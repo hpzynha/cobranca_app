@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "732759318938",
+    "project_id": "cobranca-app-dc317",
+    "storage_bucket": "cobranca-app-dc317.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:732759318938:android:7aa743ac7c345846d79a23",
+        "android_client_info": {
+          "package_name": "com.example.app_cobranca"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlO45Y60uQyJ_KJp4ON9xQW_Dwwi4mGMQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

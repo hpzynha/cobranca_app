@@ -1,12 +1,19 @@
+import 'package:app_cobranca/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/social_auth_button.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/tween_animation_builder_widget.dart';
 import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
 
-class AuthLandingScreen extends StatelessWidget {
+class AuthLandingScreen extends StatefulWidget {
   const AuthLandingScreen({super.key});
 
+  @override
+  State<AuthLandingScreen> createState() => _AuthLandingScreenState();
+}
+
+class _AuthLandingScreenState extends State<AuthLandingScreen> {
+  final _authController = AuthController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,6 +90,7 @@ class AuthLandingScreen extends StatelessWidget {
               SocialAuthButton(
                 text: 'Continuar com Google',
                 logoPath: 'assets/images/google_logo.svg',
+                onPressed: () => _authController.signInWithGoogle(context),
               ),
               const SizedBox(height: 16),
               SocialAuthButton(

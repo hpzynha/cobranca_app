@@ -1,3 +1,4 @@
+import 'package:app_cobranca/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'core/router/app_router.dart';
 
@@ -13,6 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       routerConfig: appRouter,
+      theme: AppTheme.lightTheme,
     );
   }
 }

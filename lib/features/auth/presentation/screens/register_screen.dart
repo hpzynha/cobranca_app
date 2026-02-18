@@ -24,7 +24,7 @@ class RegisterScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [SizedBox(height: 20), const AnimatedLogoRow()],
+            children: [SizedBox(height: 80), const AnimatedLogoRow()],
           ),
         ),
       ),

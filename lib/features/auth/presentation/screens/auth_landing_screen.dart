@@ -1,6 +1,6 @@
+import 'package:app_cobranca/features/auth/presentation/widgets/social_auth_button.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/tween_animation_builder_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 
 import 'package:go_router/go_router.dart';
 
@@ -10,6 +10,7 @@ class AuthLandingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
       backgroundColor: Colors.grey.shade100,
       body: SafeArea(
         child: Padding(
@@ -79,68 +80,14 @@ class AuthLandingScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 30),
-
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: OutlinedButton(
-                  onPressed: () {},
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: Colors.grey.shade300),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/images/google_logo.svg',
-                        height: 22,
-                      ),
-                      const SizedBox(width: 12),
-                      const Text(
-                        'Continuar com Google',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              SocialAuthButton(
+                text: 'Continuar com Google',
+                logoPath: 'assets/images/google_logo.svg',
               ),
-
               const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/images/apple_logo.svg',
-                        height: 22,
-                        colorFilter: const ColorFilter.mode(
-                          Colors.black,
-                          BlendMode.srcIn,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      const Text(
-                        'Continuar com Apple',
-                        style: TextStyle(fontWeight: FontWeight.w500),
-                      ),
-                    ],
-                  ),
-                ),
+              SocialAuthButton(
+                text: 'Continuar com Apple',
+                logoPath: 'assets/images/apple_logo.svg',
               ),
             ],
           ),

@@ -3,6 +3,8 @@ import 'package:app_cobranca/features/auth/presentation/widgets/social_auth_butt
 import 'package:app_cobranca/features/auth/presentation/widgets/tween_animation_builder_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:app_cobranca/features/auth/data/auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -24,11 +26,47 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => _isLoading = true);
 
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      final user = await AuthService().login(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
 
+      if (!mounted) return;
+
+      if (user != null) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Bem-vinda ${user.email}')));
+
+        context.go('/home');
+      }
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+
+      String message = 'Erro ao logar';
+
+      if (e.code == 'user-not-found') {
+        message = 'Usuário não encontrado';
+      } else if (e.code == 'wrong-password') {
+        message = 'Senha incorreta';
+      } else if (e.code == 'invalid-email') {
+        message = 'Email inválido';
+      }
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Erro inesperado')));
+    }
+
+    if (!mounted) return;
     setState(() => _isLoading = false);
-
-    // navegar ou mostrar erro
   }
 
   @override

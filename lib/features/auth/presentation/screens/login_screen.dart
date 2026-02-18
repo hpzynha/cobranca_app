@@ -1,3 +1,4 @@
+import 'package:app_cobranca/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/social_auth_button.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/tween_animation_builder_widget.dart';
@@ -18,6 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _authController = AuthController();
 
   bool _isLoading = false;
 
@@ -169,6 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   SocialAuthButton(
                     text: 'Continuar com Google',
                     logoPath: 'assets/images/google_logo.svg',
+                    onPressed: () => _authController.signInWithGoogle(context),
                   ),
                   const SizedBox(height: 16),
                   SocialAuthButton(

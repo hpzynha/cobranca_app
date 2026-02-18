@@ -12,7 +12,20 @@
           "package_name": "com.example.app_cobranca"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "732759318938-q47bprbep8f13j91obfu9353bgrn0o2s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.app_cobranca",
+            "certificate_hash": "e20739f81bf3e790e233cc86e8beb63a22ee416d"
+          }
+        },
+        {
+          "client_id": "732759318938-kp3tfg2n7dae2am9opi9ufanu6udlis9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDlO45Y60uQyJ_KJp4ON9xQW_Dwwi4mGMQ"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "732759318938-kp3tfg2n7dae2am9opi9ufanu6udlis9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "732759318938-rdb6vei2lniilb3c6cfophms9aa0v3q2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.appCobranca"
+              }
+            }
+          ]
         }
       }
     }

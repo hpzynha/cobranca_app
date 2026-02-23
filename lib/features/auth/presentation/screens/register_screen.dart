@@ -1,5 +1,7 @@
 import 'package:app_cobranca/features/auth/data/auth_service.dart';
+import 'package:app_cobranca/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/auth_text_field.dart';
+import 'package:app_cobranca/features/auth/presentation/widgets/social_auth_button.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/tween_animation_builder_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -19,6 +21,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _authController = AuthController();
 
   bool _isLoading = false;
 
@@ -184,6 +187,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               style: TextStyle(color: Colors.white),
                             ),
                   ),
+                ),
+                const SizedBox(height: 40),
+                Row(
+                  children: const [
+                    Expanded(child: Divider()),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Text('Ou'),
+                    ),
+                    Expanded(child: Divider()),
+                  ],
+                ),
+                const SizedBox(height: 30),
+                SocialAuthButton(
+                  text: 'Continuar com Google',
+                  logoPath: 'assets/images/google_logo.svg',
+                  onPressed: () => _authController.signInWithGoogle(context),
                 ),
               ],
             ),

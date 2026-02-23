@@ -92,11 +92,6 @@ class _AuthLandingScreenState extends State<AuthLandingScreen> {
                 logoPath: 'assets/images/google_logo.svg',
                 onPressed: () => _authController.signInWithGoogle(context),
               ),
-              const SizedBox(height: 16),
-              SocialAuthButton(
-                text: 'Continuar com Apple',
-                logoPath: 'assets/images/apple_logo.svg',
-              ),
             ],
           ),
         ),

@@ -45,6 +45,10 @@ class AuthService {
     return userCredential.user;
   }
 
+  Future<void> resetPassword(String email) async {
+    await _auth.sendPasswordResetEmail(email: email);
+  }
+
   Future<void> logout() async {
     await _auth.signOut();
     await _googleSignIn.signOut();

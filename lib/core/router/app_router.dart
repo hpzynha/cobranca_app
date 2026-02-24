@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:app_cobranca/features/auth/presentation/screens/home_screen.dart';
+import 'package:app_cobranca/features/auth/presentation/screens/reset_password_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -20,7 +21,8 @@ final GoRouter appRouter = GoRouter(
     final isAuthRoute =
         state.matchedLocation == '/' ||
         state.matchedLocation == '/login' ||
-        state.matchedLocation == '/register';
+        state.matchedLocation == '/register' ||
+        state.matchedLocation == '/reset-password';
 
     // Não logado tentando acessar área protegida
     if (user == null && !isAuthRoute) {
@@ -42,6 +44,10 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const RegisterScreen(),
     ),
     GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
+    GoRoute(
+      path: '/reset-password',
+      builder: (context, state) => ResetPasswordScreen(),
+    ),
   ],
 );
 

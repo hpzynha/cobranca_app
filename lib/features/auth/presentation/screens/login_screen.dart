@@ -1,4 +1,5 @@
 import 'package:app_cobranca/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:app_cobranca/features/auth/presentation/widgets/auth_options_row.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/social_auth_button.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/tween_animation_builder_widget.dart';
@@ -134,7 +135,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                   ),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 6),
+                  AuthOptionsRow(
+                    onRememberChanged: (value) {
+                      print("Remember: $value");
+                    },
+                    onForgotPressed: () {
+                      context.push('/reset-password');
+                    },
+                  ),
+                  const SizedBox(height: 12),
 
                   SizedBox(
                     width: double.infinity,

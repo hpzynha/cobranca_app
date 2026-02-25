@@ -2,6 +2,7 @@ import 'package:app_cobranca/features/auth/presentation/controllers/auth_control
 import 'package:app_cobranca/features/auth/presentation/widgets/auth_options_row.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/social_auth_button.dart';
+import 'package:app_cobranca/core/theme/app_colors.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/tween_animation_builder_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -116,16 +117,14 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
             context.pop();
           },
-          icon: Icon(Icons.arrow_back_ios, color: Colors.black54),
+          icon: const Icon(Icons.arrow_back_ios, color: AppColors.textSecondary),
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
       ),
       body: SafeArea(
         child: Padding(
@@ -141,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(height: 8),
                   Text(
                     'Gerencie e automatize suas cobranças.',
-                    style: TextStyle(color: Colors.grey),
+                    style: TextStyle(color: AppColors.textSecondary),
                   ),
                   SizedBox(height: 40),
                   AuthTextField(
@@ -187,18 +186,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 52,
                     child: ElevatedButton(
                       onPressed: _isLoading ? null : _submit,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
                       child:
                           _isLoading
-                              ? CircularProgressIndicator(color: Colors.white)
-                              : Text(
+                              ? const CircularProgressIndicator(
+                                color: AppColors.onPrimary,
+                              )
+                              : const Text(
                                 'Entrar',
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(color: AppColors.onPrimary),
                               ),
                     ),
                   ),

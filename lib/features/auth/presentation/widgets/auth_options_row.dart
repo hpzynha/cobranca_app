@@ -1,3 +1,4 @@
+import 'package:app_cobranca/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class AuthOptionsRow extends StatefulWidget {
@@ -47,14 +48,14 @@ class _AuthOptionsRowState extends State<AuthOptionsRow> {
             ),
             Text(
               widget.rememberText,
-              style: const TextStyle(fontSize: 14, color: Colors.black54),
+              style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
             ),
           ],
         ),
         TextButton(
           onPressed: widget.onForgotPressed,
           style: TextButton.styleFrom(
-            foregroundColor: Colors.black,
+            foregroundColor: AppColors.textPrimary,
             padding: EdgeInsets.zero,
           ),
           child: const Text(

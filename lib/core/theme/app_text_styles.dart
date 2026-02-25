@@ -17,6 +17,6 @@ class AppTextStyles {
 
   static const TextStyle button = TextStyle(
     fontWeight: FontWeight.w500,
-    color: Colors.white,
+    color: AppColors.onPrimary,
   );
 }

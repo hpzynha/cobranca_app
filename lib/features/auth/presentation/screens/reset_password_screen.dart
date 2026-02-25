@@ -1,4 +1,5 @@
 import 'package:app_cobranca/features/auth/data/auth_service.dart';
+import 'package:app_cobranca/core/theme/app_colors.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -54,17 +55,15 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
           onPressed: () => context.pop(),
         ),
         title: const Text(
           "Recuperar senha",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+          style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
       ),
@@ -97,7 +96,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 const Text(
                   "Não se preocupe. Informe o e-mail associado à sua conta.",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14, color: Colors.black54),
+                  style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
                 ),
 
                 const SizedBox(height: 32),
@@ -133,22 +132,16 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   width: double.infinity,
                   height: 52,
                   child: ElevatedButton(
-                    onPressed: _isLoading ? null : () => _handleReset,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
+                    onPressed: _isLoading ? null : _handleReset,
                     child:
                         _isLoading
                             ? const CircularProgressIndicator(
-                              color: Colors.white,
+                              color: AppColors.onPrimary,
                             )
                             : const Text(
                               "Enviar email",
                               style: TextStyle(
-                                color: Colors.white,
+                                color: AppColors.onPrimary,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),

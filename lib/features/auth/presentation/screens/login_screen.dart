@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:app_cobranca/features/auth/data/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -21,16 +22,18 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _authController = AuthController();
+  final _authService = AuthService();
 
   bool _isLoading = false;
+  bool _rememberMe = false;
 
-  void _submit() async {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
     try {
-      final user = await AuthService().login(
+      final user = await _authService.login(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
@@ -38,10 +41,23 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
 
       if (user != null) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Bem-vinda ${user.email}')));
+        final prefs = await SharedPreferences.getInstance();
 
+        if (_rememberMe) {
+          await prefs.setString('saved_email', _emailController.text.trim());
+        } else {
+          await prefs.remove('saved_email');
+        }
+
+        if (!mounted) return;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Bem-vinda ${user.email ?? ""}')),
+        );
+
+        await Future.delayed(const Duration(milliseconds: 800));
+
+        if (!mounted) return;
         context.go('/home');
       }
     } on FirebaseAuthException catch (e) {
@@ -60,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(message)));
-    } catch (e) {
+    } catch (_) {
       if (!mounted) return;
 
       ScaffoldMessenger.of(
@@ -70,6 +86,24 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (!mounted) return;
     setState(() => _isLoading = false);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedEmail();
+  }
+
+  Future<void> _loadSavedEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedEmail = prefs.getString('saved_email');
+
+    if (savedEmail != null) {
+      setState(() {
+        _emailController.text = savedEmail;
+        _rememberMe = true;
+      });
+    }
   }
 
   @override
@@ -138,7 +172,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 6),
                   AuthOptionsRow(
                     onRememberChanged: (value) {
-                      print("Remember: $value");
+                      setState(() {
+                        _rememberMe = value;
+                      });
                     },
                     onForgotPressed: () {
                       context.push('/reset-password');

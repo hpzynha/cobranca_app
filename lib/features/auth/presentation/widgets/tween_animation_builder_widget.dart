@@ -32,11 +32,11 @@ class _AnimatedLogoRowState extends State<AnimatedLogoRow> {
           builder: (context, value, child) {
             return Transform.scale(scale: value, child: child);
           },
-          child: SvgPicture.asset('assets/images/logoC.svg', height: 40),
+          child: SvgPicture.asset('assets/images/logo.svg', height: 40),
         ),
         const SizedBox(width: 12),
         const Text(
-          'CobrançaAPP',
+          'Venzza',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
         ),
       ],

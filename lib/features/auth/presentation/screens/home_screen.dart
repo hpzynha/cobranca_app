@@ -1,3 +1,4 @@
+import 'package:app_cobranca/features/auth/presentation/widgets/bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +11,7 @@ class HomeScreen extends StatelessWidget {
     final user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
+      extendBody: true,
       appBar: AppBar(
         title: const Text('Dashboard'),
         actions: [
@@ -24,12 +26,17 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(
-        child: Text(
-          'Bem-vinda ${user?.email ?? ""}',
-          style: const TextStyle(fontSize: 18),
-        ),
+      body: Column(
+        children: [
+          Center(
+            child: Text(
+              'Bem-vinda ${user?.email ?? ""}',
+              style: const TextStyle(fontSize: 18),
+            ),
+          ),
+        ],
       ),
+      bottomNavigationBar: const BottomBar(),
     );
   }
 }

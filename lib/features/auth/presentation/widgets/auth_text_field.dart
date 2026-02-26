@@ -1,3 +1,4 @@
+import 'package:app_cobranca/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class AuthTextField extends StatefulWidget {
@@ -34,29 +35,16 @@ class _AuthTextFieldState extends State<AuthTextField> {
       validator: widget.validator,
       decoration: InputDecoration(
         labelText: widget.label,
-        filled: true,
-        fillColor: Colors.grey.shade100,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 18,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: Colors.black),
         ),
         suffixIcon:
             isPassword
                 ? IconButton(
                   icon: Icon(
                     _obscureText ? Icons.visibility_off : Icons.visibility,
+                    color: AppColors.textSecondary,
                   ),
                   onPressed: () {
                     setState(() {

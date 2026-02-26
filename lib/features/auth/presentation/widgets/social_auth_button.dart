@@ -1,3 +1,4 @@
+import 'package:app_cobranca/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -29,12 +30,6 @@ class SocialAuthButton extends StatelessWidget {
             context.push(route!);
           }
         },
-        style: OutlinedButton.styleFrom(
-          side: BorderSide(color: Colors.grey.shade300),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
-        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -43,7 +38,7 @@ class SocialAuthButton extends StatelessWidget {
             Text(
               text,
               style: const TextStyle(
-                color: Colors.black,
+                color: AppColors.textPrimary,
                 fontWeight: FontWeight.w500,
               ),
             ),

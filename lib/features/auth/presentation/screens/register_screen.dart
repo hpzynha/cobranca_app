@@ -2,6 +2,7 @@ import 'package:app_cobranca/features/auth/data/auth_service.dart';
 import 'package:app_cobranca/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/social_auth_button.dart';
+import 'package:app_cobranca/core/theme/app_colors.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/tween_animation_builder_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -92,14 +93,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         leading: IconButton(
           onPressed: () => context.pop(),
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black54),
+          icon: const Icon(Icons.arrow_back_ios, color: AppColors.textSecondary),
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
       ),
       body: SafeArea(
         child: Padding(
@@ -113,7 +112,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 8),
                 const Text(
                   'Crie sua conta e comece a automatizar.',
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(color: AppColors.textSecondary),
                 ),
                 const SizedBox(height: 40),
 
@@ -171,20 +170,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   height: 52,
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _submit,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
                     child:
                         _isLoading
                             ? const CircularProgressIndicator(
-                              color: Colors.white,
+                              color: AppColors.onPrimary,
                             )
                             : const Text(
                               'Criar Conta',
-                              style: TextStyle(color: Colors.white),
+                              style: TextStyle(color: AppColors.onPrimary),
                             ),
                   ),
                 ),

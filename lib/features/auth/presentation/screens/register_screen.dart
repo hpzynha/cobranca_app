@@ -6,7 +6,8 @@ import 'package:app_cobranca/core/theme/app_colors.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/tween_animation_builder_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -26,7 +27,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   bool _isLoading = false;
 
-  void _submit() async {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
     if (_passwordController.text != _confirmPasswordController.text) {
@@ -39,46 +40,45 @@ class _RegisterScreenState extends State<RegisterScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final user = await AuthService().register(
+      final response = await AuthService().register(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
+        fullName: _nameController.text.trim(),
       );
 
       if (!mounted) return;
 
-      if (user != null) {
-        // Atualiza nome do usuário no Firebase
-        await user.updateDisplayName(_nameController.text.trim());
-
-        if (!mounted) return;
-
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Conta criada com sucesso!')));
+      if (response.user != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Conta criada com sucesso!')),
+        );
 
         context.go('/home');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Verifique seu email para confirmar sua conta'),
+          ),
+        );
+
+        context.go('/login');
       }
-    } on FirebaseAuthException catch (e) {
+    } on AuthException catch (e) {
       if (!mounted) return;
-
-      String message = 'Erro ao criar conta';
-
-      if (e.code == 'email-already-in-use') {
-        message = 'Email já está em uso';
-      } else if (e.code == 'invalid-email') {
-        message = 'Email inválido';
-      } else if (e.code == 'weak-password') {
-        message = 'Senha muito fraca';
-      }
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(message)));
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      ).showSnackBar(SnackBar(content: Text(e.message)));
+    } catch (_) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Erro inesperado')));
     }
+
+    if (!mounted) return;
+    setState(() => _isLoading = false);
   }
 
   @override
@@ -97,7 +97,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () => context.pop(),
-          icon: const Icon(Icons.arrow_back_ios, color: AppColors.textSecondary),
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: AppColors.textSecondary,
+          ),
         ),
       ),
       body: SafeArea(

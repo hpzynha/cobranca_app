@@ -7,8 +7,10 @@ import 'package:app_cobranca/features/auth/presentation/widgets/tween_animation_
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:app_cobranca/features/auth/data/auth_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart'
+    show SharedPreferences;
+
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -28,20 +30,26 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
   bool _rememberMe = false;
 
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedEmail();
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
     try {
-      final user = await _authService.login(
+      final response = await _authService.login(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
 
       if (!mounted) return;
 
-      if (user != null) {
+      if (response.session != null) {
         final prefs = await SharedPreferences.getInstance();
 
         if (_rememberMe) {
@@ -51,32 +59,14 @@ class _LoginScreenState extends State<LoginScreen> {
         }
 
         if (!mounted) return;
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Bem-vinda ${user.email ?? ""}')),
-        );
-
-        await Future.delayed(const Duration(milliseconds: 800));
-
-        if (!mounted) return;
         context.go('/home');
       }
-    } on FirebaseAuthException catch (e) {
+    } on AuthException catch (e) {
       if (!mounted) return;
-
-      String message = 'Erro ao logar';
-
-      if (e.code == 'user-not-found') {
-        message = 'Usuário não encontrado';
-      } else if (e.code == 'wrong-password') {
-        message = 'Senha incorreta';
-      } else if (e.code == 'invalid-email') {
-        message = 'Email inválido';
-      }
 
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(message)));
+      ).showSnackBar(SnackBar(content: Text(e.message)));
     } catch (_) {
       if (!mounted) return;
 
@@ -87,12 +77,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (!mounted) return;
     setState(() => _isLoading = false);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _loadSavedEmail();
   }
 
   Future<void> _loadSavedEmail() async {
@@ -123,7 +107,10 @@ class _LoginScreenState extends State<LoginScreen> {
           onPressed: () {
             context.pop();
           },
-          icon: const Icon(Icons.arrow_back_ios, color: AppColors.textSecondary),
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: AppColors.textSecondary,
+          ),
         ),
       ),
       body: SafeArea(
@@ -132,89 +119,92 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Center(
             child: Form(
               key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 80),
-                  const AnimatedLogoRow(),
-                  SizedBox(height: 8),
-                  Text(
-                    'Gerencie e automatize suas cobranças.',
-                    style: TextStyle(color: AppColors.textSecondary),
-                  ),
-                  SizedBox(height: 40),
-                  AuthTextField(
-                    label: 'Email',
-                    controller: _emailController,
-                    keyboardType: TextInputType.name,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Digite seu email';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-
-                  AuthTextField(
-                    label: 'Senha',
-                    controller: _passwordController,
-                    isPassword: true,
-                    validator: (value) {
-                      if (value == null || value.length < 6) {
-                        return 'Senha Invalida';
-                      }
-                      return null;
-                    },
-                  ),
-
-                  const SizedBox(height: 6),
-                  AuthOptionsRow(
-                    onRememberChanged: (value) {
-                      setState(() {
-                        _rememberMe = value;
-                      });
-                    },
-                    onForgotPressed: () {
-                      context.push('/reset-password');
-                    },
-                  ),
-                  const SizedBox(height: 12),
-
-                  SizedBox(
-                    width: double.infinity,
-                    height: 52,
-                    child: ElevatedButton(
-                      onPressed: _isLoading ? null : _submit,
-                      child:
-                          _isLoading
-                              ? const CircularProgressIndicator(
-                                color: AppColors.onPrimary,
-                              )
-                              : const Text(
-                                'Entrar',
-                                style: TextStyle(color: AppColors.onPrimary),
-                              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 80),
+                    const AnimatedLogoRow(),
+                    SizedBox(height: 8),
+                    Text(
+                      'Gerencie e automatize suas cobranças.',
+                      style: TextStyle(color: AppColors.textSecondary),
                     ),
-                  ),
-                  const SizedBox(height: 40),
-                  Row(
-                    children: const [
-                      Expanded(child: Divider()),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12),
-                        child: Text('Ou'),
+                    SizedBox(height: 40),
+                    AuthTextField(
+                      label: 'Email',
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Digite seu email';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+
+                    AuthTextField(
+                      label: 'Senha',
+                      controller: _passwordController,
+                      isPassword: true,
+                      validator: (value) {
+                        if (value == null || value.length < 6) {
+                          return 'Senha Invalida';
+                        }
+                        return null;
+                      },
+                    ),
+
+                    const SizedBox(height: 6),
+                    AuthOptionsRow(
+                      onRememberChanged: (value) {
+                        setState(() {
+                          _rememberMe = value;
+                        });
+                      },
+                      onForgotPressed: () {
+                        context.push('/reset-password');
+                      },
+                    ),
+                    const SizedBox(height: 12),
+
+                    SizedBox(
+                      width: double.infinity,
+                      height: 52,
+                      child: ElevatedButton(
+                        onPressed: _isLoading ? null : _submit,
+                        child:
+                            _isLoading
+                                ? const CircularProgressIndicator(
+                                  color: AppColors.onPrimary,
+                                )
+                                : const Text(
+                                  'Entrar',
+                                  style: TextStyle(color: AppColors.onPrimary),
+                                ),
                       ),
-                      Expanded(child: Divider()),
-                    ],
-                  ),
-                  const SizedBox(height: 30),
-                  SocialAuthButton(
-                    text: 'Continuar com Google',
-                    logoPath: 'assets/images/google_logo.svg',
-                    onPressed: () => _authController.signInWithGoogle(context),
-                  ),
-                ],
+                    ),
+                    const SizedBox(height: 40),
+                    Row(
+                      children: const [
+                        Expanded(child: Divider()),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 12),
+                          child: Text('Ou'),
+                        ),
+                        Expanded(child: Divider()),
+                      ],
+                    ),
+                    const SizedBox(height: 30),
+                    SocialAuthButton(
+                      text: 'Continuar com Google',
+                      logoPath: 'assets/images/google_logo.svg',
+                      onPressed:
+                          () => _authController.signInWithGoogle(context),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

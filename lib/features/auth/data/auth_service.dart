@@ -1,58 +1,40 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+  final _supabase = Supabase.instance.client;
 
-  Future<User?> login({required String email, required String password}) async {
-    final credential = await _auth.signInWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-
-    return credential.user;
-  }
-
-  Future<User?> register({
+  Future<AuthResponse> login({
     required String email,
     required String password,
   }) async {
-    final credential = await _auth.createUserWithEmailAndPassword(
+    return await _supabase.auth.signInWithPassword(
       email: email,
       password: password,
     );
-
-    return credential.user;
   }
 
-  Future<User?> signInWithGoogle() async {
-    final googleSignIn = GoogleSignIn.instance;
-
-    // Inicializa (obrigatório na v7)
-    await googleSignIn.initialize();
-
-    final GoogleSignInAccount googleUser = await googleSignIn.authenticate();
-
-    final GoogleSignInAuthentication googleAuth = googleUser.authentication;
-
-    final credential = GoogleAuthProvider.credential(
-      idToken: googleAuth.idToken,
+  Future<AuthResponse> register({
+    required String email,
+    required String password,
+    required String fullName,
+  }) async {
+    return await _supabase.auth.signUp(
+      email: email,
+      password: password,
+      data: {'full_name': fullName},
     );
-
-    final userCredential = await _auth.signInWithCredential(credential);
-
-    return userCredential.user;
   }
 
   Future<void> resetPassword(String email) async {
-    await _auth.sendPasswordResetEmail(email: email);
+    await _supabase.auth.resetPasswordForEmail(
+      email,
+      redirectTo: 'io.supabase.flutter://reset-password-callback/',
+    );
   }
 
   Future<void> logout() async {
-    await _auth.signOut();
-    await _googleSignIn.signOut();
+    await _supabase.auth.signOut();
   }
 
-  User? get currentUser => _auth.currentUser;
+  User? get currentUser => _supabase.auth.currentUser;
 }

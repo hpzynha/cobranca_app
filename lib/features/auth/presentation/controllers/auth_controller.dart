@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
-import '../../data/auth_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthController {
-  final AuthService _authService = AuthService();
+  final _supabase = Supabase.instance.client;
 
   Future<void> signInWithGoogle(BuildContext context) async {
-    try {
-      final user = await _authService.signInWithGoogle();
-      if (user == null) return;
-    } catch (e) {
-      if (!context.mounted) return;
-
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Erro ao logar com Google')));
-    }
+    await _supabase.auth.signInWithOAuth(
+      OAuthProvider.google,
+      redirectTo: 'io.supabase.flutter://login-callback/',
+    );
   }
 }

@@ -32,7 +32,7 @@ class HomeScreen extends StatelessWidget {
           style: const TextStyle(fontSize: 18),
         ),
       ),
-      bottomNavigationBar: const BottomBar(),
+      bottomNavigationBar: const BottomBar(currentIndex: 0),
     );
   }
 }

@@ -1,5 +1,5 @@
 import 'package:app_cobranca/features/auth/domain/entities/auth_user.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide AuthUser;
 
 class AuthUserModel extends AuthUser {
   const AuthUserModel({

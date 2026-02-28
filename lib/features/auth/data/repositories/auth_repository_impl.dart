@@ -5,7 +5,7 @@ import 'package:app_cobranca/features/auth/data/models/auth_user_model.dart';
 import 'package:app_cobranca/features/auth/domain/entities/auth_user.dart';
 import 'package:app_cobranca/features/auth/domain/entities/signup_result.dart';
 import 'package:app_cobranca/features/auth/domain/repositories/auth_repository.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide AuthUser;
 
 class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this._remoteDataSource);

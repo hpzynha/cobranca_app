@@ -5,10 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 class EmailVerificationPage extends ConsumerWidget {
-  const EmailVerificationPage({
-    required this.email,
-    super.key,
-  });
+  const EmailVerificationPage({required this.email, super.key});
 
   final String email;
 
@@ -56,12 +53,9 @@ class EmailVerificationPage extends ConsumerWidget {
               ),
               const SizedBox(height: 20),
               const Text(
-                'We sent you a verification email',
+                'Nós enviamos um e-mail de verificação para o seu endereço de e-mail.',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 12),
               Text(
@@ -75,32 +69,14 @@ class EmailVerificationPage extends ConsumerWidget {
               const Spacer(),
               SizedBox(
                 height: 52,
-                child: ElevatedButton(
-                  onPressed: isLoading
-                      ? null
-                      : () => ref
-                          .read(emailVerificationNotifierProvider.notifier)
-                          .checkEmailVerification(),
-                  child: isLoading
-                      ? const CircularProgressIndicator(
-                          color: AppColors.onPrimary,
-                        )
-                      : const Text(
-                          'I have verified',
-                          style: TextStyle(color: AppColors.onPrimary),
-                        ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                height: 52,
                 child: OutlinedButton(
-                  onPressed: isLoading
-                      ? null
-                      : () => ref
-                          .read(emailVerificationNotifierProvider.notifier)
-                          .resendEmail(email),
-                  child: const Text('Resend email'),
+                  onPressed:
+                      isLoading
+                          ? null
+                          : () => ref
+                              .read(emailVerificationNotifierProvider.notifier)
+                              .resendEmail(email),
+                  child: const Text('Reenviar e-mail'),
                 ),
               ),
               const SizedBox(height: 12),
@@ -108,7 +84,7 @@ class EmailVerificationPage extends ConsumerWidget {
                 height: 52,
                 child: TextButton(
                   onPressed: isLoading ? null : () => context.go('/login'),
-                  child: const Text('Back to Login'),
+                  child: const Text('Voltar ao login'),
                 ),
               ),
             ],

@@ -2,20 +2,21 @@ import 'package:app_cobranca/core/theme/app_colors.dart';
 import 'package:app_cobranca/core/theme/app_responsive.dart';
 import 'package:app_cobranca/core/theme/app_spacing.dart';
 import 'package:app_cobranca/features/auth/domain/entities/student_registration_input.dart';
+import 'package:app_cobranca/features/auth/presentation/pages/alunos_page.dart';
 import 'package:app_cobranca/features/auth/presentation/providers/student_providers.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AddPage extends ConsumerStatefulWidget {
-  const AddPage({super.key});
+class AddStudentPage extends ConsumerStatefulWidget {
+  const AddStudentPage({super.key});
 
   @override
-  ConsumerState<AddPage> createState() => _AddPageState();
+  ConsumerState<AddStudentPage> createState() => _AddPageState();
 }
 
-class _AddPageState extends ConsumerState<AddPage> {
+class _AddPageState extends ConsumerState<AddStudentPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _monthlyFeeController = TextEditingController();
@@ -83,14 +84,14 @@ class _AddPageState extends ConsumerState<AddPage> {
       return;
     }
 
+    ref.invalidate(studentsProvider);
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Aluno cadastrado com sucesso.')),
     );
 
-    _formKey.currentState?.reset();
-    _nameController.clear();
-    _monthlyFeeController.clear();
-    _dueDayController.text = '10';
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute<void>(builder: (_) => const StudentsPage()),
+    );
   }
 
   @override
@@ -379,4 +380,9 @@ class _FormLabel extends StatelessWidget {
       ),
     );
   }
+}
+
+
+class AddPage extends AddStudentPage {
+  const AddPage({super.key});
 }

@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:app_cobranca/features/auth/presentation/pages/email_verification_page.dart';
-import 'package:app_cobranca/features/auth/presentation/screens/home_screen.dart';
+import 'package:app_cobranca/features/auth/presentation/pages/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../features/auth/presentation/screens/auth_landing_screen.dart';
-import '../../features/auth/presentation/screens/login_screen.dart';
-import '../../features/auth/presentation/screens/register_screen.dart';
+import '../../features/auth/presentation/pages/auth_landing_screen.dart';
+import '../../features/auth/presentation/pages/login_screen.dart';
+import '../../features/auth/presentation/pages/register_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',

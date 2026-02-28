@@ -26,7 +26,6 @@ final GoRouter appRouter = GoRouter(
         state.matchedLocation == '/reset-password';
 
     final isVerificationRoute = state.matchedLocation == '/email-verification';
-
     if (isVerificationRoute && isEmailConfirmed) {
       return '/login';
     }
@@ -59,7 +58,26 @@ final GoRouter appRouter = GoRouter(
         return EmailVerificationPage(email: email ?? '');
       },
     ),
-    GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
+    GoRoute(
+      path: '/home',
+      builder: (context, state) => const HomeScreen(initialIndex: 0),
+    ),
+    GoRoute(
+      path: '/students',
+      builder: (context, state) => const HomeScreen(initialIndex: 1),
+    ),
+    GoRoute(
+      path: '/new',
+      builder: (context, state) => const HomeScreen(initialIndex: 2),
+    ),
+    GoRoute(
+      path: '/reports',
+      builder: (context, state) => const HomeScreen(initialIndex: 3),
+    ),
+    GoRoute(
+      path: '/settings',
+      builder: (context, state) => const HomeScreen(initialIndex: 4),
+    ),
   ],
 );
 

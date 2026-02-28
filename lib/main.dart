@@ -1,7 +1,8 @@
 import 'package:app_cobranca/core/theme/app_theme.dart';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'core/router/app_router.dart';
 
 void main() async {
@@ -11,7 +12,7 @@ void main() async {
     url: 'https://frwxnviutavcycklveex.supabase.co',
     anonKey: 'sb_publishable_44kgQ12j75KTca88dMRmOg_DYzCyisN',
   );
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

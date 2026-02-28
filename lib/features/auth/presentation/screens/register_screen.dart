@@ -1,22 +1,22 @@
-import 'package:app_cobranca/features/auth/data/auth_service.dart';
+import 'package:app_cobranca/core/theme/app_colors.dart';
+import 'package:app_cobranca/features/auth/domain/entities/signup_result.dart';
 import 'package:app_cobranca/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:app_cobranca/features/auth/presentation/providers/sign_up_notifier.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/social_auth_button.dart';
-import 'package:app_cobranca/core/theme/app_colors.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/tween_animation_builder_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:supabase_flutter/supabase_flutter.dart';
-
-class RegisterScreen extends StatefulWidget {
+class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
+  ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final _nameController = TextEditingController();
@@ -25,60 +25,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _confirmPasswordController = TextEditingController();
   final _authController = AuthController();
 
-  bool _isLoading = false;
-
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
     if (_passwordController.text != _confirmPasswordController.text) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('As senhas não coincidem')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('As senhas não coincidem')),
+      );
       return;
     }
 
-    setState(() => _isLoading = true);
-
-    try {
-      final response = await AuthService().register(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
-        fullName: _nameController.text.trim(),
-      );
-
-      if (!mounted) return;
-
-      if (response.user != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Conta criada com sucesso!')),
+    await ref.read(signUpNotifierProvider.notifier).signUp(
+          fullName: _nameController.text.trim(),
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
         );
 
-        context.go('/home');
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Verifique seu email para confirmar sua conta'),
-          ),
-        );
+    final result = ref.read(signUpNotifierProvider);
+    if (!mounted) return;
+
+    result.whenOrNull(
+      data: (data) {
+        if (data == null) {
+          return;
+        }
+
+        if (data.status == SignUpStatus.requiresEmailVerification) {
+          context.go('/email-verification', extra: data.email);
+          return;
+        }
 
         context.go('/login');
-      }
-    } on AuthException catch (e) {
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(e.message)));
-    } catch (_) {
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Erro inesperado')));
-    }
-
-    if (!mounted) return;
-    setState(() => _isLoading = false);
+      },
+      error: (error, _) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(error.toString())));
+      },
+    );
   }
 
   @override
@@ -92,6 +76,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(signUpNotifierProvider);
+    final isLoading = state.isLoading;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -118,7 +105,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   style: TextStyle(color: AppColors.textSecondary),
                 ),
                 const SizedBox(height: 40),
-
                 AuthTextField(
                   label: 'Nome completo',
                   controller: _nameController,
@@ -129,9 +115,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     return null;
                   },
                 ),
-
                 const SizedBox(height: 16),
-
                 AuthTextField(
                   label: 'Email',
                   controller: _emailController,
@@ -143,9 +127,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     return null;
                   },
                 ),
-
                 const SizedBox(height: 16),
-
                 AuthTextField(
                   label: 'Senha',
                   controller: _passwordController,
@@ -157,36 +139,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     return null;
                   },
                 ),
-
                 const SizedBox(height: 16),
-
                 AuthTextField(
                   label: 'Confirmar senha',
                   controller: _confirmPasswordController,
                   isPassword: true,
                 ),
-
                 const SizedBox(height: 24),
-
                 SizedBox(
                   width: double.infinity,
                   height: 52,
                   child: ElevatedButton(
-                    onPressed: _isLoading ? null : _submit,
-                    child:
-                        _isLoading
-                            ? const CircularProgressIndicator(
-                              color: AppColors.onPrimary,
-                            )
-                            : const Text(
-                              'Criar Conta',
-                              style: TextStyle(color: AppColors.onPrimary),
-                            ),
+                    onPressed: isLoading ? null : _submit,
+                    child: isLoading
+                        ? const CircularProgressIndicator(
+                            color: AppColors.onPrimary,
+                          )
+                        : const Text(
+                            'Criar Conta',
+                            style: TextStyle(color: AppColors.onPrimary),
+                          ),
                   ),
                 ),
                 const SizedBox(height: 40),
-                Row(
-                  children: const [
+                const Row(
+                  children: [
                     Expanded(child: Divider()),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 12),

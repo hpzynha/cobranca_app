@@ -1,3 +1,8 @@
+import 'package:app_cobranca/core/constants/app_strings.dart';
+import 'package:app_cobranca/core/theme/app_colors.dart';
+import 'package:app_cobranca/core/theme/app_radius.dart';
+import 'package:app_cobranca/core/theme/app_spacing.dart';
+import 'package:app_cobranca/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
 class OverdueAlertCard extends StatelessWidget {
@@ -16,12 +21,12 @@ class OverdueAlertCard extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    const Color danger = Color(0xFFE5484D);
+    const danger = AppColors.danger;
 
     return LayoutBuilder(
       builder: (context, constraints) {
         final isCompact = constraints.maxWidth < 360;
-        final horizontalPadding = isCompact ? 12.0 : 16.0;
+        final horizontalPadding = isCompact ? 12.0 : AppSpacing.md;
         final messageSize = isCompact ? 14.0 : 15.0;
         final buttonTextSize = isCompact ? 14.0 : 15.0;
 
@@ -29,7 +34,7 @@ class OverdueAlertCard extends StatelessWidget {
           padding: EdgeInsets.all(horizontalPadding),
           decoration: BoxDecoration(
             color: danger.withValues(alpha: 0.08),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(AppRadius.lg),
             border: Border.all(color: danger.withValues(alpha: 0.25)),
           ),
           child:
@@ -43,11 +48,9 @@ class OverdueAlertCard extends StatelessWidget {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              "Você tem $overdueCount cobranças vencidas",
-                              style: TextStyle(
+                              AppStrings.overdueChargesMessage(overdueCount),
+                              style: AppTextStyles.dashboardAlert.copyWith(
                                 fontSize: messageSize,
-                                fontWeight: FontWeight.w600,
-                                color: danger,
                               ),
                             ),
                           ),
@@ -70,11 +73,9 @@ class OverdueAlertCard extends StatelessWidget {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          "Você tem $overdueCount cobranças vencidas",
-                          style: TextStyle(
+                          AppStrings.overdueChargesMessage(overdueCount),
+                          style: AppTextStyles.dashboardAlert.copyWith(
                             fontSize: messageSize,
-                            fontWeight: FontWeight.w600,
-                            color: danger,
                           ),
                         ),
                       ),
@@ -111,15 +112,11 @@ class _ActionChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: danger.withValues(alpha: 0.15),
-          borderRadius: BorderRadius.circular(999),
+          borderRadius: BorderRadius.circular(AppRadius.pill),
         ),
         child: Text(
-          "Cobrar agora",
-          style: TextStyle(
-            fontSize: fontSize,
-            fontWeight: FontWeight.w600,
-            color: danger,
-          ),
+          AppStrings.collectNow,
+          style: AppTextStyles.dashboardAlert.copyWith(fontSize: fontSize),
         ),
       ),
     );

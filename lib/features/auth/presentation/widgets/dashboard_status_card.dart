@@ -1,3 +1,6 @@
+import 'package:app_cobranca/core/theme/app_colors.dart';
+import 'package:app_cobranca/core/theme/app_radius.dart';
+import 'package:app_cobranca/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
 enum StatusType { overdue, dueToday, paid }
@@ -17,11 +20,11 @@ class DashboardStatusCard extends StatelessWidget {
   Color get color {
     switch (type) {
       case StatusType.overdue:
-        return const Color(0xFFE5484D);
+        return AppColors.danger;
       case StatusType.dueToday:
-        return const Color(0xFFF5A524);
+        return AppColors.warning;
       case StatusType.paid:
-        return const Color(0xFF2FBF71);
+        return AppColors.success;
     }
   }
 
@@ -53,7 +56,7 @@ class DashboardStatusCard extends StatelessWidget {
           padding: EdgeInsets.all(cardPadding),
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.08),
-            borderRadius: BorderRadius.circular(isCompact ? 16 : 20),
+            borderRadius: BorderRadius.circular(isCompact ? AppRadius.lg : 20),
             border: Border.all(
               color: color.withValues(alpha: 0.15),
               width: 1.2,
@@ -74,10 +77,8 @@ class DashboardStatusCard extends StatelessWidget {
               SizedBox(height: iconGap),
               Text(
                 count.toString(),
-                style: TextStyle(
+                style: AppTextStyles.dashboardCardNumber.copyWith(
                   fontSize: numberSize,
-                  fontWeight: FontWeight.w700,
-                  color: const Color(0xFF1F2937),
                 ),
               ),
               SizedBox(height: labelGap),
@@ -85,10 +86,8 @@ class DashboardStatusCard extends StatelessWidget {
                 label,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
+                style: AppTextStyles.dashboardCardLabel.copyWith(
                   fontSize: labelSize,
-                  fontWeight: FontWeight.w500,
-                  color: const Color(0xFF6B7280),
                 ),
               ),
             ],

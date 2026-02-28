@@ -1,3 +1,5 @@
+import 'package:app_cobranca/core/constants/app_strings.dart';
+import 'package:app_cobranca/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -13,26 +15,27 @@ class MonthlyBalanceHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.sizeOf(context).width;
-    final labelSize = (screenWidth * 0.046).clamp(14.0, 18.0);
-    final amountSize = (screenWidth * 0.09).clamp(28.0, 36.0);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Saldo previsto do mês",
-          style: TextStyle(fontSize: labelSize, color: const Color(0xFF6B7280)),
+          AppStrings.monthlyForecastBalance,
+          style: AppTextStyles.responsive(
+            context,
+            AppTextStyles.dashboardSubtitle,
+            baseSize: 16,
+          ),
         ),
         const SizedBox(height: 6),
         Text(
           _formatCurrency(amount),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontSize: amountSize,
-            fontWeight: FontWeight.bold,
-            color: const Color(0xFF1A1A1A),
+          style: AppTextStyles.responsive(
+            context,
+            AppTextStyles.dashboardAmount,
+            baseSize: 36,
+            min: 0.85,
           ),
         ),
       ],

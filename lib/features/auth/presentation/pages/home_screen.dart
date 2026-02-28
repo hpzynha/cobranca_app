@@ -1,3 +1,6 @@
+import 'package:app_cobranca/core/constants/app_strings.dart';
+import 'package:app_cobranca/core/theme/app_responsive.dart';
+import 'package:app_cobranca/core/theme/app_spacing.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/bottom_bar.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/dashboard_status_card.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/monthly_balance_header.dart';
@@ -11,16 +14,16 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.sizeOf(context).width;
-    final horizontalPadding = screenWidth < 360 ? 14.0 : 16.0;
-    final topSpacing = screenWidth < 360 ? 16.0 : 24.0;
-    final sectionSpacing = screenWidth < 360 ? 18.0 : 24.0;
-    final cardSpacing = screenWidth < 360 ? 8.0 : 12.0;
+    final isCompact = AppResponsive.isCompact(context);
+    final horizontalPadding = isCompact ? 14.0 : AppSpacing.md;
+    final topSpacing = isCompact ? AppSpacing.md : AppSpacing.lg;
+    final sectionSpacing = isCompact ? 18.0 : AppSpacing.lg;
+    final cardSpacing = isCompact ? AppSpacing.sm : 12.0;
 
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
-        title: const Text('Dashboard'),
+        title: const Text(AppStrings.dashboardTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -62,7 +65,7 @@ class HomeScreen extends StatelessWidget {
                         height: cardHeight,
                         child: const DashboardStatusCard(
                           count: 3,
-                          label: "Atrasados",
+                          label: AppStrings.statusOverdue,
                           type: StatusType.overdue,
                         ),
                       ),
@@ -73,7 +76,7 @@ class HomeScreen extends StatelessWidget {
                         height: cardHeight,
                         child: const DashboardStatusCard(
                           count: 4,
-                          label: "Vencem hoje",
+                          label: AppStrings.statusDueToday,
                           type: StatusType.dueToday,
                         ),
                       ),
@@ -84,7 +87,7 @@ class HomeScreen extends StatelessWidget {
                         height: cardHeight,
                         child: const DashboardStatusCard(
                           count: 5,
-                          label: "Pagos",
+                          label: AppStrings.statusPaid,
                           type: StatusType.paid,
                         ),
                       ),

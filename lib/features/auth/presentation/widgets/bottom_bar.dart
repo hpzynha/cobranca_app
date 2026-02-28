@@ -1,5 +1,8 @@
 import 'dart:ui';
 
+import 'package:app_cobranca/core/constants/app_strings.dart';
+import 'package:app_cobranca/core/theme/app_colors.dart';
+import 'package:app_cobranca/core/theme/app_responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -8,15 +11,12 @@ class BottomBar extends StatelessWidget {
 
   final int currentIndex;
 
-  static const _primaryColor = Color(0xFFE75A2E);
-  static const _inactiveColor = Color(0xFF7C8292);
   static const _centerButtonSize = 54.0;
   static const _centerButtonTopOffset = -14.0;
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.sizeOf(context).width;
-    final isCompact = screenWidth < 375;
+    final isCompact = AppResponsive.screenWidth(context) < 375;
 
     return Container(
       margin: EdgeInsets.fromLTRB(12, 0, 12, isCompact ? 12 : 16),
@@ -60,14 +60,14 @@ class BottomBar extends StatelessWidget {
                 context: context,
                 index: 0,
                 icon: Icons.home_outlined,
-                label: 'Início',
+                label: AppStrings.navHome,
                 isCompact: isCompact,
               ),
               _buildItem(
                 context: context,
                 index: 1,
                 icon: Icons.groups_2_outlined,
-                label: 'Alunos',
+                label: AppStrings.navStudents,
                 isCompact: isCompact,
               ),
               const Spacer(),
@@ -75,14 +75,14 @@ class BottomBar extends StatelessWidget {
                 context: context,
                 index: 3,
                 icon: Icons.bar_chart_outlined,
-                label: 'Relatórios',
+                label: AppStrings.navReports,
                 isCompact: isCompact,
               ),
               _buildItem(
                 context: context,
                 index: 4,
                 icon: Icons.settings_outlined,
-                label: 'Config',
+                label: AppStrings.navSettings,
                 isCompact: isCompact,
               ),
             ],
@@ -100,7 +100,7 @@ class BottomBar extends StatelessWidget {
     required bool isCompact,
   }) {
     final isActive = currentIndex == index;
-    final color = isActive ? _primaryColor : _inactiveColor;
+    final color = isActive ? AppColors.primary : AppColors.bottomBarInactive;
 
     return Expanded(
       child: InkWell(
@@ -137,11 +137,11 @@ class BottomBar extends StatelessWidget {
         width: buttonSize,
         height: buttonSize,
         decoration: const BoxDecoration(
-          color: _primaryColor,
+          color: AppColors.primary,
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: Color(0x4DE75A2E),
+              color: AppColors.primaryShadow,
               blurRadius: 20,
               offset: Offset(0, 10),
             ),

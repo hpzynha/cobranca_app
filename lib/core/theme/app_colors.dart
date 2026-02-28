@@ -13,4 +13,16 @@ class AppColors {
   static const Color inputFill = surface;
 
   static const Color googleBorder = Color(0xFFDDDDDD);
+
+  // Semantic status colors
+  static const Color danger = Color(0xFFE5484D);
+  static const Color warning = Color(0xFFF5A524);
+  static const Color success = Color(0xFF2FBF71);
+
+  // Extra neutrals used in dashboard widgets
+  static const Color textStrong = Color(0xFF1F2937);
+  static const Color textMuted = Color(0xFF6B7280);
+  static const Color bottomBarInactive = Color(0xFF7C8292);
+
+  static const Color primaryShadow = Color(0x4DE4572E);
 }

@@ -1,5 +1,7 @@
 import 'package:app_cobranca/features/auth/presentation/widgets/bottom_bar.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/dashboard_status_card.dart';
+import 'package:app_cobranca/features/auth/presentation/widgets/monthly_balance_header.dart';
+import 'package:app_cobranca/features/auth/presentation/widgets/overdue_alert_card.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -30,6 +32,8 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(height: 24),
+            const MonthlyBalanceHeader(amount: 4050.00),
             const SizedBox(height: 24),
 
             LayoutBuilder(
@@ -77,6 +81,13 @@ class HomeScreen extends StatelessWidget {
             ),
 
             const SizedBox(height: 24),
+
+            OverdueAlertCard(
+              overdueCount: 3,
+              onTap: () {
+                // navegar para lista de atrasados
+              },
+            ),
 
             // Aqui depois entra lista de alunos
           ],

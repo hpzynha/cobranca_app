@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:ui';
+
+import 'package:flutter/material.dart';
 
 class BottomBar extends StatefulWidget {
   const BottomBar({super.key});
@@ -9,63 +10,106 @@ class BottomBar extends StatefulWidget {
 }
 
 class _BottomBarState extends State<BottomBar> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
 
-  final List<IconData> _icons = [
-    Icons.home_rounded,
-    Icons.add_circle_outline_rounded,
-    Icons.bar_chart_rounded,
-    Icons.settings_rounded,
+  static const _primaryColor = Color(0xFFE75A2E);
+  static const _inactiveColor = Color(0xFF7C8292);
+
+  final List<_BottomNavItem> _items = const [
+    _BottomNavItem(icon: Icons.home_outlined, label: 'Início'),
+    _BottomNavItem(icon: Icons.groups_2_outlined, label: 'Alunos'),
+    _BottomNavItem(icon: Icons.add, label: 'Novo', isCenter: true),
+    _BottomNavItem(icon: Icons.bar_chart_outlined, label: 'Relatórios'),
+    _BottomNavItem(icon: Icons.settings_outlined, label: 'Config'),
   ];
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
+      minimum: const EdgeInsets.only(bottom: 4),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(28),
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
             child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 14),
+              height: 92,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.85),
+                color: Colors.white.withValues(alpha: 0.9),
                 borderRadius: BorderRadius.circular(28),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.06),
-                    blurRadius: 25,
+                    color: Colors.black.withValues(alpha: 0.07),
+                    blurRadius: 30,
                     offset: const Offset(0, 10),
                   ),
                 ],
+                border: Border.all(color: Colors.white.withValues(alpha: 0.4)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: List.generate(_icons.length, (index) {
-                  final isActive = _selectedIndex == index;
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: List.generate(_items.length, (index) {
+                  final item = _items[index];
 
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedIndex = index;
-                      });
-                    },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 250),
-                      curve: Curves.easeOut,
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color:
-                            isActive
-                                ? Colors.black.withValues(alpha: 0.08)
-                                : Colors.transparent,
-                        shape: BoxShape.circle,
+                  if (item.isCenter) {
+                    return Transform.translate(
+                      offset: const Offset(0, -14),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(28),
+                          onTap: () => _onTap(index),
+                          child: Ink(
+                            width: 56,
+                            height: 56,
+                            decoration: const BoxDecoration(
+                              color: _primaryColor,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color(0x4DE75A2E),
+                                  blurRadius: 16,
+                                  offset: Offset(0, 8),
+                                ),
+                              ],
+                            ),
+                            child: Icon(item.icon, color: Colors.white, size: 32),
+                          ),
+                        ),
                       ),
-                      child: Icon(
-                        _icons[index],
-                        size: index == 1 ? 30 : 24,
-                        color: isActive ? Colors.black : Colors.grey,
+                    );
+                  }
+
+                  final isActive = _selectedIndex == index;
+                  final color = isActive ? _primaryColor : _inactiveColor;
+
+                  return Expanded(
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () => _onTap(index),
+                        borderRadius: BorderRadius.circular(18),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(item.icon, color: color, size: 30),
+                              const SizedBox(height: 2),
+                              Text(
+                                item.label,
+                                style: TextStyle(
+                                  fontSize: 32 * 0.375,
+                                  fontWeight: FontWeight.w600,
+                                  color: color,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   );
@@ -77,4 +121,22 @@ class _BottomBarState extends State<BottomBar> {
       ),
     );
   }
+
+  void _onTap(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+}
+
+class _BottomNavItem {
+  final IconData icon;
+  final String label;
+  final bool isCenter;
+
+  const _BottomNavItem({
+    required this.icon,
+    required this.label,
+    this.isCenter = false,
+  });
 }

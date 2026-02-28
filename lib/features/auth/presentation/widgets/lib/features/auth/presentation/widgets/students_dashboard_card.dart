@@ -5,39 +5,72 @@ import 'package:app_cobranca/core/theme/app_spacing.dart';
 import 'package:app_cobranca/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
-class StudentsDashboardCard extends StatelessWidget {
-  const StudentsDashboardCard({super.key});
+enum StudentPaymentStatus {
+  overdue('Atrasado', Color(0xFFFDECEC), AppColors.danger),
+  paid('Pago', Color(0xFFE8F8EF), AppColors.success),
+  dueSoon('Vence em breve', Color(0xFFFFF4E7), Color(0xFFF08C00));
 
-  static const List<_StudentPaymentMock> _mockStudents = [
-    _StudentPaymentMock(
-      initials: 'MS',
-      name: 'Maria Silva',
-      dueLabel: 'Venc. dia 10',
-      amountLabel: 'R\$ 300,00',
-      status: _PaymentStatus.overdue,
-    ),
-    _StudentPaymentMock(
-      initials: 'JP',
-      name: 'João Pedro',
-      dueLabel: 'Venc. dia 15',
-      amountLabel: 'R\$ 250,00',
-      status: _PaymentStatus.paid,
-    ),
-    _StudentPaymentMock(
-      initials: 'AP',
-      name: 'Ana Paula',
-      dueLabel: 'Venc. dia 28',
-      amountLabel: 'R\$ 400,00',
-      status: _PaymentStatus.dueSoon,
-    ),
-    _StudentPaymentMock(
-      initials: 'CL',
-      name: 'Carlos Lima',
-      dueLabel: 'Venc. dia 30',
-      amountLabel: 'R\$ 350,00',
-      status: _PaymentStatus.dueSoon,
-    ),
-  ];
+  const StudentPaymentStatus(this.label, this.background, this.foreground);
+
+  final String label;
+  final Color background;
+  final Color foreground;
+}
+
+class StudentPaymentItem {
+  const StudentPaymentItem({
+    required this.initials,
+    required this.name,
+    required this.dueLabel,
+    required this.amountLabel,
+    required this.status,
+  });
+
+  final String initials;
+  final String name;
+  final String dueLabel;
+  final String amountLabel;
+  final StudentPaymentStatus status;
+}
+
+const kMockStudentPayments = <StudentPaymentItem>[
+  StudentPaymentItem(
+    initials: 'MS',
+    name: 'Maria Silva',
+    dueLabel: 'Venc. dia 10',
+    amountLabel: 'R\$ 300,00',
+    status: StudentPaymentStatus.overdue,
+  ),
+  StudentPaymentItem(
+    initials: 'JP',
+    name: 'João Pedro',
+    dueLabel: 'Venc. dia 15',
+    amountLabel: 'R\$ 250,00',
+    status: StudentPaymentStatus.paid,
+  ),
+  StudentPaymentItem(
+    initials: 'AP',
+    name: 'Ana Paula',
+    dueLabel: 'Venc. dia 28',
+    amountLabel: 'R\$ 400,00',
+    status: StudentPaymentStatus.dueSoon,
+  ),
+  StudentPaymentItem(
+    initials: 'CL',
+    name: 'Carlos Lima',
+    dueLabel: 'Venc. dia 30',
+    amountLabel: 'R\$ 350,00',
+    status: StudentPaymentStatus.dueSoon,
+  ),
+];
+
+class StudentsDashboardCard extends StatelessWidget {
+  const StudentsDashboardCard({
+    super.key,
+    this.students = kMockStudentPayments,
+  });
+
+  final List<StudentPaymentItem> students;
 
   @override
   Widget build(BuildContext context) {
@@ -45,23 +78,86 @@ class StudentsDashboardCard extends StatelessWidget {
     final titleSize = AppResponsive.fontSize(context, isCompact ? 20 : 22);
     final listHeight = isCompact ? 320.0 : 340.0;
 
+    return StudentsList(
+      students: students,
+      showTitle: true,
+      titleSize: titleSize,
+      height: listHeight,
+      physics: const BouncingScrollPhysics(),
+    );
+  }
+}
+
+class StudentsList extends StatelessWidget {
+  const StudentsList({
+    super.key,
+    required this.students,
+    this.showTitle = false,
+    this.titleSize,
+    this.height,
+    this.shrinkWrap = false,
+    this.physics,
+    this.emptyMessage = 'Nenhum aluno encontrado',
+  });
+
+  final List<StudentPaymentItem> students;
+  final bool showTitle;
+  final double? titleSize;
+  final double? height;
+  final bool shrinkWrap;
+  final ScrollPhysics? physics;
+  final String emptyMessage;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget content;
+
+    if (students.isEmpty) {
+      content = Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 20),
+        decoration: BoxDecoration(
+          color: AppColors.background,
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Text(
+          emptyMessage,
+          style: AppTextStyles.body.copyWith(
+            fontSize: 14,
+            color: AppColors.textMuted,
+          ),
+        ),
+      );
+    } else {
+      content = ListView.separated(
+        physics: physics,
+        shrinkWrap: shrinkWrap,
+        itemBuilder: (context, index) {
+          final student = students[index];
+          return _StudentRowCard(student: student);
+        },
+        separatorBuilder: (_, __) => const SizedBox(height: 14),
+        itemCount: students.length,
+      );
+    }
+
+    if (height != null) {
+      content = SizedBox(height: height, child: content);
+    }
+
+    if (!showTitle) {
+      return content;
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Alunos', style: AppTextStyles.heading.copyWith(fontSize: titleSize)),
-        const SizedBox(height: AppSpacing.md),
-        SizedBox(
-          height: listHeight,
-          child: ListView.separated(
-            physics: const BouncingScrollPhysics(),
-            itemBuilder: (context, index) {
-              final student = _mockStudents[index];
-              return _StudentRowCard(student: student);
-            },
-            separatorBuilder: (_, __) => const SizedBox(height: 14),
-            itemCount: _mockStudents.length,
-          ),
+        Text(
+          'Alunos',
+          style: AppTextStyles.heading.copyWith(fontSize: titleSize ?? 22),
         ),
+        const SizedBox(height: AppSpacing.md),
+        content,
       ],
     );
   }
@@ -70,7 +166,7 @@ class StudentsDashboardCard extends StatelessWidget {
 class _StudentRowCard extends StatelessWidget {
   const _StudentRowCard({required this.student});
 
-  final _StudentPaymentMock student;
+  final StudentPaymentItem student;
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +249,7 @@ class _StudentRowCard extends StatelessWidget {
 class _StatusPill extends StatelessWidget {
   const _StatusPill({required this.status});
 
-  final _PaymentStatus status;
+  final StudentPaymentStatus status;
 
   @override
   Widget build(BuildContext context) {
@@ -172,32 +268,4 @@ class _StatusPill extends StatelessWidget {
       ),
     );
   }
-}
-
-class _StudentPaymentMock {
-  const _StudentPaymentMock({
-    required this.initials,
-    required this.name,
-    required this.dueLabel,
-    required this.amountLabel,
-    required this.status,
-  });
-
-  final String initials;
-  final String name;
-  final String dueLabel;
-  final String amountLabel;
-  final _PaymentStatus status;
-}
-
-enum _PaymentStatus {
-  overdue('Atrasado', Color(0xFFFDECEC), AppColors.danger),
-  paid('Pago', Color(0xFFE8F8EF), AppColors.success),
-  dueSoon('Vence em breve', Color(0xFFFFF4E7), Color(0xFFF08C00));
-
-  const _PaymentStatus(this.label, this.background, this.foreground);
-
-  final String label;
-  final Color background;
-  final Color foreground;
 }

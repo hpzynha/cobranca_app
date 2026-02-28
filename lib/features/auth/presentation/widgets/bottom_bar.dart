@@ -1,15 +1,14 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
-class BottomBar extends StatefulWidget {
-  const BottomBar({super.key});
+class BottomBar extends StatelessWidget {
+  const BottomBar({
+    required this.currentIndex,
+    super.key,
+  });
 
-  @override
-  State<BottomBar> createState() => _BottomBarState();
-}
-
-class _BottomBarState extends State<BottomBar> {
-  int _selectedIndex = 0;
+  final int currentIndex;
 
   static const _primaryColor = Color(0xFFE75A2E);
   static const _inactiveColor = Color(0xFF7C8292);
@@ -24,14 +23,17 @@ class _BottomBarState extends State<BottomBar> {
         clipBehavior: Clip.none,
         alignment: Alignment.bottomCenter,
         children: [
-          _buildNavContainer(),
-          Positioned(top: _centerButtonTopOffset, child: _buildCenterButton()),
+          _buildNavContainer(context),
+          Positioned(
+            top: _centerButtonTopOffset,
+            child: _buildCenterButton(context),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildNavContainer() {
+  Widget _buildNavContainer(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(28),
       child: BackdropFilter(
@@ -53,19 +55,27 @@ class _BottomBarState extends State<BottomBar> {
           ),
           child: Row(
             children: [
-              _buildItem(index: 0, icon: Icons.home_outlined, label: 'Início'),
               _buildItem(
+                context: context,
+                index: 0,
+                icon: Icons.home_outlined,
+                label: 'Início',
+              ),
+              _buildItem(
+                context: context,
                 index: 1,
                 icon: Icons.groups_2_outlined,
                 label: 'Alunos',
               ),
               const Spacer(),
               _buildItem(
+                context: context,
                 index: 3,
                 icon: Icons.bar_chart_outlined,
                 label: 'Relatórios',
               ),
               _buildItem(
+                context: context,
                 index: 4,
                 icon: Icons.settings_outlined,
                 label: 'Config',
@@ -78,17 +88,18 @@ class _BottomBarState extends State<BottomBar> {
   }
 
   Widget _buildItem({
+    required BuildContext context,
     required int index,
     required IconData icon,
     required String label,
   }) {
-    final isActive = _selectedIndex == index;
+    final isActive = currentIndex == index;
     final color = isActive ? _primaryColor : _inactiveColor;
 
     return Expanded(
       child: InkWell(
         borderRadius: BorderRadius.circular(18),
-        onTap: () => _onTap(index),
+        onTap: () => _onTap(context, index),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: Column(
@@ -111,9 +122,9 @@ class _BottomBarState extends State<BottomBar> {
     );
   }
 
-  Widget _buildCenterButton() {
+  Widget _buildCenterButton(BuildContext context) {
     return GestureDetector(
-      onTap: () => _onTap(2),
+      onTap: () => _onTap(context, 2),
       child: Container(
         width: _centerButtonSize,
         height: _centerButtonSize,
@@ -133,9 +144,15 @@ class _BottomBarState extends State<BottomBar> {
     );
   }
 
-  void _onTap(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+  void _onTap(BuildContext context, int index) {
+    final route = switch (index) {
+      0 => '/home',
+      1 => '/alunos',
+      2 => '/adicionar',
+      3 => '/relatorios',
+      4 => '/config',
+      _ => '/home',
+    };
+    context.go(route);
   }
 }

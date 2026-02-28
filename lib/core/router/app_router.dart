@@ -1,7 +1,11 @@
 import 'dart:async';
 
+import 'package:app_cobranca/features/auth/presentation/pages/add_page.dart';
+import 'package:app_cobranca/features/auth/presentation/pages/alunos_page.dart';
 import 'package:app_cobranca/features/auth/presentation/pages/email_verification_page.dart';
+import 'package:app_cobranca/features/auth/presentation/pages/config_page.dart';
 import 'package:app_cobranca/features/auth/presentation/pages/home_screen.dart';
+import 'package:app_cobranca/features/auth/presentation/pages/relatorios_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -60,6 +64,13 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
+    GoRoute(path: '/alunos', builder: (context, state) => const AlunosPage()),
+    GoRoute(path: '/adicionar', builder: (context, state) => const AddPage()),
+    GoRoute(
+      path: '/relatorios',
+      builder: (context, state) => const RelatoriosPage(),
+    ),
+    GoRoute(path: '/config', builder: (context, state) => const ConfigPage()),
   ],
 );
 

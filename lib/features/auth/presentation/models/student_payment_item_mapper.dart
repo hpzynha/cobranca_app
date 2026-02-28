@@ -4,15 +4,20 @@ import 'package:intl/intl.dart';
 
 extension StudentPaymentItemMapper on List<Student> {
   List<StudentPaymentItem> toPaymentItems([DateTime? now]) {
-    final today = (now ?? DateTime.now()).day;
+    final referenceDate = _dateOnly(now ?? DateTime.now());
     final currency = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
+    final dueDateFormat = DateFormat('dd/MM/yyyy');
 
     return map((student) {
-      final status = _statusForDueDay(student.dueDay, today);
+      final status = _statusForStudent(student, referenceDate);
+      final dueDate = student.nextDueDate;
       return StudentPaymentItem(
         initials: _buildInitials(student.name),
         name: student.name,
-        dueLabel: 'Venc. dia ${student.dueDay}',
+        dueLabel:
+            dueDate == null
+                ? 'Sem vencimento definido'
+                : 'Venc. ${dueDateFormat.format(dueDate)}',
         amountLabel: currency.format(student.monthlyFeeCents / 100),
         status: status,
       );
@@ -20,14 +25,31 @@ extension StudentPaymentItemMapper on List<Student> {
   }
 }
 
-StudentPaymentStatus _statusForDueDay(int dueDay, int today) {
-  if (dueDay < today) {
+StudentPaymentStatus _statusForStudent(Student student, DateTime now) {
+  final nextDueDate =
+      student.nextDueDate == null ? null : _dateOnly(student.nextDueDate!);
+  final lastPaymentDate =
+      student.lastPaymentDate == null
+          ? null
+          : _dateOnly(student.lastPaymentDate!);
+
+  if (nextDueDate == null) {
+    return StudentPaymentStatus.open;
+  }
+
+  if (lastPaymentDate != null && !lastPaymentDate.isBefore(nextDueDate)) {
+    return StudentPaymentStatus.paid;
+  }
+
+  if (now.isAfter(nextDueDate)) {
     return StudentPaymentStatus.overdue;
   }
-  if (dueDay <= today + 5) {
-    return StudentPaymentStatus.dueSoon;
+
+  if (now.isAtSameMomentAs(nextDueDate)) {
+    return StudentPaymentStatus.dueToday;
   }
-  return StudentPaymentStatus.paid;
+
+  return StudentPaymentStatus.open;
 }
 
 String _buildInitials(String name) {
@@ -52,3 +74,5 @@ String _buildInitials(String name) {
 
   return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
 }
+
+DateTime _dateOnly(DateTime date) => DateTime(date.year, date.month, date.day);

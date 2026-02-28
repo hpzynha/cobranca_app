@@ -3,28 +3,35 @@ import 'package:app_cobranca/features/auth/data/models/student_registration_payl
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class StudentRemoteDataSource {
-  StudentRemoteDataSource(this._supabaseClient, {this.useMock = false});
+  StudentRemoteDataSource(this._supabaseClient);
 
   final SupabaseClient _supabaseClient;
-  final bool useMock;
 
   Future<void> createStudent(StudentRegistrationPayload payload) async {
-    if (useMock) {
-      await Future<void>.delayed(const Duration(milliseconds: 550));
-      return;
+    final ownerId = Supabase.instance.client.auth.currentUser?.id;
+    if (ownerId == null || ownerId.isEmpty) {
+      throw const AuthException('Usuário não autenticado.');
     }
 
-    await _supabaseClient.from('students').insert(payload.toSupabaseMap());
+    await _supabaseClient.from('students').insert({
+      ...payload.toSupabaseMap(),
+      'owner_id': ownerId,
+    });
   }
 
   Future<List<StudentModel>> fetchStudents() async {
-    if (useMock) {
-      return const [];
+    final ownerId = _supabaseClient.auth.currentUser?.id;
+    if (ownerId == null || ownerId.isEmpty) {
+      throw const AuthException('Usuário não autenticado.');
     }
 
     final response = await _supabaseClient
         .from('students')
-        .select('id, name, monthly_fee_cents, due_day, photo_url');
+        .select(
+          'id, owner_id, name, monthly_fee_cents, due_day, next_due_date, last_payment_date, photo_url, created_at',
+        )
+        .eq('owner_id', ownerId)
+        .order('created_at', ascending: false);
 
     final rows = (response as List).cast<Map<String, dynamic>>();
     return rows.map(StudentModel.fromSupabaseMap).toList();

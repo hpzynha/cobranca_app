@@ -5,6 +5,7 @@ import 'package:app_cobranca/features/auth/data/models/student_registration_payl
 import 'package:app_cobranca/features/auth/domain/entities/student.dart';
 import 'package:app_cobranca/features/auth/domain/entities/student_registration_input.dart';
 import 'package:app_cobranca/features/auth/domain/repositories/student_repository.dart';
+import 'package:app_cobranca/features/auth/domain/services/calculate_next_due_date.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class StudentRepositoryImpl implements StudentRepository {
@@ -15,7 +16,29 @@ class StudentRepositoryImpl implements StudentRepository {
   @override
   Future<Result<void>> createStudent(StudentRegistrationInput input) async {
     try {
-      final payload = StudentRegistrationPayload.fromInput(input);
+      final ownerId = Supabase.instance.client.auth.currentUser?.id;
+      if (ownerId == null || ownerId.isEmpty) {
+        return Result.error(
+          const Failure(
+            message: 'Usuário não autenticado. Faça login novamente.',
+          ),
+        );
+      }
+
+      final resolvedNextDueDate =
+          input.nextDueDate == null
+              ? calculateNextDueDate(input.dueDay)
+              : DateTime(
+                input.nextDueDate!.year,
+                input.nextDueDate!.month,
+                input.nextDueDate!.day,
+              );
+
+      final payload = StudentRegistrationPayload.fromInput(
+        input,
+        ownerId: ownerId,
+        resolvedNextDueDate: resolvedNextDueDate,
+      );
       await _remoteDataSource.createStudent(payload);
       return Result.success(null);
     } on PostgrestException catch (e) {

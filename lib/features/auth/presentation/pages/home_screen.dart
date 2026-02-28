@@ -108,9 +108,9 @@ class _HomeStatusSection extends StatelessWidget {
         students
             .where((student) => student.status == StudentPaymentStatus.overdue)
             .length;
-    final dueSoonCount =
+    final dueTodayCount =
         students
-            .where((student) => student.status == StudentPaymentStatus.dueSoon)
+            .where((student) => student.status == StudentPaymentStatus.dueToday)
             .length;
     final paidCount =
         students
@@ -142,7 +142,7 @@ class _HomeStatusSection extends StatelessWidget {
               child: SizedBox(
                 height: cardHeight,
                 child: DashboardStatusCard(
-                  count: dueSoonCount,
+                  count: dueTodayCount,
                   label: AppStrings.statusDueToday,
                   type: StatusType.dueToday,
                 ),

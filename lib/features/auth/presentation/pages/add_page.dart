@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 class AddPage extends ConsumerStatefulWidget {
   const AddPage({super.key});
@@ -21,6 +22,10 @@ class _AddPageState extends ConsumerState<AddPage> {
   final _nameController = TextEditingController();
   final _monthlyFeeController = TextEditingController();
   final _dueDayController = TextEditingController(text: '10');
+  final _nextDueDateController = TextEditingController();
+  final _lastPaymentDateController = TextEditingController();
+  DateTime? _nextDueDate;
+  DateTime? _lastPaymentDate;
   bool _isSubmitting = false;
 
   @override
@@ -28,6 +33,8 @@ class _AddPageState extends ConsumerState<AddPage> {
     _nameController.dispose();
     _monthlyFeeController.dispose();
     _dueDayController.dispose();
+    _nextDueDateController.dispose();
+    _lastPaymentDateController.dispose();
     super.dispose();
   }
 
@@ -48,14 +55,53 @@ class _AddPageState extends ConsumerState<AddPage> {
     return (parsed * 100).round();
   }
 
+  String _formatDate(DateTime date) => DateFormat('dd/MM/yyyy').format(date);
+
+  Future<void> _pickDate({required bool isNextDueDate}) async {
+    final now = DateTime.now();
+    final initialDate =
+        isNextDueDate
+            ? (_nextDueDate ?? now)
+            : (_lastPaymentDate ?? _nextDueDate ?? now);
+
+    final selected = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(now.year - 5),
+      lastDate: DateTime(now.year + 5),
+    );
+
+    if (selected == null || !mounted) return;
+
+    setState(() {
+      if (isNextDueDate) {
+        _nextDueDate = DateTime(selected.year, selected.month, selected.day);
+        _nextDueDateController.text = _formatDate(_nextDueDate!);
+        _dueDayController.text = _nextDueDate!.day.toString().padLeft(2, '0');
+      } else {
+        _lastPaymentDate = DateTime(
+          selected.year,
+          selected.month,
+          selected.day,
+        );
+        _lastPaymentDateController.text = _formatDate(_lastPaymentDate!);
+      }
+    });
+  }
+
   Future<void> _submit() async {
     FocusScope.of(context).unfocus();
     if (!_formKey.currentState!.validate()) return;
 
     final cents = _parseMonthlyFeeToCents(_monthlyFeeController.text);
     final dueDay = int.tryParse(_dueDayController.text.trim());
+    final nextDueDate = _nextDueDate;
 
-    if (cents == null || dueDay == null || dueDay < 1 || dueDay > 31) {
+    if (cents == null ||
+        dueDay == null ||
+        dueDay < 1 ||
+        dueDay > 31 ||
+        nextDueDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Revise os dados antes de cadastrar.')),
       );
@@ -71,6 +117,8 @@ class _AddPageState extends ConsumerState<AddPage> {
             name: _nameController.text.trim(),
             monthlyFeeCents: cents,
             dueDay: dueDay,
+            nextDueDate: nextDueDate,
+            lastPaymentDate: _lastPaymentDate,
             photoUrl: null,
           ),
         );
@@ -97,6 +145,10 @@ class _AddPageState extends ConsumerState<AddPage> {
     _nameController.clear();
     _monthlyFeeController.clear();
     _dueDayController.text = '10';
+    _nextDueDate = null;
+    _lastPaymentDate = null;
+    _nextDueDateController.clear();
+    _lastPaymentDateController.clear();
   }
 
   @override
@@ -281,6 +333,53 @@ class _AddPageState extends ConsumerState<AddPage> {
                     style: TextStyle(
                       fontSize: AppResponsive.fontSize(context, 12),
                       color: muted,
+                    ),
+                  ),
+                  SizedBox(height: sectionGap - 2),
+                  _FormLabel(text: 'Próximo vencimento *'),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _nextDueDateController,
+                    readOnly: true,
+                    onTap: () => _pickDate(isNextDueDate: true),
+                    decoration: const InputDecoration(
+                      hintText: 'Selecione a data',
+                      suffixIcon: Icon(Icons.calendar_today_outlined),
+                    ),
+                    validator: (value) {
+                      if (_nextDueDate == null) {
+                        return 'Selecione a data do próximo vencimento';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: sectionGap - 2),
+                  _FormLabel(text: 'Último pagamento (opcional)'),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _lastPaymentDateController,
+                    readOnly: true,
+                    onTap: () => _pickDate(isNextDueDate: false),
+                    decoration: InputDecoration(
+                      hintText: 'Selecione a data',
+                      suffixIcon: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (_lastPaymentDate != null)
+                            IconButton(
+                              tooltip: 'Limpar data',
+                              onPressed: () {
+                                setState(() {
+                                  _lastPaymentDate = null;
+                                  _lastPaymentDateController.clear();
+                                });
+                              },
+                              icon: const Icon(Icons.close_rounded),
+                            ),
+                          const Icon(Icons.calendar_today_outlined),
+                          const SizedBox(width: 10),
+                        ],
+                      ),
                     ),
                   ),
                   SizedBox(height: sectionGap),

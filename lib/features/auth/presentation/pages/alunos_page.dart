@@ -30,8 +30,8 @@ class _AlunosPageState extends ConsumerState<AlunosPage> {
         StudentsFilter.all => true,
         StudentsFilter.overdue =>
           student.status == StudentPaymentStatus.overdue,
-        StudentsFilter.dueSoon =>
-          student.status == StudentPaymentStatus.dueSoon,
+        StudentsFilter.dueToday =>
+          student.status == StudentPaymentStatus.dueToday,
         StudentsFilter.paid => student.status == StudentPaymentStatus.paid,
       };
 

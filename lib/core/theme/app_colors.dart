@@ -3,13 +3,20 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  static const Color primary = Color(0xFFE4572E);
-  static const Color background = Color(0xFFFFFFFF);
-  static const Color surface = Color(0xFFF5F5F5);
-  static const Color textPrimary = Color(0xFF111111);
-  static const Color textSecondary = Color(0xFF666666);
+  static const Color primary = Color(0xFFE45A2F);
   static const Color onPrimary = Color(0xFFFFFFFF);
-  static const Color border = Color(0xFFE0E0E0);
+
+  static const Color secondary = Color(0xFFF0F1F5);
+  static const Color onSecondary = Color(0xFF1A1A1A);
+
+  static const Color accent = Color(0xFFF0F1F5);
+  static const Color onAccent = Color(0xFF1A1A1A);
+
+  static const Color background = secondary;
+  static const Color surface = secondary;
+  static const Color textPrimary = onSecondary;
+  static const Color textSecondary = onSecondary;
+  static const Color border = Color(0xFFD9DCE3);
   static const Color inputFill = surface;
 
   static const Color googleBorder = Color(0xFFDDDDDD);
@@ -24,5 +31,5 @@ class AppColors {
   static const Color textMuted = Color(0xFF6B7280);
   static const Color bottomBarInactive = Color(0xFF7C8292);
 
-  static const Color primaryShadow = Color(0x4DE4572E);
+  static const Color primaryShadow = Color(0x4DE45A2F);
 }

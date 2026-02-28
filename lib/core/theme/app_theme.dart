@@ -40,7 +40,11 @@ class AppTheme {
     colorScheme: const ColorScheme.light(
       primary: AppColors.primary,
       onPrimary: AppColors.onPrimary,
-      surface: AppColors.background,
+      secondary: AppColors.secondary,
+      onSecondary: AppColors.onSecondary,
+      tertiary: AppColors.accent,
+      onTertiary: AppColors.onAccent,
+      surface: AppColors.surface,
       onSurface: AppColors.textPrimary,
     ),
     appBarTheme: const AppBarTheme(

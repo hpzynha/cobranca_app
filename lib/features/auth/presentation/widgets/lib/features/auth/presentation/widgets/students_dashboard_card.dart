@@ -116,7 +116,7 @@ class StudentsList extends StatelessWidget {
       content = Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 20),
         decoration: BoxDecoration(
-          color: AppColors.background,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(22),
           border: Border.all(color: AppColors.border),
         ),
@@ -181,7 +181,7 @@ class _StudentRowCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: isCompact ? 12 : 14, vertical: 14),
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(

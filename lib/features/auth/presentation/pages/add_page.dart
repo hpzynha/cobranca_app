@@ -90,6 +90,8 @@ class _AddPageState extends ConsumerState<AddPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Aluno cadastrado com sucesso.')),
     );
+    ref.invalidate(studentsProvider);
+    ref.invalidate(studentPaymentItemsProvider);
 
     _formKey.currentState?.reset();
     _nameController.clear();

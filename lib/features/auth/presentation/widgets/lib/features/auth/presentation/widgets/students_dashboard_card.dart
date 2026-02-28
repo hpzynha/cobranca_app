@@ -97,7 +97,7 @@ class StudentsList extends StatelessWidget {
     this.height,
     this.shrinkWrap = false,
     this.physics,
-    this.emptyMessage = 'Nenhum aluno encontrado',
+    this.emptyMessage = 'Você ainda não possui aluno cadastrado',
   });
 
   final List<StudentPaymentItem> students;
@@ -113,17 +113,12 @@ class StudentsList extends StatelessWidget {
     Widget content;
 
     if (students.isEmpty) {
-      content = Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: AppColors.border),
-        ),
+      content = Center(
         child: Text(
           emptyMessage,
+          textAlign: TextAlign.center,
           style: AppTextStyles.body.copyWith(
-            fontSize: 14,
+            fontSize: 15,
             color: AppColors.textMuted,
           ),
         ),
@@ -179,7 +174,10 @@ class _StudentRowCard extends StatelessWidget {
     final avatarRadius = isCompact ? 24.0 : 26.0;
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: isCompact ? 12 : 14, vertical: 14),
+      padding: EdgeInsets.symmetric(
+        horizontal: isCompact ? 12 : 14,
+        vertical: 14,
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(28),

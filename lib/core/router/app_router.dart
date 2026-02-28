@@ -64,8 +64,8 @@ final GoRouter appRouter = GoRouter(
     ),
 
     GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
-    GoRoute(path: '/alunos', builder: (context, state) => const StudentsPage()),
-    GoRoute(path: '/adicionar', builder: (context, state) => const AddStudentPage()),
+    GoRoute(path: '/alunos', builder: (context, state) => const AlunosPage()),
+    GoRoute(path: '/adicionar', builder: (context, state) => const AddPage()),
     GoRoute(
       path: '/relatorios',
       builder: (context, state) => const RelatoriosPage(),

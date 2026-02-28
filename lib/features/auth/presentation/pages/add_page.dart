@@ -2,21 +2,21 @@ import 'package:app_cobranca/core/theme/app_colors.dart';
 import 'package:app_cobranca/core/theme/app_responsive.dart';
 import 'package:app_cobranca/core/theme/app_spacing.dart';
 import 'package:app_cobranca/features/auth/domain/entities/student_registration_input.dart';
-import 'package:app_cobranca/features/auth/presentation/pages/alunos_page.dart';
 import 'package:app_cobranca/features/auth/presentation/providers/student_providers.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-class AddStudentPage extends ConsumerStatefulWidget {
-  const AddStudentPage({super.key});
+class AddPage extends ConsumerStatefulWidget {
+  const AddPage({super.key});
 
   @override
-  ConsumerState<AddStudentPage> createState() => _AddPageState();
+  ConsumerState<AddPage> createState() => _AddPageState();
 }
 
-class _AddPageState extends ConsumerState<AddStudentPage> {
+class _AddPageState extends ConsumerState<AddPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _monthlyFeeController = TextEditingController();
@@ -32,12 +32,13 @@ class _AddPageState extends ConsumerState<AddStudentPage> {
   }
 
   int? _parseMonthlyFeeToCents(String rawValue) {
-    final sanitized = rawValue
-        .replaceAll('R\$', '')
-        .replaceAll('.', '')
-        .replaceAll(' ', '')
-        .replaceAll(',', '.')
-        .trim();
+    final sanitized =
+        rawValue
+            .replaceAll('R\$', '')
+            .replaceAll('.', '')
+            .replaceAll(' ', '')
+            .replaceAll(',', '.')
+            .trim();
 
     final parsed = double.tryParse(sanitized);
     if (parsed == null || parsed <= 0) {
@@ -63,7 +64,9 @@ class _AddPageState extends ConsumerState<AddStudentPage> {
 
     setState(() => _isSubmitting = true);
 
-    final result = await ref.read(registerStudentUseCaseProvider).call(
+    final result = await ref
+        .read(registerStudentUseCaseProvider)
+        .call(
           StudentRegistrationInput(
             name: _nameController.text.trim(),
             monthlyFeeCents: cents,
@@ -84,22 +87,24 @@ class _AddPageState extends ConsumerState<AddStudentPage> {
       return;
     }
 
-    ref.invalidate(studentsProvider);
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Aluno cadastrado com sucesso.')),
     );
 
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute<void>(builder: (_) => const StudentsPage()),
-    );
+    _formKey.currentState?.reset();
+    _nameController.clear();
+    _monthlyFeeController.clear();
+    _dueDayController.text = '10';
   }
 
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final isCompact = AppResponsive.isCompact(context);
-    final horizontalPadding =
-        AppResponsive.size(context, isCompact ? 14 : 16).clamp(12.0, 22.0);
+    final horizontalPadding = AppResponsive.size(
+      context,
+      isCompact ? 14 : 16,
+    ).clamp(12.0, 22.0);
     final titleSize = AppResponsive.fontSize(context, isCompact ? 24 : 28);
     final subtitleSize = AppResponsive.fontSize(context, 14);
     final sectionGap = AppResponsive.size(context, isCompact ? 18 : 22);
@@ -148,7 +153,10 @@ class _AddPageState extends ConsumerState<AddStudentPage> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
-                  borderSide: const BorderSide(color: Color(0xFFC9CED8), width: 1.8),
+                  borderSide: const BorderSide(
+                    color: Color(0xFFC9CED8),
+                    width: 1.8,
+                  ),
                 ),
               ),
             ),
@@ -161,7 +169,7 @@ class _AddPageState extends ConsumerState<AddStudentPage> {
                     alignment: Alignment.centerLeft,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(16),
-                      onTap: () => Navigator.of(context).maybePop(),
+                      onTap: () => context.go('/home'),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 2,
@@ -231,13 +239,13 @@ class _AddPageState extends ConsumerState<AddStudentPage> {
                   TextFormField(
                     controller: _monthlyFeeController,
                     textInputAction: TextInputAction.next,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(RegExp(r'[0-9., ]')),
                     ],
-                    decoration: const InputDecoration(
-                      hintText: 'R\$ 150,00',
-                    ),
+                    decoration: const InputDecoration(hintText: 'R\$ 150,00'),
                     validator: (value) {
                       final cents = _parseMonthlyFeeToCents(value ?? '');
                       if (cents == null) {
@@ -280,28 +288,31 @@ class _AddPageState extends ConsumerState<AddStudentPage> {
                       onPressed: _isSubmitting ? null : _submit,
                       style: FilledButton.styleFrom(
                         backgroundColor: AppColors.primary,
-                        disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.6),
+                        disabledBackgroundColor: AppColors.primary.withValues(
+                          alpha: 0.6,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(22),
                         ),
                       ),
-                      child: _isSubmitting
-                          ? const SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.4,
-                                color: Colors.white,
+                      child:
+                          _isSubmitting
+                              ? const SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.4,
+                                  color: Colors.white,
+                                ),
+                              )
+                              : Text(
+                                'Cadastrar aluno',
+                                style: TextStyle(
+                                  fontSize: AppResponsive.fontSize(context, 15),
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                ),
                               ),
-                            )
-                          : Text(
-                              'Cadastrar aluno',
-                              style: TextStyle(
-                                fontSize: AppResponsive.fontSize(context, 15),
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                              ),
-                            ),
                     ),
                   ),
                   const SizedBox(height: AppSpacing.xl),
@@ -330,7 +341,9 @@ class _PhotoPickerPlaceholder extends StatelessWidget {
         GestureDetector(
           onTap: () {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Upload de foto será adicionado em breve.')),
+              const SnackBar(
+                content: Text('Upload de foto será adicionado em breve.'),
+              ),
             );
           },
           child: Container(
@@ -338,10 +351,7 @@ class _PhotoPickerPlaceholder extends StatelessWidget {
             height: size,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(
-                color: const Color(0xFFD9DCE3),
-                width: 2,
-              ),
+              border: Border.all(color: const Color(0xFFD9DCE3), width: 2),
             ),
             child: Icon(
               Icons.photo_camera_outlined,
@@ -380,9 +390,4 @@ class _FormLabel extends StatelessWidget {
       ),
     );
   }
-}
-
-
-class AddPage extends AddStudentPage {
-  const AddPage({super.key});
 }

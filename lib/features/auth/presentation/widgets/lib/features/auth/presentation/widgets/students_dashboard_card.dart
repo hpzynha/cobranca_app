@@ -33,10 +33,41 @@ class StudentPaymentItem {
   final StudentPaymentStatus status;
 }
 
+const kMockStudentPayments = <StudentPaymentItem>[
+  StudentPaymentItem(
+    initials: 'MS',
+    name: 'Maria Silva',
+    dueLabel: 'Venc. dia 10',
+    amountLabel: 'R\$ 300,00',
+    status: StudentPaymentStatus.overdue,
+  ),
+  StudentPaymentItem(
+    initials: 'JP',
+    name: 'João Pedro',
+    dueLabel: 'Venc. dia 15',
+    amountLabel: 'R\$ 250,00',
+    status: StudentPaymentStatus.paid,
+  ),
+  StudentPaymentItem(
+    initials: 'AP',
+    name: 'Ana Paula',
+    dueLabel: 'Venc. dia 28',
+    amountLabel: 'R\$ 400,00',
+    status: StudentPaymentStatus.dueSoon,
+  ),
+  StudentPaymentItem(
+    initials: 'CL',
+    name: 'Carlos Lima',
+    dueLabel: 'Venc. dia 30',
+    amountLabel: 'R\$ 350,00',
+    status: StudentPaymentStatus.dueSoon,
+  ),
+];
+
 class StudentsDashboardCard extends StatelessWidget {
   const StudentsDashboardCard({
     super.key,
-    required this.students,
+    this.students = kMockStudentPayments,
   });
 
   final List<StudentPaymentItem> students;

@@ -1,22 +1,18 @@
 import 'package:app_cobranca/core/constants/app_strings.dart';
 import 'package:app_cobranca/core/theme/app_responsive.dart';
 import 'package:app_cobranca/core/theme/app_spacing.dart';
-import 'package:app_cobranca/features/auth/presentation/mappers/student_ui_mapper.dart';
-import 'package:app_cobranca/features/auth/presentation/providers/student_providers.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/bottom_bar.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/dashboard_status_card.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/lib/features/auth/presentation/widgets/students_dashboard_card.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/monthly_balance_header.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/overdue_alert_card.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final studentsAsync = ref.watch(studentsProvider);
+  Widget build(BuildContext context) {
     final isCompact = AppResponsive.isCompact(context);
     final horizontalPadding =
         AppResponsive.size(context, isCompact ? 14 : 16).clamp(12.0, 22.0);
@@ -45,6 +41,7 @@ class HomeScreen extends ConsumerWidget {
               SizedBox(height: topSpacing),
               const MonthlyBalanceHeader(amount: 4050.00),
               SizedBox(height: sectionSpacing),
+
               LayoutBuilder(
                 builder: (context, constraints) {
                   final width = constraints.maxWidth;
@@ -93,16 +90,18 @@ class HomeScreen extends ConsumerWidget {
                   );
                 },
               ),
+
               SizedBox(height: sectionSpacing),
-              OverdueAlertCard(overdueCount: 3, onTap: () {}),
-              SizedBox(height: sectionSpacing),
-              studentsAsync.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (_, _) => const StudentsDashboardCard(students: []),
-                data: (students) => StudentsDashboardCard(
-                  students: students.map(toStudentPaymentItem).toList(),
-                ),
+
+              OverdueAlertCard(
+                overdueCount: 3,
+                onTap: () {
+                  // navegar para lista de atrasados
+                },
               ),
+
+              SizedBox(height: sectionSpacing),
+              const StudentsDashboardCard(),
             ],
           ),
         ),

@@ -1,7 +1,7 @@
 import 'dart:async';
 
+import 'package:app_cobranca/features/auth/presentation/pages/email_verification_page.dart';
 import 'package:app_cobranca/features/auth/presentation/screens/home_screen.dart';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -17,6 +17,7 @@ final GoRouter appRouter = GoRouter(
   ),
   redirect: (context, state) {
     final user = Supabase.instance.client.auth.currentUser;
+    final isEmailConfirmed = user?.emailConfirmedAt != null;
 
     final isAuthRoute =
         state.matchedLocation == '/' ||
@@ -24,13 +25,21 @@ final GoRouter appRouter = GoRouter(
         state.matchedLocation == '/register' ||
         state.matchedLocation == '/reset-password';
 
-    // Não logado tentando acessar área protegida
-    if (user == null && !isAuthRoute) {
+    final isVerificationRoute = state.matchedLocation == '/email-verification';
+
+    if (isVerificationRoute && isEmailConfirmed) {
+      return '/login';
+    }
+
+    if (user != null && !isEmailConfirmed && !isVerificationRoute) {
+      return '/email-verification';
+    }
+
+    if (user == null && !isAuthRoute && !isVerificationRoute) {
       return '/';
     }
 
-    //  Já logado tentando acessar tela de auth
-    if (user != null && isAuthRoute) {
+    if (user != null && isEmailConfirmed && isAuthRoute) {
       return '/home';
     }
 
@@ -42,6 +51,13 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/register',
       builder: (context, state) => const RegisterScreen(),
+    ),
+    GoRoute(
+      path: '/email-verification',
+      builder: (context, state) {
+        final email = state.extra as String?;
+        return EmailVerificationPage(email: email ?? '');
+      },
     ),
     GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
   ],

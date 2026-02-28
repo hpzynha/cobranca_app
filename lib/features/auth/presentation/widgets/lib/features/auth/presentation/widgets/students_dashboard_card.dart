@@ -1,5 +1,6 @@
 import 'package:app_cobranca/core/theme/app_colors.dart';
 import 'package:app_cobranca/core/theme/app_radius.dart';
+import 'package:app_cobranca/core/theme/app_responsive.dart';
 import 'package:app_cobranca/core/theme/app_spacing.dart';
 import 'package:app_cobranca/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
@@ -40,13 +41,17 @@ class StudentsDashboardCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isCompact = AppResponsive.isCompact(context);
+    final titleSize = AppResponsive.fontSize(context, isCompact ? 20 : 22);
+    final listHeight = isCompact ? 320.0 : 340.0;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Alunos', style: AppTextStyles.heading.copyWith(fontSize: 22)),
+        Text('Alunos', style: AppTextStyles.heading.copyWith(fontSize: titleSize)),
         const SizedBox(height: AppSpacing.md),
         SizedBox(
-          height: 360,
+          height: listHeight,
           child: ListView.separated(
             physics: const BouncingScrollPhysics(),
             itemBuilder: (context, index) {
@@ -69,8 +74,16 @@ class _StudentRowCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final maxWidth = MediaQuery.sizeOf(context).width;
+    final isCompact = maxWidth < 370;
+    final nameSize = AppResponsive.fontSize(context, isCompact ? 15 : 16);
+    final amountSize = AppResponsive.fontSize(context, isCompact ? 15 : 16);
+    final dueSize = AppResponsive.fontSize(context, 12);
+    final initialsSize = AppResponsive.fontSize(context, 11.5);
+    final avatarRadius = isCompact ? 24.0 : 26.0;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+      padding: EdgeInsets.symmetric(horizontal: isCompact ? 12 : 14, vertical: 14),
       decoration: BoxDecoration(
         color: AppColors.background,
         borderRadius: BorderRadius.circular(28),
@@ -85,17 +98,17 @@ class _StudentRowCard extends StatelessWidget {
       child: Row(
         children: [
           CircleAvatar(
-            radius: 30,
+            radius: avatarRadius,
             backgroundColor: const Color(0xFFF0F2F5),
             child: Text(
               student.initials,
               style: AppTextStyles.dashboardCardNumber.copyWith(
-                fontSize: 18,
+                fontSize: initialsSize,
                 color: AppColors.textPrimary,
               ),
             ),
           ),
-          const SizedBox(width: 14),
+          SizedBox(width: isCompact ? 10 : 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,28 +117,28 @@ class _StudentRowCard extends StatelessWidget {
                   student.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.heading.copyWith(fontSize: 23),
+                  style: AppTextStyles.heading.copyWith(fontSize: nameSize),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   student.dueLabel,
                   style: AppTextStyles.body.copyWith(
-                    fontSize: 15,
+                    fontSize: dueSize,
                     color: AppColors.textMuted,
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: isCompact ? 8 : 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
                 student.amountLabel,
-                style: AppTextStyles.heading.copyWith(fontSize: 23),
+                style: AppTextStyles.heading.copyWith(fontSize: amountSize),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 8),
               _StatusPill(status: student.status),
             ],
           ),

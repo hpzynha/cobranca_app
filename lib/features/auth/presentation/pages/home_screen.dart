@@ -7,8 +7,6 @@ import 'package:app_cobranca/features/auth/presentation/widgets/lib/features/aut
 import 'package:app_cobranca/features/auth/presentation/widgets/monthly_balance_header.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/overdue_alert_card.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -16,100 +14,96 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isCompact = AppResponsive.isCompact(context);
-    final horizontalPadding = isCompact ? 14.0 : AppSpacing.md;
-    final topSpacing = isCompact ? AppSpacing.md : AppSpacing.lg;
-    final sectionSpacing = isCompact ? 18.0 : AppSpacing.lg;
+    final horizontalPadding =
+        AppResponsive.size(context, isCompact ? 14 : 16).clamp(12.0, 22.0);
+    final topContentPadding =
+        AppResponsive.size(context, isCompact ? 10 : 14).clamp(8.0, 20.0);
+    final bottomContentPadding =
+        AppResponsive.size(context, 16).clamp(12.0, 24.0);
+    final topSpacing = AppResponsive.size(context, isCompact ? 8 : 10);
+    final sectionSpacing = AppResponsive.size(context, isCompact ? 14 : 16);
     final cardSpacing = isCompact ? AppSpacing.sm : 12.0;
 
     return Scaffold(
       extendBody: true,
-      appBar: AppBar(
-        title: const Text(AppStrings.dashboardTitle),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await Supabase.instance.client.auth.signOut();
-              if (context.mounted) {
-                context.go('/');
-              }
-            },
+      body: SafeArea(
+        bottom: false,
+        child: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(
+            horizontalPadding,
+            topContentPadding,
+            horizontalPadding,
+            bottomContentPadding,
           ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(
-          horizontalPadding,
-          0,
-          horizontalPadding,
-          16,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: topSpacing),
-            const MonthlyBalanceHeader(amount: 4050.00),
-            SizedBox(height: sectionSpacing),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: topSpacing),
+              const MonthlyBalanceHeader(amount: 4050.00),
+              SizedBox(height: sectionSpacing),
 
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final width = constraints.maxWidth;
-                final isVerySmallScreen = width < 350;
-                final isSmallScreen = width < 390;
-                final cardHeight =
-                    isVerySmallScreen ? 130.0 : (isSmallScreen ? 144.0 : 160.0);
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final width = constraints.maxWidth;
+                  final isVerySmallScreen = width < 350;
+                  final isSmallScreen = width < 390;
+                  final cardHeight =
+                      isVerySmallScreen
+                          ? 122.0
+                          : (isSmallScreen ? 132.0 : 142.0);
 
-                return Row(
-                  children: [
-                    Expanded(
-                      child: SizedBox(
-                        height: cardHeight,
-                        child: const DashboardStatusCard(
-                          count: 3,
-                          label: AppStrings.statusOverdue,
-                          type: StatusType.overdue,
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: cardHeight,
+                          child: const DashboardStatusCard(
+                            count: 3,
+                            label: AppStrings.statusOverdue,
+                            type: StatusType.overdue,
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(width: cardSpacing),
-                    Expanded(
-                      child: SizedBox(
-                        height: cardHeight,
-                        child: const DashboardStatusCard(
-                          count: 4,
-                          label: AppStrings.statusDueToday,
-                          type: StatusType.dueToday,
+                      SizedBox(width: cardSpacing),
+                      Expanded(
+                        child: SizedBox(
+                          height: cardHeight,
+                          child: const DashboardStatusCard(
+                            count: 4,
+                            label: AppStrings.statusDueToday,
+                            type: StatusType.dueToday,
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(width: cardSpacing),
-                    Expanded(
-                      child: SizedBox(
-                        height: cardHeight,
-                        child: const DashboardStatusCard(
-                          count: 5,
-                          label: AppStrings.statusPaid,
-                          type: StatusType.paid,
+                      SizedBox(width: cardSpacing),
+                      Expanded(
+                        child: SizedBox(
+                          height: cardHeight,
+                          child: const DashboardStatusCard(
+                            count: 5,
+                            label: AppStrings.statusPaid,
+                            type: StatusType.paid,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                );
-              },
-            ),
+                    ],
+                  );
+                },
+              ),
 
-            SizedBox(height: sectionSpacing),
+              SizedBox(height: sectionSpacing),
 
-            OverdueAlertCard(
-              overdueCount: 3,
-              onTap: () {
-                // navegar para lista de atrasados
-              },
-            ),
+              OverdueAlertCard(
+                overdueCount: 3,
+                onTap: () {
+                  // navegar para lista de atrasados
+                },
+              ),
 
-            SizedBox(height: sectionSpacing),
-            const StudentsDashboardCard(),
-          ],
+              SizedBox(height: sectionSpacing),
+              const StudentsDashboardCard(),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: const BottomBar(currentIndex: 0),

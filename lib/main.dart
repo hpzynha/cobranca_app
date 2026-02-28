@@ -24,6 +24,15 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       routerConfig: appRouter,
       theme: AppTheme.lightTheme,
+      builder: (context, child) {
+        final mediaQuery = MediaQuery.of(context);
+        final scaleFactor =
+            mediaQuery.textScaler.scale(1.0).clamp(0.9, 1.1).toDouble();
+        return MediaQuery(
+          data: mediaQuery.copyWith(textScaler: TextScaler.linear(scaleFactor)),
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:app_cobranca/core/theme/app_responsive.dart';
 import 'package:app_cobranca/core/theme/app_spacing.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/bottom_bar.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/dashboard_status_card.dart';
+import 'package:app_cobranca/features/auth/presentation/widgets/lib/features/auth/presentation/widgets/students_dashboard_card.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/monthly_balance_header.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/overdue_alert_card.dart';
 import 'package:flutter/material.dart';
@@ -106,7 +107,8 @@ class HomeScreen extends StatelessWidget {
               },
             ),
 
-            // Aqui depois entra lista de alunos
+            SizedBox(height: sectionSpacing),
+            const StudentsDashboardCard(),
           ],
         ),
       ),

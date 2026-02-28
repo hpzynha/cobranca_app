@@ -4,10 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class BottomBar extends StatelessWidget {
-  const BottomBar({
-    required this.currentIndex,
-    super.key,
-  });
+  const BottomBar({required this.currentIndex, super.key});
 
   final int currentIndex;
 
@@ -18,30 +15,33 @@ class BottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final isCompact = screenWidth < 375;
+
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      margin: EdgeInsets.fromLTRB(12, 0, 12, isCompact ? 12 : 16),
       child: Stack(
         clipBehavior: Clip.none,
         alignment: Alignment.bottomCenter,
         children: [
-          _buildNavContainer(context),
+          _buildNavContainer(context, isCompact),
           Positioned(
-            top: _centerButtonTopOffset,
-            child: _buildCenterButton(context),
+            top: isCompact ? -12 : _centerButtonTopOffset,
+            child: _buildCenterButton(context, isCompact),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildNavContainer(BuildContext context) {
+  Widget _buildNavContainer(BuildContext context, bool isCompact) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(28),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
         child: Container(
-          height: 78,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          height: isCompact ? 72 : 78,
+          padding: EdgeInsets.symmetric(horizontal: isCompact ? 8 : 12),
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.9),
             borderRadius: BorderRadius.circular(28),
@@ -61,12 +61,14 @@ class BottomBar extends StatelessWidget {
                 index: 0,
                 icon: Icons.home_outlined,
                 label: 'Início',
+                isCompact: isCompact,
               ),
               _buildItem(
                 context: context,
                 index: 1,
                 icon: Icons.groups_2_outlined,
                 label: 'Alunos',
+                isCompact: isCompact,
               ),
               const Spacer(),
               _buildItem(
@@ -74,12 +76,14 @@ class BottomBar extends StatelessWidget {
                 index: 3,
                 icon: Icons.bar_chart_outlined,
                 label: 'Relatórios',
+                isCompact: isCompact,
               ),
               _buildItem(
                 context: context,
                 index: 4,
                 icon: Icons.settings_outlined,
                 label: 'Config',
+                isCompact: isCompact,
               ),
             ],
           ),
@@ -93,6 +97,7 @@ class BottomBar extends StatelessWidget {
     required int index,
     required IconData icon,
     required String label,
+    required bool isCompact,
   }) {
     final isActive = currentIndex == index;
     final color = isActive ? _primaryColor : _inactiveColor;
@@ -102,16 +107,16 @@ class BottomBar extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         onTap: () => _onTap(context, index),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
+          padding: EdgeInsets.symmetric(vertical: isCompact ? 8 : 10),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 26, color: color),
-              const SizedBox(height: 4),
+              Icon(icon, size: isCompact ? 22 : 26, color: color),
+              SizedBox(height: isCompact ? 2 : 4),
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: isCompact ? 11 : 12,
                   fontWeight: FontWeight.w600,
                   color: color,
                 ),
@@ -123,12 +128,14 @@ class BottomBar extends StatelessWidget {
     );
   }
 
-  Widget _buildCenterButton(BuildContext context) {
+  Widget _buildCenterButton(BuildContext context, bool isCompact) {
+    final buttonSize = isCompact ? 50.0 : _centerButtonSize;
+
     return GestureDetector(
       onTap: () => _onTap(context, 2),
       child: Container(
-        width: _centerButtonSize,
-        height: _centerButtonSize,
+        width: buttonSize,
+        height: buttonSize,
         decoration: const BoxDecoration(
           color: _primaryColor,
           shape: BoxShape.circle,
@@ -140,7 +147,7 @@ class BottomBar extends StatelessWidget {
             ),
           ],
         ),
-        child: const Icon(Icons.add, size: 26, color: Colors.white),
+        child: Icon(Icons.add, size: isCompact ? 24 : 26, color: Colors.white),
       ),
     );
   }

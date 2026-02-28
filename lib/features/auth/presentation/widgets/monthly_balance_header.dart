@@ -13,20 +13,26 @@ class MonthlyBalanceHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final labelSize = (screenWidth * 0.046).clamp(14.0, 18.0);
+    final amountSize = (screenWidth * 0.09).clamp(28.0, 36.0);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           "Saldo previsto do mês",
-          style: TextStyle(fontSize: 16, color: Color(0xFF6B7280)),
+          style: TextStyle(fontSize: labelSize, color: const Color(0xFF6B7280)),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 6),
         Text(
           _formatCurrency(amount),
-          style: const TextStyle(
-            fontSize: 36,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: amountSize,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF1A1A1A),
+            color: const Color(0xFF1A1A1A),
           ),
         ),
       ],

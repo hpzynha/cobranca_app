@@ -11,6 +11,12 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final horizontalPadding = screenWidth < 360 ? 14.0 : 16.0;
+    final topSpacing = screenWidth < 360 ? 16.0 : 24.0;
+    final sectionSpacing = screenWidth < 360 ? 18.0 : 24.0;
+    final cardSpacing = screenWidth < 360 ? 8.0 : 12.0;
+
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
@@ -27,19 +33,27 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(
+          horizontalPadding,
+          0,
+          horizontalPadding,
+          16,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 24),
+            SizedBox(height: topSpacing),
             const MonthlyBalanceHeader(amount: 4050.00),
-            const SizedBox(height: 24),
+            SizedBox(height: sectionSpacing),
 
             LayoutBuilder(
               builder: (context, constraints) {
-                final isSmallScreen = constraints.maxWidth < 380;
-                final cardHeight = isSmallScreen ? 148.0 : 172.0;
+                final width = constraints.maxWidth;
+                final isVerySmallScreen = width < 350;
+                final isSmallScreen = width < 390;
+                final cardHeight =
+                    isVerySmallScreen ? 130.0 : (isSmallScreen ? 144.0 : 160.0);
 
                 return Row(
                   children: [
@@ -53,7 +67,7 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: cardSpacing),
                     Expanded(
                       child: SizedBox(
                         height: cardHeight,
@@ -64,7 +78,7 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: cardSpacing),
                     Expanded(
                       child: SizedBox(
                         height: cardHeight,
@@ -80,7 +94,7 @@ class HomeScreen extends StatelessWidget {
               },
             ),
 
-            const SizedBox(height: 24),
+            SizedBox(height: sectionSpacing),
 
             OverdueAlertCard(
               overdueCount: 3,

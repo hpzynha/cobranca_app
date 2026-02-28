@@ -41,19 +41,19 @@ class DashboardStatusCard extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final maxWidth = constraints.maxWidth;
-        final isCompact = maxWidth < 120;
-        final cardPadding = isCompact ? 10.0 : 14.0;
-        final iconSize = isCompact ? 20.0 : 24.0;
-        final numberSize = isCompact ? 22.0 : 30.0;
-        final labelSize = isCompact ? 12.0 : 14.0;
-        final iconGap = isCompact ? 18.0 : 22.0;
-        final labelGap = isCompact ? 8.0 : 10.0;
+        final isCompact = maxWidth < 118;
+        final cardPadding = (maxWidth * 0.11).clamp(9.0, 14.0);
+        final iconSize = (maxWidth * 0.2).clamp(16.0, 24.0);
+        final numberSize = (maxWidth * 0.24).clamp(20.0, 30.0);
+        final labelSize = (maxWidth * 0.11).clamp(10.0, 14.0);
+        final iconGap = isCompact ? 14.0 : 18.0;
+        final labelGap = isCompact ? 4.0 : 6.0;
 
         return Container(
           padding: EdgeInsets.all(cardPadding),
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.08),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(isCompact ? 16 : 20),
             border: Border.all(
               color: color.withValues(alpha: 0.15),
               width: 1.2,

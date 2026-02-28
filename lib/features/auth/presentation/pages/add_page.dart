@@ -7,6 +7,8 @@ import 'package:app_cobranca/features/auth/presentation/widgets/bottom_bar.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 class AddPage extends ConsumerStatefulWidget {
   const AddPage({super.key});
@@ -20,6 +22,10 @@ class _AddPageState extends ConsumerState<AddPage> {
   final _nameController = TextEditingController();
   final _monthlyFeeController = TextEditingController();
   final _dueDayController = TextEditingController(text: '10');
+  final _nextDueDateController = TextEditingController();
+  final _lastPaymentDateController = TextEditingController();
+  DateTime? _nextDueDate;
+  DateTime? _lastPaymentDate;
   bool _isSubmitting = false;
 
   @override
@@ -27,16 +33,19 @@ class _AddPageState extends ConsumerState<AddPage> {
     _nameController.dispose();
     _monthlyFeeController.dispose();
     _dueDayController.dispose();
+    _nextDueDateController.dispose();
+    _lastPaymentDateController.dispose();
     super.dispose();
   }
 
   int? _parseMonthlyFeeToCents(String rawValue) {
-    final sanitized = rawValue
-        .replaceAll('R\$', '')
-        .replaceAll('.', '')
-        .replaceAll(' ', '')
-        .replaceAll(',', '.')
-        .trim();
+    final sanitized =
+        rawValue
+            .replaceAll('R\$', '')
+            .replaceAll('.', '')
+            .replaceAll(' ', '')
+            .replaceAll(',', '.')
+            .trim();
 
     final parsed = double.tryParse(sanitized);
     if (parsed == null || parsed <= 0) {
@@ -46,14 +55,53 @@ class _AddPageState extends ConsumerState<AddPage> {
     return (parsed * 100).round();
   }
 
+  String _formatDate(DateTime date) => DateFormat('dd/MM/yyyy').format(date);
+
+  Future<void> _pickDate({required bool isNextDueDate}) async {
+    final now = DateTime.now();
+    final initialDate =
+        isNextDueDate
+            ? (_nextDueDate ?? now)
+            : (_lastPaymentDate ?? _nextDueDate ?? now);
+
+    final selected = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(now.year - 5),
+      lastDate: DateTime(now.year + 5),
+    );
+
+    if (selected == null || !mounted) return;
+
+    setState(() {
+      if (isNextDueDate) {
+        _nextDueDate = DateTime(selected.year, selected.month, selected.day);
+        _nextDueDateController.text = _formatDate(_nextDueDate!);
+        _dueDayController.text = _nextDueDate!.day.toString().padLeft(2, '0');
+      } else {
+        _lastPaymentDate = DateTime(
+          selected.year,
+          selected.month,
+          selected.day,
+        );
+        _lastPaymentDateController.text = _formatDate(_lastPaymentDate!);
+      }
+    });
+  }
+
   Future<void> _submit() async {
     FocusScope.of(context).unfocus();
     if (!_formKey.currentState!.validate()) return;
 
     final cents = _parseMonthlyFeeToCents(_monthlyFeeController.text);
     final dueDay = int.tryParse(_dueDayController.text.trim());
+    final nextDueDate = _nextDueDate;
 
-    if (cents == null || dueDay == null || dueDay < 1 || dueDay > 31) {
+    if (cents == null ||
+        dueDay == null ||
+        dueDay < 1 ||
+        dueDay > 31 ||
+        nextDueDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Revise os dados antes de cadastrar.')),
       );
@@ -62,11 +110,15 @@ class _AddPageState extends ConsumerState<AddPage> {
 
     setState(() => _isSubmitting = true);
 
-    final result = await ref.read(registerStudentUseCaseProvider).call(
+    final result = await ref
+        .read(registerStudentUseCaseProvider)
+        .call(
           StudentRegistrationInput(
             name: _nameController.text.trim(),
             monthlyFeeCents: cents,
             dueDay: dueDay,
+            nextDueDate: nextDueDate,
+            lastPaymentDate: _lastPaymentDate,
             photoUrl: null,
           ),
         );
@@ -86,19 +138,27 @@ class _AddPageState extends ConsumerState<AddPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Aluno cadastrado com sucesso.')),
     );
+    ref.invalidate(studentsProvider);
+    ref.invalidate(studentPaymentItemsProvider);
 
     _formKey.currentState?.reset();
     _nameController.clear();
     _monthlyFeeController.clear();
     _dueDayController.text = '10';
+    _nextDueDate = null;
+    _lastPaymentDate = null;
+    _nextDueDateController.clear();
+    _lastPaymentDateController.clear();
   }
 
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final isCompact = AppResponsive.isCompact(context);
-    final horizontalPadding =
-        AppResponsive.size(context, isCompact ? 14 : 16).clamp(12.0, 22.0);
+    final horizontalPadding = AppResponsive.size(
+      context,
+      isCompact ? 14 : 16,
+    ).clamp(12.0, 22.0);
     final titleSize = AppResponsive.fontSize(context, isCompact ? 24 : 28);
     final subtitleSize = AppResponsive.fontSize(context, 14);
     final sectionGap = AppResponsive.size(context, isCompact ? 18 : 22);
@@ -147,7 +207,10 @@ class _AddPageState extends ConsumerState<AddPage> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
-                  borderSide: const BorderSide(color: Color(0xFFC9CED8), width: 1.8),
+                  borderSide: const BorderSide(
+                    color: Color(0xFFC9CED8),
+                    width: 1.8,
+                  ),
                 ),
               ),
             ),
@@ -160,7 +223,7 @@ class _AddPageState extends ConsumerState<AddPage> {
                     alignment: Alignment.centerLeft,
                     child: InkWell(
                       borderRadius: BorderRadius.circular(16),
-                      onTap: () => Navigator.of(context).maybePop(),
+                      onTap: () => context.go('/home'),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 2,
@@ -230,13 +293,13 @@ class _AddPageState extends ConsumerState<AddPage> {
                   TextFormField(
                     controller: _monthlyFeeController,
                     textInputAction: TextInputAction.next,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(RegExp(r'[0-9., ]')),
                     ],
-                    decoration: const InputDecoration(
-                      hintText: 'R\$ 150,00',
-                    ),
+                    decoration: const InputDecoration(hintText: 'R\$ 150,00'),
                     validator: (value) {
                       final cents = _parseMonthlyFeeToCents(value ?? '');
                       if (cents == null) {
@@ -272,6 +335,53 @@ class _AddPageState extends ConsumerState<AddPage> {
                       color: muted,
                     ),
                   ),
+                  SizedBox(height: sectionGap - 2),
+                  _FormLabel(text: 'Próximo vencimento *'),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _nextDueDateController,
+                    readOnly: true,
+                    onTap: () => _pickDate(isNextDueDate: true),
+                    decoration: const InputDecoration(
+                      hintText: 'Selecione a data',
+                      suffixIcon: Icon(Icons.calendar_today_outlined),
+                    ),
+                    validator: (value) {
+                      if (_nextDueDate == null) {
+                        return 'Selecione a data do próximo vencimento';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: sectionGap - 2),
+                  _FormLabel(text: 'Último pagamento (opcional)'),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _lastPaymentDateController,
+                    readOnly: true,
+                    onTap: () => _pickDate(isNextDueDate: false),
+                    decoration: InputDecoration(
+                      hintText: 'Selecione a data',
+                      suffixIcon: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (_lastPaymentDate != null)
+                            IconButton(
+                              tooltip: 'Limpar data',
+                              onPressed: () {
+                                setState(() {
+                                  _lastPaymentDate = null;
+                                  _lastPaymentDateController.clear();
+                                });
+                              },
+                              icon: const Icon(Icons.close_rounded),
+                            ),
+                          const Icon(Icons.calendar_today_outlined),
+                          const SizedBox(width: 10),
+                        ],
+                      ),
+                    ),
+                  ),
                   SizedBox(height: sectionGap),
                   SizedBox(
                     height: AppResponsive.size(context, 52).clamp(48.0, 56.0),
@@ -279,28 +389,31 @@ class _AddPageState extends ConsumerState<AddPage> {
                       onPressed: _isSubmitting ? null : _submit,
                       style: FilledButton.styleFrom(
                         backgroundColor: AppColors.primary,
-                        disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.6),
+                        disabledBackgroundColor: AppColors.primary.withValues(
+                          alpha: 0.6,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(22),
                         ),
                       ),
-                      child: _isSubmitting
-                          ? const SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.4,
-                                color: Colors.white,
+                      child:
+                          _isSubmitting
+                              ? const SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.4,
+                                  color: Colors.white,
+                                ),
+                              )
+                              : Text(
+                                'Cadastrar aluno',
+                                style: TextStyle(
+                                  fontSize: AppResponsive.fontSize(context, 15),
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                ),
                               ),
-                            )
-                          : Text(
-                              'Cadastrar aluno',
-                              style: TextStyle(
-                                fontSize: AppResponsive.fontSize(context, 15),
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                              ),
-                            ),
                     ),
                   ),
                   const SizedBox(height: AppSpacing.xl),
@@ -329,7 +442,9 @@ class _PhotoPickerPlaceholder extends StatelessWidget {
         GestureDetector(
           onTap: () {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Upload de foto será adicionado em breve.')),
+              const SnackBar(
+                content: Text('Upload de foto será adicionado em breve.'),
+              ),
             );
           },
           child: Container(
@@ -337,10 +452,7 @@ class _PhotoPickerPlaceholder extends StatelessWidget {
             height: size,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(
-                color: const Color(0xFFD9DCE3),
-                width: 2,
-              ),
+              border: Border.all(color: const Color(0xFFD9DCE3), width: 2),
             ),
             child: Icon(
               Icons.photo_camera_outlined,

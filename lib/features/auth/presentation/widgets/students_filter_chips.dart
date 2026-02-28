@@ -2,7 +2,7 @@ import 'package:app_cobranca/core/theme/app_colors.dart';
 import 'package:app_cobranca/core/theme/app_responsive.dart';
 import 'package:flutter/material.dart';
 
-enum StudentsFilter { all, overdue, dueSoon, paid }
+enum StudentsFilter { all, overdue, dueToday, paid }
 
 extension StudentsFilterLabel on StudentsFilter {
   String get label {
@@ -11,8 +11,8 @@ extension StudentsFilterLabel on StudentsFilter {
         return 'Todos';
       case StudentsFilter.overdue:
         return 'Atrasados';
-      case StudentsFilter.dueSoon:
-        return 'Vencem hoje';
+      case StudentsFilter.dueToday:
+        return 'Vence hoje';
       case StudentsFilter.paid:
         return 'Pagos';
     }
@@ -38,34 +38,40 @@ class StudentsFilterChips extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       physics: const BouncingScrollPhysics(),
       child: Row(
-        children: filters.map((filter) {
-          final isSelected = filter == selectedFilter;
-          return Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(999),
-              onTap: () => onSelected(filter),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 180),
-                curve: Curves.easeOutCubic,
-                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                decoration: BoxDecoration(
-                  color:
-                      isSelected ? AppColors.textPrimary : const Color(0xFFF0F1F3),
+        children:
+            filters.map((filter) {
+              final isSelected = filter == selectedFilter;
+              return Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: InkWell(
                   borderRadius: BorderRadius.circular(999),
-                ),
-                child: Text(
-                  filter.label,
-                  style: TextStyle(
-                    fontSize: textSize,
-                    fontWeight: FontWeight.w600,
-                    color: isSelected ? Colors.white : AppColors.textMuted,
+                  onTap: () => onSelected(filter),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 180),
+                    curve: Curves.easeOutCubic,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color:
+                          isSelected
+                              ? AppColors.textPrimary
+                              : const Color(0xFFF0F1F3),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      filter.label,
+                      style: TextStyle(
+                        fontSize: textSize,
+                        fontWeight: FontWeight.w600,
+                        color: isSelected ? Colors.white : AppColors.textMuted,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          );
-        }).toList(),
+              );
+            }).toList(),
       ),
     );
   }

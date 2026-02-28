@@ -6,9 +6,10 @@ import 'package:app_cobranca/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
 enum StudentPaymentStatus {
-  overdue('Atrasado', Color(0xFFFDECEC), AppColors.danger),
+  overdue('Vencido', Color(0xFFFDECEC), AppColors.danger),
   paid('Pago', Color(0xFFE8F8EF), AppColors.success),
-  dueSoon('Vence em breve', Color(0xFFFFF4E7), Color(0xFFF08C00));
+  dueToday('Vence hoje', Color(0xFFFFF4E7), Color(0xFFF08C00)),
+  open('Em aberto', Color(0xFFEFF2F6), AppColors.textMuted);
 
   const StudentPaymentStatus(this.label, this.background, this.foreground);
 
@@ -33,42 +34,8 @@ class StudentPaymentItem {
   final StudentPaymentStatus status;
 }
 
-const kMockStudentPayments = <StudentPaymentItem>[
-  StudentPaymentItem(
-    initials: 'MS',
-    name: 'Maria Silva',
-    dueLabel: 'Venc. dia 10',
-    amountLabel: 'R\$ 300,00',
-    status: StudentPaymentStatus.overdue,
-  ),
-  StudentPaymentItem(
-    initials: 'JP',
-    name: 'João Pedro',
-    dueLabel: 'Venc. dia 15',
-    amountLabel: 'R\$ 250,00',
-    status: StudentPaymentStatus.paid,
-  ),
-  StudentPaymentItem(
-    initials: 'AP',
-    name: 'Ana Paula',
-    dueLabel: 'Venc. dia 28',
-    amountLabel: 'R\$ 400,00',
-    status: StudentPaymentStatus.dueSoon,
-  ),
-  StudentPaymentItem(
-    initials: 'CL',
-    name: 'Carlos Lima',
-    dueLabel: 'Venc. dia 30',
-    amountLabel: 'R\$ 350,00',
-    status: StudentPaymentStatus.dueSoon,
-  ),
-];
-
 class StudentsDashboardCard extends StatelessWidget {
-  const StudentsDashboardCard({
-    super.key,
-    this.students = kMockStudentPayments,
-  });
+  const StudentsDashboardCard({super.key, this.students = const []});
 
   final List<StudentPaymentItem> students;
 
@@ -97,7 +64,7 @@ class StudentsList extends StatelessWidget {
     this.height,
     this.shrinkWrap = false,
     this.physics,
-    this.emptyMessage = 'Nenhum aluno encontrado',
+    this.emptyMessage = 'Você ainda não possui aluno cadastrado',
   });
 
   final List<StudentPaymentItem> students;
@@ -113,17 +80,12 @@ class StudentsList extends StatelessWidget {
     Widget content;
 
     if (students.isEmpty) {
-      content = Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: AppColors.border),
-        ),
+      content = Center(
         child: Text(
           emptyMessage,
+          textAlign: TextAlign.center,
           style: AppTextStyles.body.copyWith(
-            fontSize: 14,
+            fontSize: 15,
             color: AppColors.textMuted,
           ),
         ),
@@ -179,7 +141,10 @@ class _StudentRowCard extends StatelessWidget {
     final avatarRadius = isCompact ? 24.0 : 26.0;
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: isCompact ? 12 : 14, vertical: 14),
+      padding: EdgeInsets.symmetric(
+        horizontal: isCompact ? 12 : 14,
+        vertical: 14,
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(28),

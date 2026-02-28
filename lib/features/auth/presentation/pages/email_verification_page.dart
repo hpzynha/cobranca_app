@@ -1,4 +1,5 @@
 import 'package:app_cobranca/core/theme/app_colors.dart';
+import 'package:app_cobranca/core/theme/app_responsive.dart';
 import 'package:app_cobranca/features/auth/presentation/providers/email_verification_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,6 +12,9 @@ class EmailVerificationPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final titleSize = AppResponsive.fontSize(context, 22, min: 0.92, max: 1.08);
+    final emailSize = AppResponsive.fontSize(context, 15, min: 0.95, max: 1.08);
+
     ref.listen(emailVerificationNotifierProvider, (previous, next) {
       next.whenOrNull(
         data: (state) {
@@ -52,18 +56,21 @@ class EmailVerificationPage extends ConsumerWidget {
                 color: AppColors.primary,
               ),
               const SizedBox(height: 20),
-              const Text(
+              Text(
                 'Nós enviamos um e-mail de verificação para o seu endereço de e-mail.',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+                style: TextStyle(
+                  fontSize: titleSize,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const SizedBox(height: 12),
               Text(
                 email,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.textSecondary,
-                  fontSize: 15,
+                  fontSize: emailSize,
                 ),
               ),
               const Spacer(),

@@ -1,4 +1,5 @@
 import 'package:app_cobranca/core/theme/app_colors.dart';
+import 'package:app_cobranca/core/theme/app_responsive.dart';
 import 'package:flutter/material.dart';
 
 class AuthOptionsRow extends StatefulWidget {
@@ -32,6 +33,13 @@ class _AuthOptionsRowState extends State<AuthOptionsRow> {
 
   @override
   Widget build(BuildContext context) {
+    final rememberSize = AppResponsive.fontSize(
+      context,
+      14,
+      min: 0.95,
+      max: 1.08,
+    );
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -48,7 +56,10 @@ class _AuthOptionsRowState extends State<AuthOptionsRow> {
             ),
             Text(
               widget.rememberText,
-              style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
+              style: TextStyle(
+                fontSize: rememberSize,
+                color: AppColors.textSecondary,
+              ),
             ),
           ],
         ),

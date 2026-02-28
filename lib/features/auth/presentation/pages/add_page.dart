@@ -1,4 +1,5 @@
 import 'package:app_cobranca/features/auth/presentation/widgets/bottom_bar.dart';
+import 'package:app_cobranca/core/theme/app_responsive.dart';
 import 'package:flutter/material.dart';
 
 class AddPage extends StatelessWidget {
@@ -6,6 +7,8 @@ class AddPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final titleSize = AppResponsive.fontSize(context, 20, min: 0.95, max: 1.1);
+
     return Scaffold(
       extendBody: true,
       appBar: AppBar(title: const Text('Adicionar')),
@@ -14,9 +17,12 @@ class AddPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
+            Text(
               'Criar novo cadastro',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+              style: TextStyle(
+                fontSize: titleSize,
+                fontWeight: FontWeight.w700,
+              ),
             ),
             const SizedBox(height: 16),
             TextField(

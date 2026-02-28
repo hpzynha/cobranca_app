@@ -1,4 +1,5 @@
 import 'package:app_cobranca/core/theme/app_colors.dart';
+import 'package:app_cobranca/core/theme/app_responsive.dart';
 import 'package:app_cobranca/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/social_auth_button.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/tween_animation_builder_widget.dart';
@@ -17,6 +18,13 @@ class _AuthLandingScreenState extends State<AuthLandingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final subtitleSize = AppResponsive.fontSize(
+      context,
+      15,
+      min: 0.95,
+      max: 1.08,
+    );
+
     return Scaffold(
       appBar: AppBar(),
       backgroundColor: AppColors.background,
@@ -29,9 +37,12 @@ class _AuthLandingScreenState extends State<AuthLandingScreen> {
               const SizedBox(height: 80),
               const AnimatedLogoRow(),
               const SizedBox(height: 24),
-              const Text(
+              Text(
                 'Automatize suas cobranças e nunca mais perca dinheiro por esquecimento.',
-                style: TextStyle(fontSize: 15, color: AppColors.textSecondary),
+                style: TextStyle(
+                  fontSize: subtitleSize,
+                  color: AppColors.textSecondary,
+                ),
               ),
               const SizedBox(height: 60),
               SizedBox(

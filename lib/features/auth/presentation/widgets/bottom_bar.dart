@@ -101,6 +101,12 @@ class BottomBar extends StatelessWidget {
   }) {
     final isActive = currentIndex == index;
     final color = isActive ? AppColors.primary : AppColors.bottomBarInactive;
+    final labelSize = AppResponsive.fontSize(
+      context,
+      isCompact ? 11 : 12,
+      min: 0.96,
+      max: 1.08,
+    );
 
     return Expanded(
       child: InkWell(
@@ -116,7 +122,7 @@ class BottomBar extends StatelessWidget {
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: isCompact ? 11 : 12,
+                  fontSize: labelSize,
                   fontWeight: FontWeight.w600,
                   color: color,
                 ),

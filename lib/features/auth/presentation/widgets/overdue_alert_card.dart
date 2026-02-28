@@ -1,6 +1,7 @@
 import 'package:app_cobranca/core/constants/app_strings.dart';
 import 'package:app_cobranca/core/theme/app_colors.dart';
 import 'package:app_cobranca/core/theme/app_radius.dart';
+import 'package:app_cobranca/core/theme/app_responsive.dart';
 import 'package:app_cobranca/core/theme/app_spacing.dart';
 import 'package:app_cobranca/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
@@ -27,8 +28,18 @@ class OverdueAlertCard extends StatelessWidget {
       builder: (context, constraints) {
         final isCompact = constraints.maxWidth < 360;
         final horizontalPadding = isCompact ? 12.0 : AppSpacing.md;
-        final messageSize = isCompact ? 14.0 : 15.0;
-        final buttonTextSize = isCompact ? 14.0 : 15.0;
+        final messageSize = AppResponsive.fontSize(
+          context,
+          isCompact ? 14 : 15,
+          min: 0.95,
+          max: 1.08,
+        );
+        final buttonTextSize = AppResponsive.fontSize(
+          context,
+          isCompact ? 14 : 15,
+          min: 0.95,
+          max: 1.08,
+        );
 
         return Container(
           padding: EdgeInsets.all(horizontalPadding),

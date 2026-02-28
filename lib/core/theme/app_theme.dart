@@ -1,8 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 import 'app_colors.dart';
 
 class AppTheme {
   AppTheme._();
+
+  static final TextTheme _fintechTextTheme = const TextTheme(
+    displayLarge: TextStyle(fontSize: 40, fontWeight: FontWeight.w700),
+    displayMedium: TextStyle(fontSize: 34, fontWeight: FontWeight.w700),
+    headlineLarge: TextStyle(fontSize: 28, fontWeight: FontWeight.w700),
+    headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
+    titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+    titleMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+    titleSmall: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+    bodyLarge: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
+      height: 1.45,
+    ),
+    bodyMedium: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w400,
+      height: 1.45,
+    ),
+    bodySmall: TextStyle(
+      fontSize: 12,
+      fontWeight: FontWeight.w400,
+      height: 1.4,
+    ),
+    labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+    labelMedium: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+    labelSmall: TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+  );
 
   static final ThemeData lightTheme = ThemeData(
     useMaterial3: true,
@@ -19,9 +49,10 @@ class AppTheme {
       foregroundColor: AppColors.textPrimary,
       surfaceTintColor: Colors.transparent,
     ),
-    textTheme: const TextTheme(
-      bodyLarge: TextStyle(color: AppColors.textPrimary),
-      bodyMedium: TextStyle(color: AppColors.textSecondary),
+    textTheme: GoogleFonts.interTextTheme(_fintechTextTheme).copyWith(
+      bodyLarge: GoogleFonts.inter(color: AppColors.textPrimary),
+      bodyMedium: GoogleFonts.inter(color: AppColors.textSecondary),
+      bodySmall: GoogleFonts.inter(color: AppColors.textSecondary),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,

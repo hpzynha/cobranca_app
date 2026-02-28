@@ -1,3 +1,4 @@
+import 'package:app_cobranca/core/theme/app_responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -23,6 +24,13 @@ class _AnimatedLogoRowState extends State<AnimatedLogoRow> {
 
   @override
   Widget build(BuildContext context) {
+    final logoTextSize = AppResponsive.fontSize(
+      context,
+      20,
+      min: 0.95,
+      max: 1.08,
+    );
+
     return Row(
       children: [
         TweenAnimationBuilder<double>(
@@ -35,9 +43,9 @@ class _AnimatedLogoRowState extends State<AnimatedLogoRow> {
           child: SvgPicture.asset('assets/images/logo.svg', height: 40),
         ),
         const SizedBox(width: 12),
-        const Text(
+        Text(
           'Venzza',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+          style: TextStyle(fontSize: logoTextSize, fontWeight: FontWeight.w600),
         ),
       ],
     );

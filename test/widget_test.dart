@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  AppTheme.useGoogleFontsForTests = false;
+
   test('AppTheme.lightTheme usa configurações principais esperadas', () {
     final theme = AppTheme.lightTheme;
 

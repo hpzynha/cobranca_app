@@ -296,6 +296,14 @@ class _AddPageState extends ConsumerState<AddPage> {
                   const SizedBox(height: 8),
                   IntlPhoneField(
                     initialCountryCode: 'BR',
+                    showCountryFlag: true,
+                    showDropdownIcon: true,
+                    dropdownIconPosition: IconPosition.trailing,
+                    dropdownIcon: const Icon(
+                      Icons.arrow_drop_down_rounded,
+                      color: muted,
+                    ),
+                    flagsButtonPadding: const EdgeInsets.only(left: 12, right: 8),
                     disableLengthCheck: false,
                     keyboardType: TextInputType.phone,
                     decoration: const InputDecoration(
@@ -318,6 +326,14 @@ class _AddPageState extends ConsumerState<AddPage> {
                       }
                       return null;
                     },
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Toque na bandeira/código para trocar o país (padrão: +55).',
+                    style: TextStyle(
+                      fontSize: AppResponsive.fontSize(context, 12),
+                      color: muted,
+                    ),
                   ),
                   SizedBox(height: sectionGap - 2),
                   _FormLabel(text: 'Valor da mensalidade *'),

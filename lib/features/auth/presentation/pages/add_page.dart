@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 
 class AddPage extends ConsumerStatefulWidget {
   const AddPage({super.key});
@@ -20,7 +21,7 @@ class AddPage extends ConsumerStatefulWidget {
 class _AddPageState extends ConsumerState<AddPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _whatsappController = TextEditingController();
+  String _whatsappCompleteNumber = '';
   final _monthlyFeeController = TextEditingController();
   final _dueDayController = TextEditingController(text: '10');
   final _nextDueDateController = TextEditingController();
@@ -32,7 +33,6 @@ class _AddPageState extends ConsumerState<AddPage> {
   @override
   void dispose() {
     _nameController.dispose();
-    _whatsappController.dispose();
     _monthlyFeeController.dispose();
     _dueDayController.dispose();
     _nextDueDateController.dispose();
@@ -117,7 +117,7 @@ class _AddPageState extends ConsumerState<AddPage> {
         .call(
           StudentRegistrationInput(
             name: _nameController.text.trim(),
-            whatsapp: _whatsappController.text.trim(),
+            whatsapp: _whatsappCompleteNumber.trim(),
             monthlyFeeCents: cents,
             dueDay: dueDay,
             nextDueDate: nextDueDate,
@@ -146,7 +146,7 @@ class _AddPageState extends ConsumerState<AddPage> {
 
     _formKey.currentState?.reset();
     _nameController.clear();
-    _whatsappController.clear();
+    _whatsappCompleteNumber = '';
     _monthlyFeeController.clear();
     _dueDayController.text = '10';
     _nextDueDate = null;
@@ -294,23 +294,27 @@ class _AddPageState extends ConsumerState<AddPage> {
                   SizedBox(height: sectionGap - 2),
                   _FormLabel(text: 'WhatsApp *'),
                   const SizedBox(height: 8),
-                  TextFormField(
-                    controller: _whatsappController,
-                    textInputAction: TextInputAction.next,
+                  IntlPhoneField(
+                    initialCountryCode: 'BR',
+                    disableLengthCheck: false,
                     keyboardType: TextInputType.phone,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r'[0-9()+\- ]'),
-                      ),
-                    ],
                     decoration: const InputDecoration(
-                      hintText: 'Ex: +55 11 99999-9999',
+                      hintText: '11 99999-9999',
                     ),
-                    validator: (value) {
-                      final whatsapp = value?.trim() ?? '';
-                      final digits = whatsapp.replaceAll(RegExp(r'\D'), '');
-                      if (digits.length < 10) {
-                        return 'Informe um WhatsApp válido com DDD';
+                    invalidNumberMessage: 'Informe um WhatsApp válido',
+                    onChanged: (phone) {
+                      _whatsappCompleteNumber = phone.completeNumber;
+                    },
+                    onSaved: (phone) {
+                      _whatsappCompleteNumber = phone?.completeNumber ?? '';
+                    },
+                    validator: (phone) {
+                      final completeNumber =
+                          phone?.completeNumber.trim() ??
+                          _whatsappCompleteNumber.trim();
+                      final digits = completeNumber.replaceAll(RegExp(r'\D'), '');
+                      if (!completeNumber.startsWith('+') || digits.length < 10) {
+                        return 'Informe um WhatsApp válido com código do país';
                       }
                       return null;
                     },

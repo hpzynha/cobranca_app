@@ -20,6 +20,7 @@ class AddPage extends ConsumerStatefulWidget {
 class _AddPageState extends ConsumerState<AddPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+  final _whatsappController = TextEditingController();
   final _monthlyFeeController = TextEditingController();
   final _dueDayController = TextEditingController(text: '10');
   final _nextDueDateController = TextEditingController();
@@ -31,6 +32,7 @@ class _AddPageState extends ConsumerState<AddPage> {
   @override
   void dispose() {
     _nameController.dispose();
+    _whatsappController.dispose();
     _monthlyFeeController.dispose();
     _dueDayController.dispose();
     _nextDueDateController.dispose();
@@ -115,6 +117,7 @@ class _AddPageState extends ConsumerState<AddPage> {
         .call(
           StudentRegistrationInput(
             name: _nameController.text.trim(),
+            whatsapp: _whatsappController.text.trim(),
             monthlyFeeCents: cents,
             dueDay: dueDay,
             nextDueDate: nextDueDate,
@@ -143,6 +146,7 @@ class _AddPageState extends ConsumerState<AddPage> {
 
     _formKey.currentState?.reset();
     _nameController.clear();
+    _whatsappController.clear();
     _monthlyFeeController.clear();
     _dueDayController.text = '10';
     _nextDueDate = null;
@@ -284,6 +288,30 @@ class _AddPageState extends ConsumerState<AddPage> {
                       final name = value?.trim() ?? '';
                       if (name.isEmpty) return 'Informe o nome do aluno';
                       if (name.length < 3) return 'Nome muito curto';
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: sectionGap - 2),
+                  _FormLabel(text: 'WhatsApp *'),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _whatsappController,
+                    textInputAction: TextInputAction.next,
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[0-9()+\- ]'),
+                      ),
+                    ],
+                    decoration: const InputDecoration(
+                      hintText: 'Ex: +55 11 99999-9999',
+                    ),
+                    validator: (value) {
+                      final whatsapp = value?.trim() ?? '';
+                      final digits = whatsapp.replaceAll(RegExp(r'\D'), '');
+                      if (digits.length < 10) {
+                        return 'Informe um WhatsApp válido com DDD';
+                      }
                       return null;
                     },
                   ),

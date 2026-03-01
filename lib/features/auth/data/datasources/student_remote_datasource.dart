@@ -28,7 +28,7 @@ class StudentRemoteDataSource {
     final response = await _supabaseClient
         .from('students')
         .select(
-          'id, owner_id, name, monthly_fee_cents, due_day, next_due_date, last_payment_date, photo_url, created_at',
+          'id, owner_id, name, whatsapp, monthly_fee_cents, due_day, next_due_date, last_payment_date, photo_url, created_at',
         )
         .eq('owner_id', ownerId)
         .order('created_at', ascending: false);

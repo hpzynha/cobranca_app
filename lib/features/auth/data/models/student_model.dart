@@ -4,6 +4,7 @@ class StudentModel {
   const StudentModel({
     required this.id,
     required this.name,
+    required this.whatsapp,
     required this.monthlyFeeCents,
     required this.dueDay,
     this.nextDueDate,
@@ -13,6 +14,7 @@ class StudentModel {
 
   final String id;
   final String name;
+  final String whatsapp;
   final int monthlyFeeCents;
   final int dueDay;
   final DateTime? nextDueDate;
@@ -26,6 +28,7 @@ class StudentModel {
     return StudentModel(
       id: (map['id'] ?? '').toString(),
       name: (map['name'] ?? '').toString(),
+      whatsapp: (map['whatsapp'] ?? '').toString(),
       monthlyFeeCents: (map['monthly_fee_cents'] as num?)?.toInt() ?? 0,
       dueDay: (map['due_day'] as num?)?.toInt() ?? 1,
       nextDueDate:
@@ -44,6 +47,7 @@ class StudentModel {
     return {
       'id': id,
       'name': name,
+      'whatsapp': whatsapp,
       'monthly_fee_cents': monthlyFeeCents,
       'due_day': dueDay,
       'next_due_date': nextDueDate?.toIso8601String(),
@@ -56,6 +60,7 @@ class StudentModel {
     return Student(
       id: id,
       name: name,
+      whatsapp: whatsapp,
       monthlyFeeCents: monthlyFeeCents,
       dueDay: dueDay,
       nextDueDate: nextDueDate,

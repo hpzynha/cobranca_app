@@ -4,6 +4,7 @@ class StudentRegistrationPayload {
   const StudentRegistrationPayload({
     required this.ownerId,
     required this.name,
+    required this.whatsapp,
     required this.monthlyFeeCents,
     required this.dueDay,
     required this.nextDueDate,
@@ -13,6 +14,7 @@ class StudentRegistrationPayload {
 
   final String ownerId;
   final String name;
+  final String whatsapp;
   final int monthlyFeeCents;
   final int dueDay;
   final DateTime nextDueDate;
@@ -27,6 +29,7 @@ class StudentRegistrationPayload {
     return StudentRegistrationPayload(
       ownerId: ownerId,
       name: input.name.trim(),
+      whatsapp: input.whatsapp.trim(),
       monthlyFeeCents: input.monthlyFeeCents,
       dueDay: input.dueDay,
       nextDueDate: resolvedNextDueDate,
@@ -39,6 +42,7 @@ class StudentRegistrationPayload {
     return {
       'owner_id': ownerId,
       'name': name,
+      'whatsapp': whatsapp,
       'monthly_fee_cents': monthlyFeeCents,
       'due_day': dueDay,
       'next_due_date': nextDueDate.toIso8601String(),

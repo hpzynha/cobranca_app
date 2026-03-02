@@ -15,6 +15,8 @@ class ResetPasswordScreen extends StatefulWidget {
 }
 
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
+  static const int _resetCooldownInSeconds = 12;
+
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -23,9 +25,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final _authService = AuthService();
 
   StreamSubscription<AuthState>? _authSubscription;
+  Timer? _cooldownTimer;
 
   bool _isLoading = false;
   bool _isRecoveryMode = false;
+  int _remainingCooldown = 0;
+
+  bool get _isResetButtonDisabled => _isLoading || _remainingCooldown > 0;
 
   @override
   void initState() {
@@ -40,7 +46,34 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     });
   }
 
+  void _startResetCooldown() {
+    _cooldownTimer?.cancel();
+    setState(() {
+      _remainingCooldown = _resetCooldownInSeconds;
+    });
+
+    _cooldownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+
+      if (_remainingCooldown <= 1) {
+        timer.cancel();
+        setState(() {
+          _remainingCooldown = 0;
+        });
+        return;
+      }
+
+      setState(() {
+        _remainingCooldown -= 1;
+      });
+    });
+  }
+
   Future<void> _sendResetLink() async {
+    if (_isResetButtonDisabled) return;
     if (!_requestFormKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
@@ -49,14 +82,15 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       await _authService.resetPassword(_emailController.text.trim());
 
       if (!mounted) return;
+      _startResetCooldown();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Se o e-mail estiver cadastrado, você receberá um link de redefinição.'),
         ),
       );
-      context.pop();
     } on AuthException {
       if (!mounted) return;
+      _startResetCooldown();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Se o e-mail estiver cadastrado, você receberá um link de redefinição.'),
@@ -108,6 +142,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   void dispose() {
     _authSubscription?.cancel();
+    _cooldownTimer?.cancel();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -161,17 +196,24 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               return null;
             },
           ),
+          const SizedBox(height: 12),
+          const Text(
+            'Por segurança, você poderá solicitar um novo link em alguns segundos.',
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+          ),
           const SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
             height: 52,
             child: ElevatedButton(
-              onPressed: _isLoading ? null : _sendResetLink,
+              onPressed: _isResetButtonDisabled ? null : _sendResetLink,
               child: _isLoading
                   ? const CircularProgressIndicator(color: AppColors.onPrimary)
-                  : const Text(
-                      'Enviar link',
-                      style: TextStyle(color: AppColors.onPrimary),
+                  : Text(
+                      _remainingCooldown > 0
+                          ? 'Aguarde ${_remainingCooldown}s'
+                          : 'Enviar link',
+                      style: const TextStyle(color: AppColors.onPrimary),
                     ),
             ),
           ),

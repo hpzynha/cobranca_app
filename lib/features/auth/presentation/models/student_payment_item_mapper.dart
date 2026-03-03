@@ -32,6 +32,11 @@ extension StudentPaymentItemMapper on List<Student> {
 }
 
 StudentPaymentStatus _statusForStudent(Student student, DateTime now) {
+  final backendStatus = _statusFromBackend(student.paymentStatusCode);
+  if (backendStatus != null) {
+    return backendStatus;
+  }
+
   final nextDueDate =
       student.nextDueDate == null ? null : _dateOnly(student.nextDueDate!);
   final lastPaymentDate =
@@ -43,8 +48,18 @@ StudentPaymentStatus _statusForStudent(Student student, DateTime now) {
     return StudentPaymentStatus.pending;
   }
 
-  if (lastPaymentDate != null && !lastPaymentDate.isBefore(nextDueDate)) {
-    return StudentPaymentStatus.paid;
+  if (lastPaymentDate != null) {
+    if (!lastPaymentDate.isBefore(nextDueDate)) {
+      return StudentPaymentStatus.paid;
+    }
+
+    final previousDueDate = _previousDueDate(nextDueDate, student.dueDay);
+    final paidCurrentCycle =
+        !lastPaymentDate.isBefore(previousDueDate) &&
+        lastPaymentDate.isBefore(nextDueDate);
+    if (paidCurrentCycle) {
+      return StudentPaymentStatus.paid;
+    }
   }
 
   if (now.isAfter(nextDueDate)) {
@@ -83,3 +98,29 @@ String _buildInitials(String name) {
 }
 
 DateTime _dateOnly(DateTime date) => DateTime(date.year, date.month, date.day);
+
+DateTime _previousDueDate(DateTime nextDueDate, int dueDay) {
+  final previousMonth = DateTime(nextDueDate.year, nextDueDate.month - 1);
+  final clampedDay = _clampDay(previousMonth.year, previousMonth.month, dueDay);
+  return DateTime(previousMonth.year, previousMonth.month, clampedDay);
+}
+
+int _clampDay(int year, int month, int day) {
+  final lastDay = DateTime(year, month + 1, 0).day;
+  return day.clamp(1, lastDay);
+}
+
+StudentPaymentStatus? _statusFromBackend(String? raw) {
+  switch ((raw ?? '').trim().toLowerCase()) {
+    case 'paid':
+      return StudentPaymentStatus.paid;
+    case 'overdue':
+      return StudentPaymentStatus.overdue;
+    case 'due_soon':
+      return StudentPaymentStatus.dueSoon;
+    case 'pending':
+      return StudentPaymentStatus.pending;
+    default:
+      return null;
+  }
+}

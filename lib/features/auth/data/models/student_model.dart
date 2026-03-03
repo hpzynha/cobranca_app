@@ -10,6 +10,7 @@ class StudentModel {
     this.nextDueDate,
     this.lastPaymentDate,
     this.photoUrl,
+    this.paymentStatusCode,
   });
 
   final String id;
@@ -20,6 +21,7 @@ class StudentModel {
   final DateTime? nextDueDate;
   final DateTime? lastPaymentDate;
   final String? photoUrl;
+  final String? paymentStatusCode;
 
   factory StudentModel.fromSupabaseMap(Map<String, dynamic> map) {
     final nextDueDateRaw = map['next_due_date']?.toString();
@@ -40,6 +42,7 @@ class StudentModel {
               ? null
               : DateTime.parse(lastPaymentDateRaw),
       photoUrl: map['photo_url'] as String?,
+      paymentStatusCode: map['payment_status']?.toString(),
     );
   }
 
@@ -66,6 +69,7 @@ class StudentModel {
       nextDueDate: nextDueDate,
       lastPaymentDate: lastPaymentDate,
       photoUrl: photoUrl,
+      paymentStatusCode: paymentStatusCode,
     );
   }
 }

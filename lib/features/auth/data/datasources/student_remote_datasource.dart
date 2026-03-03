@@ -24,17 +24,22 @@ class StudentRemoteDataSource {
     if (ownerId == null || ownerId.isEmpty) {
       throw const AuthException('Usuário não autenticado.');
     }
+    try {
+      final response = await _supabaseClient.rpc('list_students_with_status');
+      final rows = (response as List).cast<Map<String, dynamic>>();
+      return rows.map(StudentModel.fromSupabaseMap).toList();
+    } on PostgrestException {
+      final response = await _supabaseClient
+          .from('students')
+          .select(
+            'id, owner_id, name, whatsapp, monthly_fee_cents, due_day, next_due_date, last_payment_date, photo_url, created_at',
+          )
+          .eq('owner_id', ownerId)
+          .order('created_at', ascending: false);
 
-    final response = await _supabaseClient
-        .from('students')
-        .select(
-          'id, owner_id, name, whatsapp, monthly_fee_cents, due_day, next_due_date, last_payment_date, photo_url, created_at',
-        )
-        .eq('owner_id', ownerId)
-        .order('created_at', ascending: false);
-
-    final rows = (response as List).cast<Map<String, dynamic>>();
-    return rows.map(StudentModel.fromSupabaseMap).toList();
+      final rows = (response as List).cast<Map<String, dynamic>>();
+      return rows.map(StudentModel.fromSupabaseMap).toList();
+    }
   }
 
   Future<void> markStudentAsPaid({

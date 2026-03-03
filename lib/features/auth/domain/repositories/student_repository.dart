@@ -5,10 +5,5 @@ import 'package:app_cobranca/features/auth/domain/entities/student_registration_
 abstract class StudentRepository {
   Future<Result<void>> createStudent(StudentRegistrationInput input);
   Future<Result<List<Student>>> listStudents();
-  Future<Result<void>> markStudentAsPaid({
-    required String studentId,
-    required int dueDay,
-    DateTime? currentNextDueDate,
-    DateTime? paidAt,
-  });
+  Future<Result<void>> markStudentAsPaid({required String studentId});
 }

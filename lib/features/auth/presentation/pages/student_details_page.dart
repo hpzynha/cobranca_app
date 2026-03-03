@@ -8,7 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class StudentDetailsPage extends ConsumerWidget {
+class StudentDetailsPage extends ConsumerStatefulWidget {
   const StudentDetailsPage({
     super.key,
     required this.studentId,
@@ -19,19 +19,27 @@ class StudentDetailsPage extends ConsumerWidget {
   final StudentPaymentItem? initialStudent;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<StudentDetailsPage> createState() => _StudentDetailsPageState();
+}
+
+class _StudentDetailsPageState extends ConsumerState<StudentDetailsPage> {
+  bool _paidConfirmedLocal = false;
+  bool _isMarkingAsPaid = false;
+
+  @override
+  Widget build(BuildContext context) {
     final studentsAsync = ref.watch(studentPaymentItemsProvider);
     StudentPaymentItem? studentFromList;
     final cachedStudents = studentsAsync.valueOrNull;
     if (cachedStudents != null) {
       for (final item in cachedStudents) {
-        if (item.id == studentId) {
+        if (item.id == widget.studentId) {
           studentFromList = item;
           break;
         }
       }
     }
-    final student = studentFromList ?? initialStudent;
+    final student = studentFromList ?? widget.initialStudent;
 
     if (student == null) {
       return Scaffold(
@@ -40,7 +48,8 @@ class StudentDetailsPage extends ConsumerWidget {
       );
     }
 
-    final paymentStatus = student.status;
+    final paymentStatus =
+        _paidConfirmedLocal ? StudentPaymentStatus.paid : student.status;
     final shouldShowChargeButton = {
       StudentPaymentStatus.overdue,
       StudentPaymentStatus.dueSoon,
@@ -106,9 +115,16 @@ class StudentDetailsPage extends ConsumerWidget {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton.icon(
-                        onPressed: () => _markAsPaid(context, ref, student),
+                        onPressed:
+                            _isMarkingAsPaid
+                                ? null
+                                : () => _markAsPaid(context, student),
                         icon: const Icon(Icons.check_circle_outline),
-                        label: const Text('Marcar como pago'),
+                        label: Text(
+                          _isMarkingAsPaid
+                              ? 'Marcando pagamento...'
+                              : 'Marcar como pago',
+                        ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
                           foregroundColor: Colors.white,
@@ -128,7 +144,7 @@ class StudentDetailsPage extends ConsumerWidget {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton.icon(
-                        onPressed: () => _openWhatsApp(student),
+                        onPressed: _isMarkingAsPaid ? null : () => _openWhatsApp(student),
                         icon: const Icon(Icons.chat_bubble_rounded),
                         label: const Text('Enviar mensagem no WhatsApp'),
                         style: ElevatedButton.styleFrom(
@@ -148,6 +164,10 @@ class StudentDetailsPage extends ConsumerWidget {
                     ),
                   ],
                 ),
+              if (paymentStatus == StudentPaymentStatus.paid) ...[
+                const SizedBox(height: 8),
+                const _PaymentConfirmedCard(),
+              ],
             ],
           ),
         ),
@@ -157,27 +177,18 @@ class StudentDetailsPage extends ConsumerWidget {
 
   Future<void> _markAsPaid(
     BuildContext context,
-    WidgetRef ref,
     StudentPaymentItem student,
   ) async {
-    if (student.dueDay == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Não foi possível identificar o vencimento do aluno.')),
-      );
-      return;
-    }
+    setState(() => _isMarkingAsPaid = true);
 
     final result = await ref
         .read(markStudentAsPaidUseCaseProvider)
-        .call(
-          studentId: student.id,
-          dueDay: student.dueDay!,
-          currentNextDueDate: student.nextDueDate,
-        );
+        .call(studentId: student.id);
 
     if (!context.mounted) return;
 
     if (!result.isSuccess) {
+      setState(() => _isMarkingAsPaid = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -188,12 +199,14 @@ class StudentDetailsPage extends ConsumerWidget {
       return;
     }
 
+    setState(() {
+      _isMarkingAsPaid = false;
+      _paidConfirmedLocal = true;
+    });
+
     ref.invalidate(studentsProvider);
     ref.invalidate(studentPaymentItemsProvider);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Pagamento marcado com sucesso.')),
-    );
   }
 
   List<Widget> _buildHistory(StudentPaymentItem student) {
@@ -326,6 +339,37 @@ class _PaymentStatusBadge extends StatelessWidget {
       child: Text(
         status.label,
         style: TextStyle(fontWeight: FontWeight.w700, color: status.foreground),
+      ),
+    );
+  }
+}
+
+class _PaymentConfirmedCard extends StatelessWidget {
+  const _PaymentConfirmedCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE6F4EC),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: const Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.check_circle_outline, color: AppColors.success, size: 28),
+          SizedBox(width: 12),
+          Text(
+            'Pagamento confirmado',
+            style: TextStyle(
+              color: AppColors.success,
+              fontWeight: FontWeight.w700,
+              fontSize: 20,
+            ),
+          ),
+        ],
       ),
     );
   }

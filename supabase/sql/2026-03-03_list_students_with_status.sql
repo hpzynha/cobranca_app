@@ -68,3 +68,74 @@ as $$
   from base b
   order by b.created_at desc;
 $$;
+
+create or replace function public.mark_student_as_paid(p_student_id uuid)
+returns table (
+  last_payment_date timestamptz,
+  next_due_date timestamptz,
+  payment_status text
+)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_student public.students%rowtype;
+  v_today date;
+  v_current_month_due date;
+  v_next_due date;
+begin
+  if auth.uid() is null then
+    raise exception 'Usuário não autenticado.';
+  end if;
+
+  select *
+    into v_student
+    from public.students s
+   where s.id = p_student_id
+     and s.owner_id = auth.uid()
+   for update;
+
+  if not found then
+    raise exception 'Aluno não encontrado para este usuário.';
+  end if;
+
+  v_today := (now() at time zone 'UTC')::date;
+
+  v_current_month_due := make_date(
+    extract(year from v_today)::int,
+    extract(month from v_today)::int,
+    least(
+      greatest(v_student.due_day, 1),
+      extract(day from (date_trunc('month', v_today) + interval '1 month - 1 day'))::int
+    )
+  );
+
+  if v_current_month_due <= v_today then
+    v_next_due := make_date(
+      extract(year from (v_today + interval '1 month'))::int,
+      extract(month from (v_today + interval '1 month'))::int,
+      least(
+        greatest(v_student.due_day, 1),
+        extract(day from (date_trunc('month', v_today + interval '1 month') + interval '1 month - 1 day'))::int
+      )
+    );
+  else
+    v_next_due := v_current_month_due;
+  end if;
+
+  update public.students
+     set last_payment_date = v_today::timestamptz,
+         next_due_date = v_next_due::timestamptz
+   where id = p_student_id
+     and owner_id = auth.uid();
+
+  return query
+  select
+    v_today::timestamptz as last_payment_date,
+    v_next_due::timestamptz as next_due_date,
+    'paid'::text as payment_status;
+end;
+$$;
+
+grant execute on function public.mark_student_as_paid(uuid) to authenticated;

@@ -6,17 +6,7 @@ class MarkStudentAsPaidUseCase {
 
   final StudentRepository _studentRepository;
 
-  Future<Result<void>> call({
-    required String studentId,
-    required int dueDay,
-    DateTime? currentNextDueDate,
-    DateTime? paidAt,
-  }) {
-    return _studentRepository.markStudentAsPaid(
-      studentId: studentId,
-      dueDay: dueDay,
-      currentNextDueDate: currentNextDueDate,
-      paidAt: paidAt,
-    );
+  Future<Result<void>> call({required String studentId}) {
+    return _studentRepository.markStudentAsPaid(studentId: studentId);
   }
 }

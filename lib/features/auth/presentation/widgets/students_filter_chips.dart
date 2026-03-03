@@ -12,7 +12,7 @@ extension StudentsFilterLabel on StudentsFilter {
       case StudentsFilter.overdue:
         return 'Atrasados';
       case StudentsFilter.dueToday:
-        return 'Vence hoje';
+        return 'Vence em breve';
       case StudentsFilter.paid:
         return 'Pagos';
     }

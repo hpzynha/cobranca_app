@@ -12,14 +12,20 @@ extension StudentPaymentItemMapper on List<Student> {
       final status = _statusForStudent(student, referenceDate);
       final dueDate = student.nextDueDate;
       return StudentPaymentItem(
+        id: student.id,
         initials: _buildInitials(student.name),
         name: student.name,
+        whatsapp: student.whatsapp,
         dueLabel:
             dueDate == null
                 ? 'Sem vencimento definido'
                 : 'Venc. ${dueDateFormat.format(dueDate)}',
         amountLabel: currency.format(student.monthlyFeeCents / 100),
         status: status,
+        photoUrl: student.photoUrl,
+        dueDay: student.dueDay,
+        nextDueDate: student.nextDueDate,
+        lastPaymentDate: student.lastPaymentDate,
       );
     }).toList();
   }
@@ -34,7 +40,7 @@ StudentPaymentStatus _statusForStudent(Student student, DateTime now) {
           : _dateOnly(student.lastPaymentDate!);
 
   if (nextDueDate == null) {
-    return StudentPaymentStatus.open;
+    return StudentPaymentStatus.pending;
   }
 
   if (lastPaymentDate != null && !lastPaymentDate.isBefore(nextDueDate)) {
@@ -45,11 +51,12 @@ StudentPaymentStatus _statusForStudent(Student student, DateTime now) {
     return StudentPaymentStatus.overdue;
   }
 
-  if (now.isAtSameMomentAs(nextDueDate)) {
-    return StudentPaymentStatus.dueToday;
+  final daysToDue = nextDueDate.difference(now).inDays;
+  if (daysToDue <= 2) {
+    return StudentPaymentStatus.dueSoon;
   }
 
-  return StudentPaymentStatus.open;
+  return StudentPaymentStatus.pending;
 }
 
 String _buildInitials(String name) {

@@ -9,6 +9,7 @@ import 'package:app_cobranca/features/auth/presentation/widgets/monthly_balance_
 import 'package:app_cobranca/features/auth/presentation/widgets/overdue_alert_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -83,6 +84,9 @@ class HomeScreen extends ConsumerWidget {
               switch (studentsAsync) {
                 AsyncData(:final value) => StudentsDashboardCard(
                   students: value,
+                  onStudentTap: (student) {
+                    context.push('/alunos/${student.id}', extra: student);
+                  },
                 ),
                 AsyncError() => const StudentsDashboardCard(students: []),
                 _ => const StudentsDashboardCard(students: []),
@@ -110,7 +114,7 @@ class _HomeStatusSection extends StatelessWidget {
             .length;
     final dueTodayCount =
         students
-            .where((student) => student.status == StudentPaymentStatus.dueToday)
+            .where((student) => student.status == StudentPaymentStatus.dueSoon)
             .length;
     final paidCount =
         students

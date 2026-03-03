@@ -5,7 +5,7 @@ class AppStrings {
   static const monthlyForecastBalance = 'Saldo previsto do mês';
 
   static const statusOverdue = 'Atrasados';
-  static const statusDueToday = 'Vencem hoje';
+  static const statusDueToday = 'Vencem em breve';
   static const statusPaid = 'Pagos';
 
   static const navHome = 'Início';

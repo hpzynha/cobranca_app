@@ -5,10 +5,12 @@ import 'package:app_cobranca/features/auth/presentation/pages/alunos_page.dart';
 import 'package:app_cobranca/features/auth/presentation/pages/email_verification_page.dart';
 import 'package:app_cobranca/features/auth/presentation/pages/config_page.dart';
 import 'package:app_cobranca/features/auth/presentation/pages/home_screen.dart';
+import 'package:app_cobranca/features/auth/presentation/pages/student_details_page.dart';
 import 'package:app_cobranca/features/auth/presentation/pages/relatorios_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:app_cobranca/features/auth/presentation/widgets/lib/features/auth/presentation/widgets/students_dashboard_card.dart';
 
 import '../../features/auth/presentation/pages/auth_landing_screen.dart';
 import '../../features/auth/presentation/pages/login_screen.dart';
@@ -71,6 +73,13 @@ final GoRouter appRouter = GoRouter(
 
     GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
     GoRoute(path: '/alunos', builder: (context, state) => const AlunosPage()),
+    GoRoute(
+      path: '/alunos/:id',
+      builder: (context, state) => StudentDetailsPage(
+        studentId: state.pathParameters['id']!,
+        initialStudent: state.extra as StudentPaymentItem?,
+      ),
+    ),
     GoRoute(path: '/adicionar', builder: (context, state) => const AddPage()),
     GoRoute(
       path: '/relatorios',

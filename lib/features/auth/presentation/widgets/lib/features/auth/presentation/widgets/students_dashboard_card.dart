@@ -6,10 +6,10 @@ import 'package:app_cobranca/core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
 
 enum StudentPaymentStatus {
-  overdue('Vencido', Color(0xFFFDECEC), AppColors.danger),
+  overdue('Atrasado', Color(0xFFFDECEC), AppColors.danger),
   paid('Pago', Color(0xFFE8F8EF), AppColors.success),
-  dueToday('Vence hoje', Color(0xFFFFF4E7), Color(0xFFF08C00)),
-  open('Em aberto', Color(0xFFEFF2F6), AppColors.textMuted);
+  dueSoon('Vence em breve', Color(0xFFFFF4E7), Color(0xFFF08C00)),
+  pending('Pendente', Color(0xFFEFF2F6), AppColors.textMuted);
 
   const StudentPaymentStatus(this.label, this.background, this.foreground);
 
@@ -20,24 +20,41 @@ enum StudentPaymentStatus {
 
 class StudentPaymentItem {
   const StudentPaymentItem({
+    required this.id,
     required this.initials,
     required this.name,
+    required this.whatsapp,
     required this.dueLabel,
     required this.amountLabel,
     required this.status,
+    this.photoUrl,
+    this.dueDay,
+    this.nextDueDate,
+    this.lastPaymentDate,
   });
 
+  final String id;
   final String initials;
   final String name;
+  final String whatsapp;
   final String dueLabel;
   final String amountLabel;
   final StudentPaymentStatus status;
+  final String? photoUrl;
+  final int? dueDay;
+  final DateTime? nextDueDate;
+  final DateTime? lastPaymentDate;
 }
 
 class StudentsDashboardCard extends StatelessWidget {
-  const StudentsDashboardCard({super.key, this.students = const []});
+  const StudentsDashboardCard({
+    super.key,
+    this.students = const [],
+    this.onStudentTap,
+  });
 
   final List<StudentPaymentItem> students;
+  final ValueChanged<StudentPaymentItem>? onStudentTap;
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +68,7 @@ class StudentsDashboardCard extends StatelessWidget {
       titleSize: titleSize,
       height: listHeight,
       physics: const BouncingScrollPhysics(),
+      onStudentTap: onStudentTap,
     );
   }
 }
@@ -65,6 +83,7 @@ class StudentsList extends StatelessWidget {
     this.shrinkWrap = false,
     this.physics,
     this.emptyMessage = 'Você ainda não possui aluno cadastrado',
+    this.onStudentTap,
   });
 
   final List<StudentPaymentItem> students;
@@ -74,6 +93,7 @@ class StudentsList extends StatelessWidget {
   final bool shrinkWrap;
   final ScrollPhysics? physics;
   final String emptyMessage;
+  final ValueChanged<StudentPaymentItem>? onStudentTap;
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +116,10 @@ class StudentsList extends StatelessWidget {
         shrinkWrap: shrinkWrap,
         itemBuilder: (context, index) {
           final student = students[index];
-          return _StudentRowCard(student: student);
+          return _StudentRowCard(
+            student: student,
+            onTap: onStudentTap == null ? null : () => onStudentTap!(student),
+          );
         },
         separatorBuilder: (_, __) => const SizedBox(height: 14),
         itemCount: students.length,
@@ -126,9 +149,10 @@ class StudentsList extends StatelessWidget {
 }
 
 class _StudentRowCard extends StatelessWidget {
-  const _StudentRowCard({required this.student});
+  const _StudentRowCard({required this.student, this.onTap});
 
   final StudentPaymentItem student;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -140,72 +164,82 @@ class _StudentRowCard extends StatelessWidget {
     final initialsSize = AppResponsive.fontSize(context, 11.5);
     final avatarRadius = isCompact ? 24.0 : 26.0;
 
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: isCompact ? 12 : 14,
-        vertical: 14,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(28),
+      child: InkWell(
         borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
+        onTap: onTap,
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: isCompact ? 12 : 14,
+            vertical: 14,
           ),
-        ],
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: avatarRadius,
-            backgroundColor: const Color(0xFFF0F2F5),
-            child: Text(
-              student.initials,
-              style: AppTextStyles.dashboardCardNumber.copyWith(
-                fontSize: initialsSize,
-                color: AppColors.textPrimary,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.06),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
               ),
-            ),
-          ),
-          SizedBox(width: isCompact ? 10 : 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  student.name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.heading.copyWith(fontSize: nameSize),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  student.dueLabel,
-                  style: AppTextStyles.body.copyWith(
-                    fontSize: dueSize,
-                    color: AppColors.textMuted,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(width: isCompact ? 8 : 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                student.amountLabel,
-                style: AppTextStyles.heading.copyWith(fontSize: amountSize),
-              ),
-              const SizedBox(height: 8),
-              _StatusPill(status: student.status),
             ],
           ),
-          const SizedBox(width: 8),
-          const Icon(Icons.chevron_right_rounded, color: AppColors.textMuted),
-        ],
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: avatarRadius,
+                backgroundColor: const Color(0xFFF0F2F5),
+                child: Text(
+                  student.initials,
+                  style: AppTextStyles.dashboardCardNumber.copyWith(
+                    fontSize: initialsSize,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ),
+              SizedBox(width: isCompact ? 10 : 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      student.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.heading.copyWith(fontSize: nameSize),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      student.dueLabel,
+                      style: AppTextStyles.body.copyWith(
+                        fontSize: dueSize,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(width: isCompact ? 8 : 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    student.amountLabel,
+                    style: AppTextStyles.heading.copyWith(fontSize: amountSize),
+                  ),
+                  const SizedBox(height: 8),
+                  _StatusPill(status: student.status),
+                ],
+              ),
+              const SizedBox(width: 8),
+              const Icon(
+                Icons.chevron_right_rounded,
+                color: AppColors.textMuted,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

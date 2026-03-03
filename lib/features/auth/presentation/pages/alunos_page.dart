@@ -6,6 +6,7 @@ import 'package:app_cobranca/features/auth/presentation/widgets/lib/features/aut
 import 'package:app_cobranca/features/auth/presentation/widgets/students_filter_chips.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/students_search_field.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AlunosPage extends ConsumerStatefulWidget {
@@ -31,7 +32,7 @@ class _AlunosPageState extends ConsumerState<AlunosPage> {
         StudentsFilter.overdue =>
           student.status == StudentPaymentStatus.overdue,
         StudentsFilter.dueToday =>
-          student.status == StudentPaymentStatus.dueToday,
+          student.status == StudentPaymentStatus.dueSoon,
         StudentsFilter.paid => student.status == StudentPaymentStatus.paid,
       };
 
@@ -103,6 +104,9 @@ class _AlunosPageState extends ConsumerState<AlunosPage> {
                           physics: const BouncingScrollPhysics(),
                           emptyMessage:
                               'Nenhum aluno encontrado para esta busca/filtro.',
+                          onStudentTap: (student) {
+                            context.push('/alunos/${student.id}', extra: student);
+                          },
                         ),
                       ),
                     ],

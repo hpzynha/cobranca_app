@@ -3,6 +3,7 @@ import 'package:app_cobranca/features/auth/domain/usecases/list_students_usecase
 import 'package:app_cobranca/features/auth/data/datasources/student_remote_datasource.dart';
 import 'package:app_cobranca/features/auth/data/repositories/student_repository_impl.dart';
 import 'package:app_cobranca/features/auth/domain/repositories/student_repository.dart';
+import 'package:app_cobranca/features/auth/domain/usecases/mark_student_as_paid_usecase.dart';
 import 'package:app_cobranca/features/auth/domain/usecases/register_student_usecase.dart';
 import 'package:app_cobranca/features/auth/presentation/models/student_payment_item_mapper.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/lib/features/auth/presentation/widgets/students_dashboard_card.dart';
@@ -25,6 +26,12 @@ final registerStudentUseCaseProvider = Provider<RegisterStudentUseCase>((ref) {
 
 final listStudentsUseCaseProvider = Provider<ListStudentsUseCase>((ref) {
   return ListStudentsUseCase(ref.watch(studentRepositoryProvider));
+});
+
+final markStudentAsPaidUseCaseProvider = Provider<MarkStudentAsPaidUseCase>((
+  ref,
+) {
+  return MarkStudentAsPaidUseCase(ref.watch(studentRepositoryProvider));
 });
 
 final studentsProvider = FutureProvider<List<Student>>((ref) async {

@@ -8,6 +8,7 @@ class Student {
     this.nextDueDate,
     this.lastPaymentDate,
     this.photoUrl,
+    this.paymentStatusCode,
   });
 
   final String id;
@@ -18,4 +19,5 @@ class Student {
   final DateTime? nextDueDate;
   final DateTime? lastPaymentDate;
   final String? photoUrl;
+  final String? paymentStatusCode;
 }

@@ -83,4 +83,29 @@ class StudentRepositoryImpl implements StudentRepository {
       );
     }
   }
+
+  @override
+  Future<Result<void>> markStudentAsPaid({required String studentId}) async {
+    try {
+      await _remoteDataSource.markStudentAsPaid(studentId: studentId);
+
+      return Result.success(null);
+    } on PostgrestException catch (e) {
+      return Result.error(
+        Failure(
+          message:
+              e.message.isNotEmpty
+                  ? e.message
+                  : 'Não foi possível marcar o pagamento.',
+          code: e.code,
+        ),
+      );
+    } catch (_) {
+      return Result.error(
+        const Failure(
+          message: 'Não foi possível marcar o pagamento. Tente novamente.',
+        ),
+      );
+    }
+  }
 }

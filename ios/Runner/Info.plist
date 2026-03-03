@@ -11,6 +11,12 @@
                 <string>com.googleusercontent.apps.732759318938-rdb6vei2lniilb3c6cfophms9aa0v3q2</string>
             </array>
         </dict>
+        <dict>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>io.supabase.flutter</string>
+            </array>
+        </dict>
     </array>
 
     <key>CFBundleDevelopmentRegion</key>

@@ -13,6 +13,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../features/auth/presentation/pages/auth_landing_screen.dart';
 import '../../features/auth/presentation/pages/login_screen.dart';
 import '../../features/auth/presentation/pages/register_screen.dart';
+import '../../features/auth/presentation/pages/reset_password_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -23,18 +24,19 @@ final GoRouter appRouter = GoRouter(
     final user = Supabase.instance.client.auth.currentUser;
     final isEmailConfirmed = user?.emailConfirmedAt != null;
 
+    final isResetPasswordRoute = state.matchedLocation == '/reset-password';
     final isAuthRoute =
         state.matchedLocation == '/' ||
         state.matchedLocation == '/login' ||
         state.matchedLocation == '/register' ||
-        state.matchedLocation == '/reset-password';
+        isResetPasswordRoute;
 
     final isVerificationRoute = state.matchedLocation == '/email-verification';
     if (isVerificationRoute && isEmailConfirmed) {
       return '/login';
     }
 
-    if (user != null && !isEmailConfirmed && !isVerificationRoute) {
+    if (user != null && !isEmailConfirmed && !isVerificationRoute && !isResetPasswordRoute) {
       return '/email-verification';
     }
 
@@ -42,7 +44,7 @@ final GoRouter appRouter = GoRouter(
       return '/';
     }
 
-    if (user != null && isEmailConfirmed && isAuthRoute) {
+    if (user != null && isEmailConfirmed && isAuthRoute && !isResetPasswordRoute) {
       return '/home';
     }
 
@@ -54,6 +56,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/register',
       builder: (context, state) => const RegisterScreen(),
+    ),
+    GoRoute(
+      path: '/reset-password',
+      builder: (context, state) => const ResetPasswordScreen(),
     ),
     GoRoute(
       path: '/email-verification',

@@ -113,3 +113,39 @@ Larissa Nogueira
 Software & Mobile Developer
 
 Desenvolvido com 💜 e foco em resolver problemas reais.
+
+---
+
+## 🔑 Recuperação de senha (Supabase)
+
+Fluxo implementado no app:
+
+1. Usuário toca em **"Esqueceu sua senha?"** na tela de login.
+2. Informa o e-mail e recebe feedback neutro de envio.
+3. Abre o link recebido por e-mail.
+4. App abre tela de **nova senha**.
+5. Após redefinir, usuário é redirecionado para o login (sem login automático).
+
+### Configuração necessária no Supabase
+
+No painel do Supabase (`Authentication > URL Configuration`):
+
+- **Site URL**: defina a URL base do seu app/web.
+- **Redirect URLs**: adicione:
+  - `io.supabase.flutter://reset-password-callback/`
+  - `io.supabase.flutter://login-callback/`
+
+No painel do Supabase (`Authentication > Email Templates`):
+
+- Garanta que o template de **Reset Password** esteja ativo.
+
+### O que configurar no Firebase
+
+Para esse fluxo de reset com Supabase usando deep link por scheme (`io.supabase.flutter://...`), **não é obrigatório usar Firebase Dynamic Links**.
+
+No Firebase, mantenha apenas o que já existe para o app (ex.: Google Sign-In, Analytics, Crashlytics). Se quiser usar links universais (`https://`) no futuro, aí sim você pode configurar domínio de links (Firebase Hosting/Dynamic Links + App/Universal Links).
+
+### Mobile
+
+- Android: `intent-filter` para `io.supabase.flutter://login-callback` e `io.supabase.flutter://reset-password-callback`.
+- iOS: `CFBundleURLSchemes` com `io.supabase.flutter`.

@@ -85,7 +85,10 @@ class StudentDetailsPage extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: AppSpacing.lg),
-              _InfoTile(label: 'Vencimento', value: 'Dia ${student.dueDay ?? '--'}'),
+              _InfoTile(
+                label: 'Vencimento',
+                value: _formatDueDate(student),
+              ),
               const SizedBox(height: 12),
               _InfoTile(
                 label: 'Status',
@@ -98,18 +101,98 @@ class StudentDetailsPage extends ConsumerWidget {
               ..._buildHistory(student),
               const SizedBox(height: 24),
               if (shouldShowChargeButton)
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: () => _openWhatsApp(student),
-                    icon: const Icon(Icons.send_outlined),
-                    label: const Text('Cobrar no WhatsApp'),
-                  ),
+                Column(
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () => _markAsPaid(context, ref, student),
+                        icon: const Icon(Icons.check_circle_outline),
+                        label: const Text('Marcar como pago'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          minimumSize: const Size.fromHeight(56),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          textStyle: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () => _openWhatsApp(student),
+                        icon: const Icon(Icons.chat_bubble_rounded),
+                        label: const Text('Enviar mensagem no WhatsApp'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF25D366),
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          minimumSize: const Size.fromHeight(56),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          textStyle: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> _markAsPaid(
+    BuildContext context,
+    WidgetRef ref,
+    StudentPaymentItem student,
+  ) async {
+    if (student.dueDay == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Não foi possível identificar o vencimento do aluno.')),
+      );
+      return;
+    }
+
+    final result = await ref
+        .read(markStudentAsPaidUseCaseProvider)
+        .call(
+          studentId: student.id,
+          dueDay: student.dueDay!,
+          currentNextDueDate: student.nextDueDate,
+        );
+
+    if (!context.mounted) return;
+
+    if (!result.isSuccess) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            result.failure?.message ?? 'Não foi possível marcar como pago.',
+          ),
+        ),
+      );
+      return;
+    }
+
+    ref.invalidate(studentsProvider);
+    ref.invalidate(studentPaymentItemsProvider);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Pagamento marcado com sucesso.')),
     );
   }
 
@@ -158,6 +241,16 @@ class StudentDetailsPage extends ConsumerWidget {
   double _amountFromLabel(String amountLabel) {
     final normalized = amountLabel.replaceAll(RegExp(r'[^0-9,]'), '').replaceAll('.', '').replaceAll(',', '.');
     return double.tryParse(normalized) ?? 0;
+  }
+
+  String _formatDueDate(StudentPaymentItem student) {
+    if (student.nextDueDate != null) {
+      return DateFormat('dd/MM/yyyy').format(student.nextDueDate!);
+    }
+    if (student.dueDay != null) {
+      return 'Dia ${student.dueDay}';
+    }
+    return '--';
   }
 
   Future<void> _openWhatsApp(StudentPaymentItem student) async {

@@ -83,4 +83,65 @@ class StudentRepositoryImpl implements StudentRepository {
       );
     }
   }
+
+  @override
+  Future<Result<void>> markStudentAsPaid({
+    required String studentId,
+    required int dueDay,
+    DateTime? currentNextDueDate,
+    DateTime? paidAt,
+  }) async {
+    try {
+      final paymentDate = _dateOnly(paidAt ?? DateTime.now());
+      final resolvedNextDueDate = _nextDueDateAfterPayment(
+        dueDay: dueDay,
+        currentNextDueDate: currentNextDueDate,
+        paidAt: paymentDate,
+      );
+
+      await _remoteDataSource.markStudentAsPaid(
+        studentId: studentId,
+        lastPaymentDate: paymentDate,
+        nextDueDate: resolvedNextDueDate,
+      );
+
+      return Result.success(null);
+    } on PostgrestException catch (e) {
+      return Result.error(
+        Failure(
+          message:
+              e.message.isNotEmpty
+                  ? e.message
+                  : 'Não foi possível marcar o pagamento.',
+          code: e.code,
+        ),
+      );
+    } catch (_) {
+      return Result.error(
+        const Failure(
+          message: 'Não foi possível marcar o pagamento. Tente novamente.',
+        ),
+      );
+    }
+  }
+
+  DateTime _nextDueDateAfterPayment({
+    required int dueDay,
+    required DateTime paidAt,
+    DateTime? currentNextDueDate,
+  }) {
+    final base =
+        currentNextDueDate == null
+            ? DateTime(paidAt.year, paidAt.month + 1)
+            : DateTime(currentNextDueDate.year, currentNextDueDate.month + 1);
+    final day = _clampDay(base.year, base.month, dueDay);
+    return DateTime(base.year, base.month, day);
+  }
+}
+
+DateTime _dateOnly(DateTime date) => DateTime(date.year, date.month, date.day);
+
+int _clampDay(int year, int month, int day) {
+  final lastDay = DateTime(year, month + 1, 0).day;
+  return day.clamp(1, lastDay);
 }

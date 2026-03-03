@@ -36,4 +36,24 @@ class StudentRemoteDataSource {
     final rows = (response as List).cast<Map<String, dynamic>>();
     return rows.map(StudentModel.fromSupabaseMap).toList();
   }
+
+  Future<void> markStudentAsPaid({
+    required String studentId,
+    required DateTime lastPaymentDate,
+    required DateTime nextDueDate,
+  }) async {
+    final ownerId = _supabaseClient.auth.currentUser?.id;
+    if (ownerId == null || ownerId.isEmpty) {
+      throw const AuthException('Usuário não autenticado.');
+    }
+
+    await _supabaseClient
+        .from('students')
+        .update({
+          'last_payment_date': lastPaymentDate.toIso8601String(),
+          'next_due_date': nextDueDate.toIso8601String(),
+        })
+        .eq('id', studentId)
+        .eq('owner_id', ownerId);
+  }
 }

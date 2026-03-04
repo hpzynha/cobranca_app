@@ -183,7 +183,7 @@ class _StudentDetailsPageState extends ConsumerState<StudentDetailsPage> {
 
     final result = await ref
         .read(markStudentAsPaidUseCaseProvider)
-        .call(studentId: student.id);
+        .call(student.id);
 
     if (!context.mounted) return;
 
@@ -206,6 +206,7 @@ class _StudentDetailsPageState extends ConsumerState<StudentDetailsPage> {
 
     ref.invalidate(studentsProvider);
     ref.invalidate(studentPaymentItemsProvider);
+    ref.invalidate(monthlyReportProvider);
 
   }
 

@@ -1,5 +1,6 @@
 import 'package:app_cobranca/features/auth/data/models/student_model.dart';
 import 'package:app_cobranca/features/auth/data/models/student_registration_payload.dart';
+import 'package:app_cobranca/features/auth/domain/entities/monthly_report.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class StudentRemoteDataSource {
@@ -42,10 +43,28 @@ class StudentRemoteDataSource {
     }
   }
 
-  Future<void> markStudentAsPaid({required String studentId}) async {
+  Future<void> markStudentAsPaid(String studentId) async {
     await _supabaseClient.rpc(
       'mark_student_as_paid',
       params: {'p_student_id': studentId},
     );
+  }
+
+  Future<MonthlyReport> getMonthlyReport() async {
+    final now = DateTime.now();
+
+    final response = await _supabaseClient.rpc(
+      'get_monthly_report',
+      params: {
+        'p_month': DateTime(now.year, now.month, 1).toIso8601String(),
+      },
+    );
+
+    final rows = (response as List).cast<Map<String, dynamic>>();
+    if (rows.isEmpty) {
+      return MonthlyReport(expectedCents: 0, receivedCents: 0, pendingCents: 0);
+    }
+
+    return MonthlyReport.fromMap(rows.first);
   }
 }

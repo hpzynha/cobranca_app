@@ -85,9 +85,9 @@ class StudentRepositoryImpl implements StudentRepository {
   }
 
   @override
-  Future<Result<void>> markStudentAsPaid({required String studentId}) async {
+  Future<Result<void>> markStudentAsPaid(String studentId) async {
     try {
-      await _remoteDataSource.markStudentAsPaid(studentId: studentId);
+      await _remoteDataSource.markStudentAsPaid(studentId);
 
       return Result.success(null);
     } on PostgrestException catch (e) {

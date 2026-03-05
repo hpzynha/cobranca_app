@@ -6,7 +6,7 @@ class MarkStudentAsPaidUseCase {
 
   final StudentRepository _studentRepository;
 
-  Future<Result<void>> call({required String studentId}) {
-    return _studentRepository.markStudentAsPaid(studentId: studentId);
+  Future<Result<void>> call(String studentId) {
+    return _studentRepository.markStudentAsPaid(studentId);
   }
 }

@@ -1,3 +1,4 @@
+import 'package:app_cobranca/features/auth/domain/entities/monthly_report.dart';
 import 'package:app_cobranca/features/auth/domain/entities/student.dart';
 import 'package:app_cobranca/features/auth/domain/usecases/list_students_usecase.dart';
 import 'package:app_cobranca/features/auth/data/datasources/student_remote_datasource.dart';
@@ -40,6 +41,12 @@ final studentsProvider = FutureProvider<List<Student>>((ref) async {
     throw Exception(result.failure?.message ?? 'Erro ao carregar alunos.');
   }
   return result.data ?? const [];
+});
+
+
+final monthlyReportProvider = FutureProvider<MonthlyReport>((ref) async {
+  final datasource = ref.watch(studentRemoteDataSourceProvider);
+  return datasource.getMonthlyReport();
 });
 
 final studentPaymentItemsProvider = FutureProvider<List<StudentPaymentItem>>((

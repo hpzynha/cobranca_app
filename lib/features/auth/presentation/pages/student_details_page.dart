@@ -67,8 +67,11 @@ class _StudentDetailsPageState extends ConsumerState<StudentDetailsPage> {
             children: [
               TextButton.icon(
                 onPressed: () => context.pop(),
-                icon: const Icon(Icons.arrow_back),
-                label: const Text('Voltar'),
+                icon: const Icon(Icons.arrow_back, color: AppColors.primary),
+                label: const Text(
+                  'Voltar',
+                  style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600),
+                ),
               ),
               const SizedBox(height: 10),
               Row(
@@ -210,12 +213,15 @@ class _StudentDetailsPageState extends ConsumerState<StudentDetailsPage> {
   }
 
   List<Widget> _buildHistory(StudentPaymentItem student) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final currency = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
     if (student.lastPaymentDate == null) {
-      return const [
+      return [
         Text(
           'Nenhum pagamento registrado',
-          style: TextStyle(color: AppColors.textMuted),
+          style: TextStyle(
+            color: isDark ? AppColors.textMutedDark : AppColors.textMuted,
+          ),
         ),
       ];
     }
@@ -228,7 +234,7 @@ class _StudentDetailsPageState extends ConsumerState<StudentDetailsPage> {
         width: double.infinity,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? const Color(0xFF1A1A28) : Colors.white,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
@@ -239,12 +245,32 @@ class _StudentDetailsPageState extends ConsumerState<StudentDetailsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(month, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 20)),
-                  Text('Pago em $date', style: const TextStyle(color: AppColors.textMuted, fontSize: 16)),
+                  Text(
+                    month,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 20,
+                      color: isDark ? AppColors.textPrimaryDark : AppColors.textStrong,
+                    ),
+                  ),
+                  Text(
+                    'Pago em $date',
+                    style: TextStyle(
+                      color: isDark ? AppColors.textMutedDark : AppColors.textMuted,
+                      fontSize: 16,
+                    ),
+                  ),
                 ],
               ),
             ),
-            Text(currency.format(student.monthlyFeeCents / 100), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 20)),
+            Text(
+              currency.format(student.monthlyFeeCents / 100),
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 20,
+                color: isDark ? AppColors.textPrimaryDark : AppColors.textStrong,
+              ),
+            ),
           ],
         ),
       ),
@@ -282,13 +308,17 @@ class _StudentAvatar extends StatelessWidget {
     final hasPhoto = student.photoUrl != null && student.photoUrl!.isNotEmpty;
     return CircleAvatar(
       radius: 52,
-      backgroundColor: const Color(0xFFE9EDF1),
+      backgroundColor: AppColors.primary,
       backgroundImage: hasPhoto ? NetworkImage(student.photoUrl!) : null,
       child: hasPhoto
           ? null
           : Text(
               student.initials,
-              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 28),
+              style: const TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 28,
+                color: Colors.white,
+              ),
             ),
     );
   }
@@ -303,15 +333,35 @@ class _InfoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1A1A28) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: Row(
         children: [
-          Text(label, style: const TextStyle(fontSize: 18, color: AppColors.textMuted)),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 18,
+              color: isDark ? AppColors.textMutedDark : AppColors.textMuted,
+            ),
+          ),
           const Spacer(),
-          if (trailing != null) trailing! else Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+          if (trailing != null)
+            trailing!
+          else
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: isDark ? AppColors.textPrimaryDark : AppColors.textStrong,
+              ),
+            ),
         ],
       ),
     );
@@ -344,11 +394,14 @@ class _PaymentConfirmedCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
       decoration: BoxDecoration(
-        color: const Color(0xFFE6F4EC),
+        color: isDark
+            ? AppColors.success.withValues(alpha: 0.15)
+            : const Color(0xFFE6F4EC),
         borderRadius: BorderRadius.circular(20),
       ),
       child: const Row(

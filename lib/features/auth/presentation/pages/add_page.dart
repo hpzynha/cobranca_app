@@ -159,6 +159,7 @@ class _AddPageState extends ConsumerState<AddPage> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final isCompact = AppResponsive.isCompact(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final horizontalPadding = AppResponsive.size(
       context,
       isCompact ? 14 : 16,
@@ -166,10 +167,11 @@ class _AddPageState extends ConsumerState<AddPage> {
     final titleSize = AppResponsive.fontSize(context, isCompact ? 24 : 28);
     final subtitleSize = AppResponsive.fontSize(context, 14);
     final sectionGap = AppResponsive.size(context, isCompact ? 18 : 22);
-    const pageBackground = Color(0xFFF3F4F6);
-    const fieldBackground = Color(0xFFF3F4F6);
-    const fieldBorder = Color(0xFFD9DCE3);
-    const muted = Color(0xFF6B7280);
+    final pageBackground = isDark ? AppColors.backgroundDark : const Color(0xFFF3F4F6);
+    final fieldBackground = isDark ? const Color(0xFF1A1A28) : const Color(0xFFF3F4F6);
+    final fieldBorder = isDark ? const Color(0xFF2a2a45) : const Color(0xFFD9DCE3);
+    final focusedBorderColor = isDark ? AppColors.primary : const Color(0xFFC9CED8);
+    final muted = isDark ? AppColors.textMutedDark : const Color(0xFF6B7280);
     final bottomScrollPadding =
         (isCompact ? 128.0 : 140.0) +
         mediaQuery.padding.bottom +
@@ -203,18 +205,15 @@ class _AddPageState extends ConsumerState<AddPage> {
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
-                  borderSide: const BorderSide(color: fieldBorder, width: 1.6),
+                  borderSide: BorderSide(color: fieldBorder, width: 1.6),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
-                  borderSide: const BorderSide(color: fieldBorder, width: 1.6),
+                  borderSide: BorderSide(color: fieldBorder, width: 1.6),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
-                  borderSide: const BorderSide(
-                    color: Color(0xFFC9CED8),
-                    width: 1.8,
-                  ),
+                  borderSide: BorderSide(color: focusedBorderColor, width: 1.8),
                 ),
               ),
             ),
@@ -236,7 +235,7 @@ class _AddPageState extends ConsumerState<AddPage> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.arrow_back,
                               color: muted,
                               size: 28,
@@ -261,7 +260,7 @@ class _AddPageState extends ConsumerState<AddPage> {
                     style: TextStyle(
                       fontSize: titleSize,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary,
+                      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -299,7 +298,7 @@ class _AddPageState extends ConsumerState<AddPage> {
                     showCountryFlag: true,
                     showDropdownIcon: true,
                     dropdownIconPosition: IconPosition.trailing,
-                    dropdownIcon: const Icon(
+                    dropdownIcon: Icon(
                       Icons.arrow_drop_down_rounded,
                       color: muted,
                     ),
@@ -483,7 +482,9 @@ class _PhotoPickerPlaceholder extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = AppResponsive.size(context, 140).clamp(120.0, 160.0);
     final iconSize = AppResponsive.size(context, 34).clamp(30.0, 38.0);
-    const muted = Color(0xFF6B7280);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final borderColor = isDark ? const Color(0xFF2a2a45) : const Color(0xFFD9DCE3);
+    final iconColor = isDark ? AppColors.textMutedDark : const Color(0xFF6B7280);
 
     return Column(
       children: [
@@ -500,12 +501,13 @@ class _PhotoPickerPlaceholder extends StatelessWidget {
             height: size,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFFD9DCE3), width: 2),
+              color: isDark ? const Color(0xFF1A1A28) : null,
+              border: Border.all(color: borderColor, width: 2),
             ),
             child: Icon(
               Icons.photo_camera_outlined,
               size: iconSize,
-              color: muted,
+              color: iconColor,
             ),
           ),
         ),
@@ -530,12 +532,13 @@ class _FormLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Text(
       text,
       style: TextStyle(
         fontSize: AppResponsive.fontSize(context, 16),
         fontWeight: FontWeight.w700,
-        color: const Color(0xFF202327),
+        color: isDark ? AppColors.textPrimaryDark : const Color(0xFF202327),
       ),
     );
   }

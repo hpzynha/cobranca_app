@@ -209,6 +209,7 @@ class _StudentDetailsPageState extends ConsumerState<StudentDetailsPage> {
 
     ref.invalidate(studentsProvider);
     ref.invalidate(studentPaymentItemsProvider);
+    ref.invalidate(monthlyReportProvider);
 
   }
 

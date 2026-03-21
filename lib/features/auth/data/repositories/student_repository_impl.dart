@@ -122,4 +122,40 @@ class StudentRepositoryImpl implements StudentRepository {
       );
     }
   }
+
+  @override
+  Future<Result<({int expectedCents, int receivedCents, int pendingCents})>>
+  getMonthlyReport(DateTime month) async {
+    try {
+      final data = await _remoteDataSource.getMonthlyReport(month);
+      return Result.success((
+        expectedCents: (data['expected_cents'] as num).toInt(),
+        receivedCents: (data['received_cents'] as num).toInt(),
+        pendingCents: (data['pending_cents'] as num).toInt(),
+      ));
+    } on AuthException {
+      return Result.error(
+        const Failure(
+          message: 'Sessão expirada. Faça login novamente.',
+          code: 'auth_error',
+        ),
+      );
+    } on PostgrestException catch (e) {
+      return Result.error(
+        Failure(
+          message:
+              e.message.isNotEmpty
+                  ? e.message
+                  : 'Não foi possível carregar o relatório.',
+          code: e.code,
+        ),
+      );
+    } catch (_) {
+      return Result.error(
+        const Failure(
+          message: 'Sem conexão ou erro inesperado. Tente novamente.',
+        ),
+      );
+    }
+  }
 }

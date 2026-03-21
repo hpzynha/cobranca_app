@@ -53,3 +53,14 @@ final monthlyBalanceProvider = FutureProvider<double>((ref) async {
   final students = await ref.watch(studentsProvider.future);
   return students.fold<double>(0, (sum, s) => sum + s.monthlyFeeCents / 100.0);
 });
+
+final monthlyReportProvider = FutureProvider<
+  ({int expectedCents, int receivedCents, int pendingCents})
+>((ref) async {
+  final repo = ref.read(studentRepositoryProvider);
+  final result = await repo.getMonthlyReport(DateTime.now());
+  if (!result.isSuccess) {
+    throw Exception(result.failure?.message ?? 'Erro ao carregar relatório.');
+  }
+  return result.data!;
+});

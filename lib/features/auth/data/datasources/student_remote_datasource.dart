@@ -55,4 +55,14 @@ class StudentRemoteDataSource {
       params: {'p_student_id': studentId},
     );
   }
+
+  Future<Map<String, dynamic>> getMonthlyReport(DateTime month) async {
+    final monthStr =
+        '${month.year}-${month.month.toString().padLeft(2, '0')}-01';
+    final response = await _supabaseClient.rpc(
+      'get_monthly_report',
+      params: {'p_month': monthStr},
+    );
+    return (response as List).first as Map<String, dynamic>;
+  }
 }

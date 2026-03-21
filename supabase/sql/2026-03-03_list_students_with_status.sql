@@ -124,6 +124,15 @@ begin
     v_next_due := v_current_month_due;
   end if;
 
+  insert into public.payments (student_id, owner_id, amount_cents, competence_date, paid_at)
+  values (
+    p_student_id,
+    auth.uid(),
+    v_student.monthly_fee_cents,
+    date_trunc('month', v_today)::date,
+    v_today
+  );
+
   update public.students
      set last_payment_date = v_today::timestamptz,
          next_due_date = v_next_due::timestamptz
@@ -139,3 +148,33 @@ end;
 $$;
 
 grant execute on function public.mark_student_as_paid(uuid) to authenticated;
+
+create or replace function public.get_monthly_report(p_month date)
+returns table (
+  expected_cents integer,
+  received_cents integer,
+  pending_cents integer
+)
+language sql
+security definer
+set search_path = public
+as $$
+  with expected as (
+    select coalesce(sum(monthly_fee_cents), 0)::integer as total
+    from public.students
+    where owner_id = auth.uid()
+  ),
+  received as (
+    select coalesce(sum(amount_cents), 0)::integer as total
+    from public.payments
+    where owner_id = auth.uid()
+      and date_trunc('month', competence_date) = date_trunc('month', p_month)
+  )
+  select
+    expected.total as expected_cents,
+    received.total as received_cents,
+    (expected.total - received.total)::integer as pending_cents
+  from expected, received;
+$$;
+
+grant execute on function public.get_monthly_report(date) to authenticated;

@@ -18,26 +18,37 @@ class StudentsSearchField extends StatelessWidget {
   Widget build(BuildContext context) {
     final iconSize = AppResponsive.size(context, 20).clamp(18.0, 22.0);
     final fontSize = AppResponsive.fontSize(context, 14).clamp(13.0, 16.0);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final fillColor = isDark ? AppColors.surfaceDark : const Color(0xFFF8F8F8);
+    final borderColor =
+        isDark ? AppColors.borderDark : const Color(0xFFE9EAED);
+    final focusBorderColor =
+        isDark ? AppColors.borderDark.withValues(alpha: 0.6) : const Color(0xFFD2D4D9);
+    final textColor =
+        isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
 
     return TextField(
       controller: controller,
       onChanged: onChanged,
       textInputAction: TextInputAction.search,
-      style: TextStyle(fontSize: fontSize, color: AppColors.textPrimary),
+      style: TextStyle(fontSize: fontSize, color: textColor),
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: TextStyle(fontSize: fontSize, color: AppColors.textMuted),
-        prefixIcon: Icon(Icons.search_rounded, color: AppColors.textMuted, size: iconSize),
+        prefixIcon:
+            Icon(Icons.search_rounded, color: AppColors.textMuted, size: iconSize),
         filled: true,
-        fillColor: const Color(0xFFF8F8F8),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        fillColor: fillColor,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: const BorderSide(color: Color(0xFFE9EAED)),
+          borderSide: BorderSide(color: borderColor),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: const BorderSide(color: Color(0xFFD2D4D9)),
+          borderSide: BorderSide(color: focusBorderColor),
         ),
       ),
     );

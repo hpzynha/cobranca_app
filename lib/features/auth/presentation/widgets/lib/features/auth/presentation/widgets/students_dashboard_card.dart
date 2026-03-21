@@ -156,6 +156,15 @@ class _StudentRowCard extends StatelessWidget {
   final StudentPaymentItem student;
   final VoidCallback? onTap;
 
+  Color get _avatarColor {
+    return switch (student.status) {
+      StudentPaymentStatus.overdue => AppColors.danger,
+      StudentPaymentStatus.paid => AppColors.success,
+      StudentPaymentStatus.dueSoon => AppColors.warning,
+      StudentPaymentStatus.pending => AppColors.primary,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final maxWidth = MediaQuery.sizeOf(context).width;
@@ -166,8 +175,11 @@ class _StudentRowCard extends StatelessWidget {
     final initialsSize = AppResponsive.fontSize(context, 11.5);
     final avatarRadius = isCompact ? 24.0 : 26.0;
 
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Material(
-      color: Colors.white,
+      color: colorScheme.surface,
       borderRadius: BorderRadius.circular(28),
       child: InkWell(
         borderRadius: BorderRadius.circular(28),
@@ -181,7 +193,7 @@ class _StudentRowCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.06),
+                color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.06),
                 blurRadius: 16,
                 offset: const Offset(0, 4),
               ),
@@ -191,12 +203,12 @@ class _StudentRowCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: avatarRadius,
-                backgroundColor: const Color(0xFFF0F2F5),
+                backgroundColor: _avatarColor,
                 child: Text(
                   student.initials,
                   style: AppTextStyles.dashboardCardNumber.copyWith(
                     fontSize: initialsSize,
-                    color: AppColors.textPrimary,
+                    color: Colors.white,
                   ),
                 ),
               ),

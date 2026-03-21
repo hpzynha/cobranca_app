@@ -79,6 +79,7 @@ class DashboardStatusCard extends StatelessWidget {
                 count.toString(),
                 style: AppTextStyles.dashboardCardNumber.copyWith(
                   fontSize: numberSize,
+                  color: color,
                 ),
               ),
               SizedBox(height: labelGap),

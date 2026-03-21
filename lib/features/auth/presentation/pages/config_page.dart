@@ -1,13 +1,17 @@
+import 'package:app_cobranca/core/theme/theme_provider.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/bottom_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class ConfigPage extends StatelessWidget {
+class ConfigPage extends ConsumerWidget {
   const ConfigPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = ref.watch(themeModeProvider) == ThemeMode.dark;
+
     return Scaffold(
       extendBody: true,
       appBar: AppBar(title: const Text('Configurações')),
@@ -22,6 +26,15 @@ class ConfigPage extends StatelessWidget {
             title: Text('Notificações'),
           ),
           ListTile(
+            leading: const Icon(Icons.dark_mode_outlined),
+            title: const Text('Modo escuro'),
+            trailing: Switch(
+              value: isDark,
+              onChanged: (_) =>
+                  ref.read(themeModeProvider.notifier).toggle(),
+            ),
+          ),
+          ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Sair'),
             onTap: () async {
@@ -33,7 +46,7 @@ class ConfigPage extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: const BottomBar(currentIndex: 4),
+      bottomNavigationBar: const BottomBar(currentIndex: -1),
     );
   }
 }

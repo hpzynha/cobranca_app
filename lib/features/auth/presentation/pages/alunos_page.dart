@@ -5,6 +5,7 @@ import 'package:app_cobranca/features/auth/presentation/widgets/bottom_bar.dart'
 import 'package:app_cobranca/features/auth/presentation/widgets/lib/features/auth/presentation/widgets/students_dashboard_card.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/students_filter_chips.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/students_search_field.dart';
+import 'package:app_cobranca/features/auth/presentation/widgets/venzza_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -58,73 +59,69 @@ class _AlunosPageState extends ConsumerState<AlunosPage> {
       context,
       isCompact ? 14 : 16,
     ).clamp(12.0, 22.0);
-    final topPadding = AppResponsive.size(context, isCompact ? 12 : 16);
     final studentsAsync = ref.watch(studentPaymentItemsProvider);
 
     return Scaffold(
       extendBody: true,
-      body: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(
-            horizontalPadding,
-            topPadding,
-            horizontalPadding,
-            8,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Alunos', style: Theme.of(context).textTheme.headlineMedium),
-              Expanded(
-                child: switch (studentsAsync) {
-                  AsyncData(:final value) when value.isEmpty => const Center(
-                    child: Text('Você ainda não possui aluno cadastrado'),
-                  ),
-                  AsyncData(:final value) => Column(
-                    children: [
-                      const SizedBox(height: AppSpacing.md),
-                      StudentsSearchField(
-                        controller: _searchController,
-                        onChanged: (query) {
-                          setState(() => _searchQuery = query);
-                        },
-                      ),
-                      const SizedBox(height: 12),
-                      StudentsFilterChips(
-                        selectedFilter: _selectedFilter,
-                        onSelected: (filter) {
-                          setState(() => _selectedFilter = filter);
-                        },
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      Expanded(
-                        child: StudentsList(
-                          students: _filteredStudents(value),
-                          physics: const BouncingScrollPhysics(),
-                          emptyMessage:
-                              'Nenhum aluno encontrado para esta busca/filtro.',
-                          onStudentTap: (student) {
-                            context.push('/alunos/${student.id}', extra: student);
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  AsyncError() => Center(
-                    child: Text(
-                      'Não foi possível carregar os alunos.',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ),
-                  _ => const Center(child: CircularProgressIndicator()),
-                },
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const VenzzaAppBar(title: 'Alunos'),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(
+                horizontalPadding,
+                8,
+                horizontalPadding,
+                8,
               ),
-            ],
+              child: switch (studentsAsync) {
+                AsyncData(:final value) when value.isEmpty => const Center(
+                  child: Text('Você ainda não possui aluno cadastrado'),
+                ),
+                AsyncData(:final value) => Column(
+                  children: [
+                    const SizedBox(height: AppSpacing.md),
+                    StudentsSearchField(
+                      controller: _searchController,
+                      onChanged: (query) {
+                        setState(() => _searchQuery = query);
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    StudentsFilterChips(
+                      selectedFilter: _selectedFilter,
+                      onSelected: (filter) {
+                        setState(() => _selectedFilter = filter);
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    Expanded(
+                      child: StudentsList(
+                        students: _filteredStudents(value),
+                        physics: const BouncingScrollPhysics(),
+                        emptyMessage:
+                            'Nenhum aluno encontrado para esta busca/filtro.',
+                        onStudentTap: (student) {
+                          context.push('/alunos/${student.id}', extra: student);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                AsyncError() => Center(
+                  child: Text(
+                    'Não foi possível carregar os alunos.',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+                _ => const Center(child: CircularProgressIndicator()),
+              },
+            ),
           ),
-        ),
+        ],
       ),
-      bottomNavigationBar: const BottomBar(currentIndex: 1),
+      bottomNavigationBar: const BottomBar(currentIndex: 0),
     );
   }
 }

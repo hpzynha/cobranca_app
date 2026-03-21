@@ -7,166 +7,170 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class BottomBar extends StatelessWidget {
+  /// Índices: 0 = Alunos, 1 = + (add), 2 = Relatórios.
+  /// Passe -1 para nenhum item ativo (ex: Config page).
   const BottomBar({required this.currentIndex, super.key});
 
   final int currentIndex;
 
-  static const _centerButtonSize = 54.0;
-  static const _centerButtonTopOffset = -14.0;
-
   @override
   Widget build(BuildContext context) {
     final isCompact = AppResponsive.screenWidth(context) < 375;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
-      margin: EdgeInsets.fromLTRB(12, 0, 12, isCompact ? 12 : 16),
-      child: Stack(
-        clipBehavior: Clip.none,
-        alignment: Alignment.bottomCenter,
-        children: [
-          _buildNavContainer(context, isCompact),
-          Positioned(
-            top: isCompact ? -12 : _centerButtonTopOffset,
-            child: _buildCenterButton(context, isCompact),
-          ),
-        ],
-      ),
-    );
-  }
+    final bgColor = isDark
+        ? AppColors.bottomBarDark.withValues(alpha: 0.95)
+        : Colors.white.withValues(alpha: 0.9);
+    final borderColor = isDark
+        ? AppColors.borderDark.withValues(alpha: 0.8)
+        : Colors.white.withValues(alpha: 0.4);
+    final shadowColor =
+        Colors.black.withValues(alpha: isDark ? 0.40 : 0.10);
 
-  Widget _buildNavContainer(BuildContext context, bool isCompact) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(28),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-        child: Container(
-          height: isCompact ? 72 : 78,
-          padding: EdgeInsets.symmetric(horizontal: isCompact ? 8 : 12),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.9),
-            borderRadius: BorderRadius.circular(28),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.06),
-                blurRadius: 30,
-                offset: const Offset(0, 10),
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(14, 0, 14, isCompact ? 10 : 14),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(26),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: Container(
+              decoration: BoxDecoration(
+                color: bgColor,
+                borderRadius: BorderRadius.circular(26),
+                border: Border.all(color: borderColor),
+                boxShadow: [
+                  BoxShadow(
+                    color: shadowColor,
+                    blurRadius: 24,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
               ),
-            ],
-            border: Border.all(color: Colors.white.withValues(alpha: 0.4)),
-          ),
-          child: Row(
-            children: [
-              _buildItem(
-                context: context,
-                index: 0,
-                icon: Icons.home_outlined,
-                label: AppStrings.navHome,
-                isCompact: isCompact,
+              padding: EdgeInsets.symmetric(
+                horizontal: isCompact ? 16 : 24,
+                vertical: isCompact ? 10 : 12,
               ),
-              _buildItem(
-                context: context,
-                index: 1,
-                icon: Icons.groups_2_outlined,
-                label: AppStrings.navStudents,
-                isCompact: isCompact,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _NavItem(
+                    icon: Icons.groups_2_outlined,
+                    label: AppStrings.navStudents,
+                    isActive: currentIndex == 0,
+                    isDark: isDark,
+                    onTap: () => context.go('/alunos'),
+                    isCompact: isCompact,
+                  ),
+                  _FabButton(
+                    isCompact: isCompact,
+                    onTap: () => context.go('/adicionar'),
+                  ),
+                  _NavItem(
+                    icon: Icons.bar_chart_outlined,
+                    label: AppStrings.navReports,
+                    isActive: currentIndex == 2,
+                    isDark: isDark,
+                    onTap: () => context.go('/relatorios'),
+                    isCompact: isCompact,
+                  ),
+                ],
               ),
-              const Spacer(),
-              _buildItem(
-                context: context,
-                index: 3,
-                icon: Icons.bar_chart_outlined,
-                label: AppStrings.navReports,
-                isCompact: isCompact,
-              ),
-              _buildItem(
-                context: context,
-                index: 4,
-                icon: Icons.settings_outlined,
-                label: AppStrings.navSettings,
-                isCompact: isCompact,
-              ),
-            ],
+            ),
           ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildItem({
-    required BuildContext context,
-    required int index,
-    required IconData icon,
-    required String label,
-    required bool isCompact,
-  }) {
-    final isActive = currentIndex == index;
-    final color = isActive ? AppColors.primary : AppColors.bottomBarInactive;
-    final labelSize = AppResponsive.fontSize(
-      context,
-      isCompact ? 11 : 12,
-      min: 0.96,
-      max: 1.08,
-    );
+class _NavItem extends StatelessWidget {
+  const _NavItem({
+    required this.icon,
+    required this.label,
+    required this.isActive,
+    required this.isDark,
+    required this.onTap,
+    required this.isCompact,
+  });
 
-    return Expanded(
-      child: InkWell(
-        borderRadius: BorderRadius.circular(18),
-        onTap: () => _onTap(context, index),
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: isCompact ? 8 : 10),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: isCompact ? 22 : 26, color: color),
-              SizedBox(height: isCompact ? 2 : 4),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: labelSize,
-                  fontWeight: FontWeight.w600,
-                  color: color,
-                ),
-              ),
-            ],
-          ),
+  final IconData icon;
+  final String label;
+  final bool isActive;
+  final bool isDark;
+  final VoidCallback onTap;
+  final bool isCompact;
+
+  @override
+  Widget build(BuildContext context) {
+    final activeColor =
+        isDark ? AppColors.primaryOnDark : AppColors.primary;
+    final inactiveColor = isDark
+        ? const Color(0xFF4a4a62)
+        : AppColors.bottomBarInactive;
+    final color = isActive ? activeColor : inactiveColor;
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(16),
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: isCompact ? 12 : 16,
+          vertical: 4,
         ),
-      ),
-    );
-  }
-
-  Widget _buildCenterButton(BuildContext context, bool isCompact) {
-    final buttonSize = isCompact ? 50.0 : _centerButtonSize;
-
-    return GestureDetector(
-      onTap: () => _onTap(context, 2),
-      child: Container(
-        width: buttonSize,
-        height: buttonSize,
-        decoration: const BoxDecoration(
-          color: AppColors.primary,
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primaryShadow,
-              blurRadius: 20,
-              offset: Offset(0, 10),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: isCompact ? 22 : 24, color: color),
+            const SizedBox(height: 3),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: isCompact ? 10 : 11,
+                fontWeight: FontWeight.w600,
+                color: color,
+              ),
             ),
           ],
         ),
-        child: Icon(Icons.add, size: isCompact ? 24 : 26, color: Colors.white),
       ),
     );
   }
+}
 
-  void _onTap(BuildContext context, int index) {
-    final route = switch (index) {
-      0 => '/home',
-      1 => '/alunos',
-      2 => '/adicionar',
-      3 => '/relatorios',
-      4 => '/config',
-      _ => '/home',
-    };
-    context.go(route);
+class _FabButton extends StatelessWidget {
+  const _FabButton({required this.isCompact, required this.onTap});
+
+  final bool isCompact;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final size = isCompact ? 44.0 : 48.0;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          color: AppColors.primary,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: const [
+            BoxShadow(
+              color: AppColors.primaryShadow,
+              blurRadius: 12,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Icon(
+          Icons.add,
+          size: isCompact ? 22 : 24,
+          color: Colors.white,
+        ),
+      ),
+    );
   }
 }

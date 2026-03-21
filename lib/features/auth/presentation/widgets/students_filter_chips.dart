@@ -33,45 +33,49 @@ class StudentsFilterChips extends StatelessWidget {
   Widget build(BuildContext context) {
     final filters = StudentsFilter.values;
     final textSize = AppResponsive.fontSize(context, 14).clamp(13.0, 16.0);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final selectedBg =
+        isDark ? AppColors.textPrimaryDark : AppColors.textStrong;
+    final unselectedBg =
+        isDark ? AppColors.surfaceDark : const Color(0xFFF0F1F3);
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       physics: const BouncingScrollPhysics(),
       child: Row(
-        children:
-            filters.map((filter) {
-              final isSelected = filter == selectedFilter;
-              return Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: InkWell(
+        children: filters.map((filter) {
+          final isSelected = filter == selectedFilter;
+          return Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(999),
+              onTap: () => onSelected(filter),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                curve: Curves.easeOutCubic,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: isSelected ? selectedBg : unselectedBg,
                   borderRadius: BorderRadius.circular(999),
-                  onTap: () => onSelected(filter),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
-                    curve: Curves.easeOutCubic,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 18,
-                      vertical: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color:
-                          isSelected
-                              ? AppColors.textPrimary
-                              : const Color(0xFFF0F1F3),
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: Text(
-                      filter.label,
-                      style: TextStyle(
-                        fontSize: textSize,
-                        fontWeight: FontWeight.w600,
-                        color: isSelected ? Colors.white : AppColors.textMuted,
-                      ),
-                    ),
+                ),
+                child: Text(
+                  filter.label,
+                  style: TextStyle(
+                    fontSize: textSize,
+                    fontWeight: FontWeight.w600,
+                    color: isSelected
+                        ? (isDark ? AppColors.backgroundDark : Colors.white)
+                        : AppColors.textMuted,
                   ),
                 ),
-              );
-            }).toList(),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }

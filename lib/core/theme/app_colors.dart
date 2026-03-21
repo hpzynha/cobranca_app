@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  static const Color primary = Color(0xFFE45A2F);
+  static const Color primary = Color(0xFF5B4CF5);
   static const Color onPrimary = Color(0xFFFFFFFF);
 
   static const Color secondary = Color(0xFFF0F1F5);
@@ -31,5 +31,14 @@ class AppColors {
   static const Color textMuted = Color(0xFF6B7280);
   static const Color bottomBarInactive = Color(0xFF7C8292);
 
-  static const Color primaryShadow = Color(0x4DE45A2F);
+  static const Color primaryShadow = Color(0x4D3D2FD9);
+
+  // ── Dark palette ────────────────────────────────────────────
+  static const Color backgroundDark = Color(0xFF0F0F14);
+  static const Color surfaceDark = Color(0xFF1A1A28);
+  static const Color primaryOnDark = Color(0xFF7C6FF7);
+  static const Color textPrimaryDark = Color(0xFFE4E4F0);
+  static const Color textMutedDark = Color(0xFF8A8FA8);
+  static const Color borderDark = Color(0xFF252535);
+  static const Color bottomBarDark = Color(0xFF1E1E2E);
 }

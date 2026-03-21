@@ -93,7 +93,7 @@ class HomeScreen extends ConsumerWidget {
           ),
         ],
       ),
-      bottomNavigationBar: const BottomBar(currentIndex: 0),
+      bottomNavigationBar: const BottomBar(currentIndex: 0),  // 0 = Alunos
     );
   }
 }

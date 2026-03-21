@@ -59,7 +59,7 @@ class AppTheme {
           foregroundColor: AppColors.textPrimary,
           surfaceTintColor: Colors.transparent,
         ),
-        textTheme: _buildTextTheme(),
+        textTheme: _buildLightTextTheme(),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: AppColors.inputFill,
@@ -106,16 +106,87 @@ class AppTheme {
         ),
       );
 
-  static TextTheme _buildTextTheme() {
+  static ThemeData get darkTheme => ThemeData(
+        useMaterial3: true,
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: AppColors.backgroundDark,
+        colorScheme: const ColorScheme.dark(
+          primary: AppColors.primary,
+          onPrimary: AppColors.onPrimary,
+          secondary: AppColors.surfaceDark,
+          onSecondary: AppColors.textPrimaryDark,
+          tertiary: AppColors.surfaceDark,
+          onTertiary: AppColors.textPrimaryDark,
+          surface: AppColors.surfaceDark,
+          onSurface: AppColors.textPrimaryDark,
+          onSurfaceVariant: AppColors.textMutedDark,
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          foregroundColor: AppColors.textPrimaryDark,
+          surfaceTintColor: Colors.transparent,
+        ),
+        textTheme: _buildDarkTextTheme(),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: AppColors.surfaceDark,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: const BorderSide(color: AppColors.borderDark),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: const BorderSide(color: AppColors.borderDark),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: const BorderSide(color: AppColors.primary),
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: AppColors.onPrimary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
+          ),
+        ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+            foregroundColor: AppColors.textPrimaryDark,
+            side: const BorderSide(color: AppColors.borderDark),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
+          ),
+        ),
+        checkboxTheme: CheckboxThemeData(
+          fillColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return AppColors.primary;
+            }
+            return Colors.transparent;
+          }),
+          checkColor: WidgetStateProperty.all(AppColors.onPrimary),
+          side: const BorderSide(color: AppColors.borderDark),
+        ),
+      );
+
+  static TextTheme _buildLightTextTheme() {
+    final base = _fintechTextTheme.apply(
+      bodyColor: AppColors.textPrimary,
+      displayColor: AppColors.textPrimary,
+    );
     if (_useGoogleFonts) {
-      return GoogleFonts.interTextTheme(_fintechTextTheme).copyWith(
+      return GoogleFonts.interTextTheme(base).copyWith(
         bodyLarge: GoogleFonts.inter(color: AppColors.textPrimary),
         bodyMedium: GoogleFonts.inter(color: AppColors.textSecondary),
         bodySmall: GoogleFonts.inter(color: AppColors.textSecondary),
       );
     }
-
-    return _fintechTextTheme.copyWith(
+    return base.copyWith(
       bodyLarge: const TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w400,
@@ -133,6 +204,40 @@ class AppTheme {
         fontWeight: FontWeight.w400,
         height: 1.4,
         color: AppColors.textSecondary,
+      ),
+    );
+  }
+
+  static TextTheme _buildDarkTextTheme() {
+    final base = _fintechTextTheme.apply(
+      bodyColor: AppColors.textPrimaryDark,
+      displayColor: AppColors.textPrimaryDark,
+    );
+    if (_useGoogleFonts) {
+      return GoogleFonts.interTextTheme(base).copyWith(
+        bodyLarge: GoogleFonts.inter(color: AppColors.textPrimaryDark),
+        bodyMedium: GoogleFonts.inter(color: AppColors.textPrimaryDark),
+        bodySmall: GoogleFonts.inter(color: AppColors.textMutedDark),
+      );
+    }
+    return base.copyWith(
+      bodyLarge: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+        height: 1.45,
+        color: AppColors.textPrimaryDark,
+      ),
+      bodyMedium: const TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        height: 1.45,
+        color: AppColors.textPrimaryDark,
+      ),
+      bodySmall: const TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w400,
+        height: 1.4,
+        color: AppColors.textMutedDark,
       ),
     );
   }

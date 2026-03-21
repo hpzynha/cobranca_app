@@ -215,6 +215,8 @@ class _HomeHeaderState extends ConsumerState<HomeHeader> {
     ).then((value) async {
       if (!context.mounted) return;
       switch (value) {
+        case 'profile':
+          context.push('/perfil');
         case 'config':
           context.push('/config');
         case 'signout':

@@ -5,6 +5,7 @@ import 'package:app_cobranca/features/auth/presentation/pages/alunos_page.dart';
 import 'package:app_cobranca/features/auth/presentation/pages/email_verification_page.dart';
 import 'package:app_cobranca/features/auth/presentation/pages/config_page.dart';
 import 'package:app_cobranca/features/auth/presentation/pages/home_screen.dart';
+import 'package:app_cobranca/features/auth/presentation/pages/perfil_page.dart';
 import 'package:app_cobranca/features/auth/presentation/pages/student_details_page.dart';
 import 'package:app_cobranca/features/auth/presentation/pages/relatorios_page.dart';
 import 'package:flutter/material.dart';
@@ -86,6 +87,7 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const RelatoriosPage(),
     ),
     GoRoute(path: '/config', builder: (context, state) => const ConfigPage()),
+    GoRoute(path: '/perfil', builder: (context, state) => const PerfilPage()),
   ],
 );
 

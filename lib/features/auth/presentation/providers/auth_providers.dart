@@ -37,3 +37,13 @@ final checkEmailVerificationUseCaseProvider =
 final signOutUseCaseProvider = Provider<SignOutUseCase>((ref) {
   return SignOutUseCase(ref.watch(authRepositoryProvider));
 });
+
+final currentUserNameProvider = Provider<String>((ref) {
+  final user = Supabase.instance.client.auth.currentUser;
+  final fullName = user?.userMetadata?['full_name'] as String?;
+  if (fullName != null && fullName.trim().isNotEmpty) {
+    return fullName.trim().split(' ').first;
+  }
+  final email = user?.email ?? '';
+  return email.split('@').first;
+});

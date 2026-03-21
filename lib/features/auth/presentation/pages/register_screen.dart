@@ -4,7 +4,6 @@ import 'package:app_cobranca/features/auth/presentation/controllers/auth_control
 import 'package:app_cobranca/features/auth/presentation/providers/sign_up_notifier.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/social_auth_button.dart';
-import 'package:app_cobranca/features/auth/presentation/widgets/tween_animation_builder_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -18,7 +17,6 @@ class RegisterScreen extends ConsumerStatefulWidget {
 
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
-
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -46,21 +44,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     result.whenOrNull(
       data: (data) {
-        if (data == null) {
-          return;
-        }
-
+        if (data == null) return;
         if (data.status == SignUpStatus.requiresEmailVerification) {
           context.go('/email-verification', extra: data.email);
           return;
         }
-
         context.go('/login');
       },
       error: (error, _) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(error.toString())));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(error.toString())));
       },
     );
   }
@@ -79,108 +72,285 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final state = ref.watch(signUpNotifierProvider);
     final isLoading = state.isLoading;
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? AppColors.backgroundDark : Colors.white;
+    final backBtnBg =
+        isDark ? const Color(0xFF1A1A28) : const Color(0xFFF0F1F5);
+    final backIconColor =
+        isDark ? AppColors.textPrimaryDark : const Color(0xFF1A1A1A);
+    final titleColor = backIconColor;
+    final heroBorderColor =
+        isDark ? const Color(0xFF1A1A28) : const Color(0xFFF0F1F5);
+    final dividerColor =
+        isDark ? const Color(0xFF252535) : const Color(0xFFE8EAF0);
+    final footerColor =
+        isDark ? const Color(0xFF5a5a72) : const Color(0xFF9CA3AF);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () => context.pop(),
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: AppColors.textSecondary,
-          ),
-        ),
-      ),
+      backgroundColor: bgColor,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Form(
-            key: _formKey,
-            child: ListView(
-              children: [
-                const SizedBox(height: 80),
-                const AnimatedLogoRow(),
-                const SizedBox(height: 8),
-                const Text(
-                  'Crie sua conta e comece a automatizar.',
-                  style: TextStyle(color: AppColors.textSecondary),
-                ),
-                const SizedBox(height: 40),
-                AuthTextField(
-                  label: 'Nome completo',
-                  controller: _nameController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Digite seu nome';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                AuthTextField(
-                  label: 'Email',
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Digite seu email';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                AuthTextField(
-                  label: 'Senha',
-                  controller: _passwordController,
-                  isPassword: true,
-                  validator: (value) {
-                    if (value == null || value.length < 6) {
-                      return 'Senha deve ter pelo menos 6 caracteres';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                AuthTextField(
-                  label: 'Confirmar senha',
-                  controller: _confirmPasswordController,
-                  isPassword: true,
-                ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton(
-                    onPressed: isLoading ? null : _submit,
-                    child: isLoading
-                        ? const CircularProgressIndicator(
-                            color: AppColors.onPrimary,
-                          )
-                        : const Text(
-                            'Criar Conta',
-                            style: TextStyle(color: AppColors.onPrimary),
+        child: Column(
+          children: [
+            // ── Top bar ──────────────────────────────────────
+            Container(
+              height: 52,
+              color: bgColor,
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => context.pop(),
+                    child: Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: backBtnBg,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(
+                        Icons.arrow_back_rounded,
+                        size: 18,
+                        color: backIconColor,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    'Criar conta',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: titleColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // ── Body ─────────────────────────────────────────
+            Expanded(
+              child: SingleChildScrollView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Hero
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 14),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  width: 42,
+                                  height: 42,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary
+                                        .withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const Icon(
+                                    Icons.person_add_outlined,
+                                    color: AppColors.primary,
+                                    size: 22,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Crie sua conta',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w800,
+                                        color: titleColor,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 1),
+                                    const Text(
+                                      'Comece a automatizar suas cobranças.',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: Color(0xFF6B7280),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            Divider(
+                              height: 1,
+                              thickness: 1,
+                              color: heroBorderColor,
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Campos
+                      AuthTextField(
+                        label: 'Nome completo',
+                        hint: 'Ex: Maria Silva',
+                        controller: _nameController,
+                        suffixIcon: Icons.person_outline_rounded,
+                        textInputAction: TextInputAction.next,
+                        validator: (v) {
+                          if (v == null || v.isEmpty) {
+                            return 'Digite seu nome';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      AuthTextField(
+                        label: 'E-mail',
+                        hint: 'seu@email.com',
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        suffixIcon: Icons.mail_outline_rounded,
+                        textInputAction: TextInputAction.next,
+                        validator: (v) {
+                          if (v == null || v.isEmpty) {
+                            return 'Digite seu e-mail';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      AuthTextField(
+                        label: 'Senha',
+                        hint: 'Mín. 8 caracteres',
+                        controller: _passwordController,
+                        isPassword: true,
+                        textInputAction: TextInputAction.next,
+                        validator: (v) {
+                          if (v == null || v.length < 6) {
+                            return 'Senha deve ter pelo menos 6 caracteres';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      AuthTextField(
+                        label: 'Confirmar senha',
+                        hint: 'Repita a senha',
+                        controller: _confirmPasswordController,
+                        isPassword: true,
+                        textInputAction: TextInputAction.done,
+                      ),
+                      const SizedBox(height: 18),
+
+                      // Botão cadastrar
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: FilledButton(
+                          onPressed: isLoading ? null : _submit,
+                          style: FilledButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            disabledBackgroundColor:
+                                AppColors.primary.withValues(alpha: 0.6),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
                           ),
+                          child: isLoading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : const Text(
+                                  'Criar conta',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Divider
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Divider(
+                              color: dividerColor,
+                              thickness: 1,
+                            ),
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 12),
+                            child: Text(
+                              'ou',
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: Color(0xFF9CA3AF),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Divider(
+                              color: dividerColor,
+                              thickness: 1,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Google
+                      SocialAuthButton(
+                        text: 'Continuar com Google',
+                        logoPath: 'assets/images/google_logo.svg',
+                        onPressed: () =>
+                            _authController.signInWithGoogle(context),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Footer
+                      Center(
+                        child: GestureDetector(
+                          onTap: () => context.pop(),
+                          child: RichText(
+                            text: TextSpan(
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: footerColor,
+                              ),
+                              children: const [
+                                TextSpan(text: 'Já tem conta? '),
+                                TextSpan(
+                                  text: 'Entrar',
+                                  style: TextStyle(
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 40),
-                const Row(
-                  children: [
-                    Expanded(child: Divider()),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12),
-                      child: Text('Ou'),
-                    ),
-                    Expanded(child: Divider()),
-                  ],
-                ),
-                const SizedBox(height: 30),
-                SocialAuthButton(
-                  text: 'Continuar com Google',
-                  logoPath: 'assets/images/google_logo.svg',
-                  onPressed: () => _authController.signInWithGoogle(context),
-                ),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );

@@ -113,6 +113,7 @@ class StudentsList extends StatelessWidget {
       );
     } else {
       content = ListView.separated(
+        padding: EdgeInsets.zero,
         physics: physics,
         shrinkWrap: shrinkWrap,
         itemBuilder: (context, index) {
@@ -143,7 +144,7 @@ class StudentsList extends StatelessWidget {
           style: AppTextStyles.heading.copyWith(fontSize: titleSize ?? 22),
         ),
         const SizedBox(height: AppSpacing.md),
-        content,
+        Expanded(child: content),
       ],
     );
   }

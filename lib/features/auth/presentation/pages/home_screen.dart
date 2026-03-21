@@ -1,7 +1,6 @@
 import 'package:app_cobranca/core/constants/app_strings.dart';
 import 'package:app_cobranca/core/theme/app_responsive.dart';
 import 'package:app_cobranca/core/theme/app_spacing.dart';
-import 'package:app_cobranca/core/theme/app_text_styles.dart';
 import 'package:app_cobranca/features/auth/presentation/providers/auth_providers.dart';
 import 'package:app_cobranca/features/auth/presentation/providers/student_providers.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/bottom_bar.dart';
@@ -73,22 +72,18 @@ class HomeScreen extends ConsumerWidget {
                   OverdueAlertCard(overdueCount: overdueCount, onTap: () {}),
                   SizedBox(height: sectionSpacing),
                 ],
-                Text(
-                  'Alunos',
-                  style: AppTextStyles.heading.copyWith(fontSize: titleSize),
-                ),
-                const SizedBox(height: AppSpacing.md),
               ],
             ),
           ),
 
-          // ── Lista de alunos (única parte que scrola) ───────
+          // ── Lista de alunos (título + cards scrollam juntos) ─
           Expanded(
             child: Padding(
               padding: EdgeInsets.fromLTRB(horizontalPadding, 0, horizontalPadding, bottomContentPadding),
               child: StudentsList(
                 students: students,
-                showTitle: false,
+                showTitle: true,
+                titleSize: titleSize,
                 physics: const BouncingScrollPhysics(),
                 onStudentTap: (s) =>
                     context.push('/alunos/${s.id}', extra: s),

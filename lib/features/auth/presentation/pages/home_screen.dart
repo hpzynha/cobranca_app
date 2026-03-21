@@ -1,6 +1,7 @@
 import 'package:app_cobranca/core/constants/app_strings.dart';
 import 'package:app_cobranca/core/theme/app_responsive.dart';
 import 'package:app_cobranca/core/theme/app_spacing.dart';
+import 'package:app_cobranca/core/theme/app_text_styles.dart';
 import 'package:app_cobranca/features/auth/presentation/providers/auth_providers.dart';
 import 'package:app_cobranca/features/auth/presentation/providers/student_providers.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/bottom_bar.dart';
@@ -32,68 +33,71 @@ class HomeScreen extends ConsumerWidget {
     final balance = ref.watch(monthlyBalanceProvider).valueOrNull ?? 0.0;
     final userName = ref.watch(currentUserNameProvider);
 
+    final titleSize = AppResponsive.fontSize(context, isCompact ? 16 : 18);
+    final students = studentsAsync.valueOrNull ?? [];
+    final overdueCount =
+        students.where((s) => s.status == StudentPaymentStatus.overdue).length;
+
     return Scaffold(
       extendBody: true,
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // ── Header fixo ───────────────────────────────────
           HomeHeader(balance: balance, userName: userName),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(
-                horizontalPadding,
-                sectionSpacing,
-                horizontalPadding,
-                bottomContentPadding,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  switch (studentsAsync) {
-                    AsyncData(:final value) => _HomeStatusSection(
-                      students: value,
-                      cardSpacing: cardSpacing,
-                    ),
-                    AsyncError() => Text(
-                      'Não foi possível carregar os indicadores de alunos.',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    _ => const Center(child: CircularProgressIndicator()),
-                  },
 
+          // ── Seção fixa (status + alerta + título) ─────────
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+              horizontalPadding,
+              sectionSpacing,
+              horizontalPadding,
+              0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                switch (studentsAsync) {
+                  AsyncData(:final value) => _HomeStatusSection(
+                    students: value,
+                    cardSpacing: cardSpacing,
+                  ),
+                  AsyncError() => Text(
+                    'Não foi possível carregar os indicadores de alunos.',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  _ => const Center(child: CircularProgressIndicator()),
+                },
+                SizedBox(height: sectionSpacing),
+                if (overdueCount > 0) ...[
+                  OverdueAlertCard(overdueCount: overdueCount, onTap: () {}),
                   SizedBox(height: sectionSpacing),
-
-                  if (studentsAsync.hasValue)
-                    OverdueAlertCard(
-                      overdueCount:
-                          studentsAsync.value!
-                              .where(
-                                (student) =>
-                                    student.status == StudentPaymentStatus.overdue,
-                              )
-                              .length,
-                      onTap: () {
-                        // navegar para lista de atrasados
-                      },
-                    ),
-
-                  SizedBox(height: sectionSpacing),
-                  switch (studentsAsync) {
-                    AsyncData(:final value) => StudentsDashboardCard(
-                      students: value,
-                      onStudentTap: (student) {
-                        context.push('/alunos/${student.id}', extra: student);
-                      },
-                    ),
-                    AsyncError() => const StudentsDashboardCard(students: []),
-                    _ => const StudentsDashboardCard(students: []),
-                  },
                 ],
+                Text(
+                  'Alunos',
+                  style: AppTextStyles.heading.copyWith(fontSize: titleSize),
+                ),
+                const SizedBox(height: AppSpacing.md),
+              ],
+            ),
+          ),
+
+          // ── Lista de alunos (única parte que scrola) ───────
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(horizontalPadding, 0, horizontalPadding, bottomContentPadding),
+              child: StudentsList(
+                students: students,
+                showTitle: false,
+                physics: const BouncingScrollPhysics(),
+                onStudentTap: (s) =>
+                    context.push('/alunos/${s.id}', extra: s),
               ),
             ),
           ),
         ],
       ),
-      bottomNavigationBar: const BottomBar(currentIndex: 0),  // 0 = Alunos
+      bottomNavigationBar: const BottomBar(currentIndex: 0),
     );
   }
 }

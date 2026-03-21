@@ -1,4 +1,5 @@
 import 'package:app_cobranca/core/theme/app_colors.dart';
+import 'package:app_cobranca/core/theme/app_responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -32,21 +33,21 @@ class VenzzaAppBar extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   alignment: Alignment.center,
-                  child: const Text(
+                  child: Text(
                     'V',
                     style: TextStyle(
                       color: AppColors.primary,
-                      fontSize: 13,
+                      fontSize: AppResponsive.fontSize(context, 12),
                       fontWeight: FontWeight.w800,
                     ),
                   ),
                 ),
                 const SizedBox(width: 8),
-                const Text(
+                Text(
                   'Venzza',
                   style: TextStyle(
                     color: AppColors.primary,
-                    fontSize: 15,
+                    fontSize: AppResponsive.fontSize(context, 13),
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -58,7 +59,7 @@ class VenzzaAppBar extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              fontSize: 17,
+              fontSize: AppResponsive.fontSize(context, 15),
               fontWeight: FontWeight.w700,
               color: isDark ? AppColors.textPrimaryDark : AppColors.textStrong,
             ),

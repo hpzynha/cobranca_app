@@ -163,9 +163,9 @@ class _PerfilPageState extends ConsumerState<PerfilPage> {
                             )
                           : Text(
                               _initials,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 28,
+                                fontSize: AppResponsive.fontSize(context, 24),
                                 fontWeight: FontWeight.w800,
                               ),
                             ),
@@ -177,7 +177,7 @@ class _PerfilPageState extends ConsumerState<PerfilPage> {
                         Text(
                           _fullName.isNotEmpty ? _fullName : 'Sem nome',
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: AppResponsive.fontSize(context, 18),
                             fontWeight: FontWeight.w800,
                             color: textPrimary,
                           ),
@@ -204,7 +204,7 @@ class _PerfilPageState extends ConsumerState<PerfilPage> {
                     const SizedBox(height: 4),
                     Text(
                       _email,
-                      style: TextStyle(fontSize: 13, color: textMuted),
+                      style: TextStyle(fontSize: AppResponsive.fontSize(context, 12), color: textMuted),
                     ),
                   ],
                 ),
@@ -347,7 +347,7 @@ class _StatCard extends StatelessWidget {
           Text(
             value,
             style: TextStyle(
-              fontSize: 20,
+              fontSize: AppResponsive.fontSize(context, 18),
               fontWeight: FontWeight.w800,
               color: textPrimary,
             ),
@@ -403,7 +403,7 @@ class _AccountTile extends StatelessWidget {
                   child: Text(
                     label,
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: AppResponsive.fontSize(context, 13),
                       fontWeight: FontWeight.w500,
                       color: textPrimary,
                     ),

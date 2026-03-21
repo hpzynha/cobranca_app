@@ -9,50 +9,50 @@ class AppTextStyles {
   // Colors removed from non-semantic styles so they inherit from the theme
   // (enabling dark mode text color propagation via DefaultTextStyle).
   static const TextStyle heading = TextStyle(
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: FontWeight.w700,
     letterSpacing: -0.25,
   );
 
   static const TextStyle body = TextStyle(
-    fontSize: 16,
+    fontSize: 14,
     height: 1.45,
   );
 
   // Intentional white — used on colored (primary) backgrounds.
   static const TextStyle button = TextStyle(
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: FontWeight.w600,
     color: AppColors.onPrimary,
   );
 
   static const TextStyle dashboardSubtitle = TextStyle(
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: FontWeight.w500,
   );
 
   static const TextStyle dashboardAmount = TextStyle(
-    fontSize: 34,
+    fontSize: 28,
     fontWeight: FontWeight.w700,
     height: 1.08,
     fontFeatures: [FontFeature.tabularFigures()],
   );
 
   static const TextStyle dashboardCardNumber = TextStyle(
-    fontSize: 28,
+    fontSize: 22,
     fontWeight: FontWeight.w700,
     fontFeatures: [FontFeature.tabularFigures()],
   );
 
   static const TextStyle dashboardCardLabel = TextStyle(
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: FontWeight.w600,
     letterSpacing: 0.1,
   );
 
   // Intentional danger red — always semantic.
   static const TextStyle dashboardAlert = TextStyle(
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: FontWeight.w600,
     color: AppColors.danger,
   );

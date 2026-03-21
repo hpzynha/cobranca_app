@@ -61,15 +61,14 @@ class StudentsDashboardCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isCompact = AppResponsive.isCompact(context);
-    final titleSize = AppResponsive.fontSize(context, isCompact ? 20 : 22);
-    final listHeight = isCompact ? 320.0 : 340.0;
+    final titleSize = AppResponsive.fontSize(context, isCompact ? 16 : 18);
 
     return StudentsList(
       students: students,
       showTitle: true,
       titleSize: titleSize,
-      height: listHeight,
-      physics: const BouncingScrollPhysics(),
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       onStudentTap: onStudentTap,
     );
   }
@@ -107,7 +106,7 @@ class StudentsList extends StatelessWidget {
           emptyMessage,
           textAlign: TextAlign.center,
           style: AppTextStyles.body.copyWith(
-            fontSize: 15,
+            fontSize: 13,
             color: AppColors.textMuted,
           ),
         ),
@@ -169,10 +168,10 @@ class _StudentRowCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final maxWidth = MediaQuery.sizeOf(context).width;
     final isCompact = maxWidth < 370;
-    final nameSize = AppResponsive.fontSize(context, isCompact ? 15 : 16);
-    final amountSize = AppResponsive.fontSize(context, isCompact ? 15 : 16);
-    final dueSize = AppResponsive.fontSize(context, 12);
-    final initialsSize = AppResponsive.fontSize(context, 11.5);
+    final nameSize = AppResponsive.fontSize(context, isCompact ? 13 : 14);
+    final amountSize = AppResponsive.fontSize(context, isCompact ? 13 : 14);
+    final dueSize = AppResponsive.fontSize(context, 11);
+    final initialsSize = AppResponsive.fontSize(context, 10.5);
     final avatarRadius = isCompact ? 24.0 : 26.0;
 
     final colorScheme = Theme.of(context).colorScheme;
@@ -180,9 +179,9 @@ class _StudentRowCard extends StatelessWidget {
 
     return Material(
       color: colorScheme.surface,
-      borderRadius: BorderRadius.circular(28),
+      borderRadius: BorderRadius.circular(16),
       child: InkWell(
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(16),
         onTap: onTap,
         child: Container(
           padding: EdgeInsets.symmetric(
@@ -190,14 +189,28 @@ class _StudentRowCard extends StatelessWidget {
             vertical: 14,
           ),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(28),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.06),
-                blurRadius: 16,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            color: colorScheme.surface,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: isDark
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.25),
+                      blurRadius: 16,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
+                : [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.07),
+                      blurRadius: 12,
+                      offset: const Offset(0, 2),
+                    ),
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 3,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
           ),
           child: Row(
             children: [
@@ -276,7 +289,7 @@ class _StatusPill extends StatelessWidget {
         status.label,
         style: AppTextStyles.dashboardAlert.copyWith(
           color: status.foreground,
-          fontSize: 12,
+          fontSize: 11,
         ),
       ),
     );

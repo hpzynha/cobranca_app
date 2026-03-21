@@ -13,31 +13,31 @@ class AppTheme {
   }
 
   static final TextTheme _fintechTextTheme = const TextTheme(
-    displayLarge: TextStyle(fontSize: 40, fontWeight: FontWeight.w700),
-    displayMedium: TextStyle(fontSize: 34, fontWeight: FontWeight.w700),
-    headlineLarge: TextStyle(fontSize: 28, fontWeight: FontWeight.w700),
-    headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
-    titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-    titleMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-    titleSmall: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+    displayLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.w700),
+    displayMedium: TextStyle(fontSize: 26, fontWeight: FontWeight.w700),
+    headlineLarge: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+    headlineMedium: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+    titleLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+    titleMedium: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+    titleSmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
     bodyLarge: TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.w400,
-      height: 1.45,
-    ),
-    bodyMedium: TextStyle(
       fontSize: 14,
       fontWeight: FontWeight.w400,
       height: 1.45,
     ),
-    bodySmall: TextStyle(
+    bodyMedium: TextStyle(
       fontSize: 12,
+      fontWeight: FontWeight.w400,
+      height: 1.45,
+    ),
+    bodySmall: TextStyle(
+      fontSize: 11,
       fontWeight: FontWeight.w400,
       height: 1.4,
     ),
-    labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-    labelMedium: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-    labelSmall: TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+    labelLarge: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+    labelMedium: TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+    labelSmall: TextStyle(fontSize: 10, fontWeight: FontWeight.w500),
   );
 
   static ThemeData get lightTheme => ThemeData(
@@ -188,19 +188,19 @@ class AppTheme {
     }
     return base.copyWith(
       bodyLarge: const TextStyle(
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: FontWeight.w400,
         height: 1.45,
         color: AppColors.textPrimary,
       ),
       bodyMedium: const TextStyle(
-        fontSize: 14,
+        fontSize: 12,
         fontWeight: FontWeight.w400,
         height: 1.45,
         color: AppColors.textSecondary,
       ),
       bodySmall: const TextStyle(
-        fontSize: 12,
+        fontSize: 11,
         fontWeight: FontWeight.w400,
         height: 1.4,
         color: AppColors.textSecondary,
@@ -222,19 +222,19 @@ class AppTheme {
     }
     return base.copyWith(
       bodyLarge: const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        height: 1.45,
-        color: AppColors.textPrimaryDark,
-      ),
-      bodyMedium: const TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.w400,
         height: 1.45,
         color: AppColors.textPrimaryDark,
       ),
-      bodySmall: const TextStyle(
+      bodyMedium: const TextStyle(
         fontSize: 12,
+        fontWeight: FontWeight.w400,
+        height: 1.45,
+        color: AppColors.textPrimaryDark,
+      ),
+      bodySmall: const TextStyle(
+        fontSize: 11,
         fontWeight: FontWeight.w400,
         height: 1.4,
         color: AppColors.textMutedDark,

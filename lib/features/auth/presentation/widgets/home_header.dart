@@ -1,4 +1,5 @@
 import 'package:app_cobranca/core/theme/app_colors.dart';
+import 'package:app_cobranca/core/theme/app_responsive.dart';
 import 'package:app_cobranca/core/theme/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -259,11 +260,11 @@ class _HomeHeaderState extends ConsumerState<HomeHeader> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             alignment: Alignment.center,
-                            child: const Text(
+                            child: Text(
                               'V',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 13,
+                                fontSize: AppResponsive.fontSize(context, 12),
                                 fontWeight: FontWeight.w800,
                               ),
                             ),
@@ -273,7 +274,7 @@ class _HomeHeaderState extends ConsumerState<HomeHeader> {
                             'Venzza',
                             style: TextStyle(
                               color: Colors.white.withValues(alpha: 0.9),
-                              fontSize: 15,
+                              fontSize: AppResponsive.fontSize(context, 13),
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -298,9 +299,9 @@ class _HomeHeaderState extends ConsumerState<HomeHeader> {
                         alignment: Alignment.center,
                         child: Text(
                           _initials,
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Colors.white,
-                            fontSize: 13,
+                            fontSize: AppResponsive.fontSize(context, 11),
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -313,7 +314,7 @@ class _HomeHeaderState extends ConsumerState<HomeHeader> {
                   'Previsão de receita mensal',
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.65),
-                    fontSize: 12,
+                    fontSize: AppResponsive.fontSize(context, 11),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -325,18 +326,18 @@ class _HomeHeaderState extends ConsumerState<HomeHeader> {
                       child: _balanceVisible
                           ? Text(
                               currency.format(widget.balance),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 30,
+                                fontSize: AppResponsive.fontSize(context, 26),
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: -0.5,
                               ),
                             )
-                          : const Text(
+                          : Text(
                               '••••••',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 26,
+                                fontSize: AppResponsive.fontSize(context, 22),
                                 fontWeight: FontWeight.w700,
                                 letterSpacing: 4,
                               ),

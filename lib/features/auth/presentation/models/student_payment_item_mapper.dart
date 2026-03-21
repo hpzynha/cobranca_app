@@ -27,6 +27,7 @@ extension StudentPaymentItemMapper on List<Student> {
         dueDay: student.dueDay,
         nextDueDate: student.nextDueDate,
         lastPaymentDate: student.lastPaymentDate,
+        isActive: student.isActive,
       );
     }).toList();
   }

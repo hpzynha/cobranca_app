@@ -11,6 +11,7 @@ class StudentModel {
     this.lastPaymentDate,
     this.photoUrl,
     this.paymentStatusCode,
+    this.isActive = true,
   });
 
   final String id;
@@ -22,6 +23,7 @@ class StudentModel {
   final DateTime? lastPaymentDate;
   final String? photoUrl;
   final String? paymentStatusCode;
+  final bool isActive;
 
   factory StudentModel.fromSupabaseMap(Map<String, dynamic> map) {
     final nextDueDateRaw = map['next_due_date']?.toString();
@@ -43,6 +45,7 @@ class StudentModel {
               : DateTime.parse(lastPaymentDateRaw),
       photoUrl: map['photo_url'] as String?,
       paymentStatusCode: map['payment_status']?.toString(),
+      isActive: (map['is_active'] as bool?) ?? true,
     );
   }
 
@@ -70,6 +73,7 @@ class StudentModel {
       lastPaymentDate: lastPaymentDate,
       photoUrl: photoUrl,
       paymentStatusCode: paymentStatusCode,
+      isActive: isActive,
     );
   }
 }

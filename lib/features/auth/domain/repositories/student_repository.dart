@@ -6,6 +6,9 @@ abstract class StudentRepository {
   Future<Result<void>> createStudent(StudentRegistrationInput input);
   Future<Result<List<Student>>> listStudents();
   Future<Result<void>> markStudentAsPaid({required String studentId});
+  Future<Result<void>> inactivateStudent({required String studentId});
+  Future<Result<void>> reactivateStudent({required String studentId});
+  Future<Result<void>> deleteStudent({required String studentId});
   Future<Result<({int expectedCents, int receivedCents, int pendingCents})>>
   getMonthlyReport(DateTime month);
 }

@@ -32,6 +32,7 @@ class StudentPaymentItem {
     this.dueDay,
     this.nextDueDate,
     this.lastPaymentDate,
+    this.isActive = true,
   });
 
   final String id;
@@ -46,6 +47,7 @@ class StudentPaymentItem {
   final int? dueDay;
   final DateTime? nextDueDate;
   final DateTime? lastPaymentDate;
+  final bool isActive;
 }
 
 class StudentsDashboardCard extends StatelessWidget {

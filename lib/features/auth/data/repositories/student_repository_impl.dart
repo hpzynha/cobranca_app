@@ -124,6 +124,57 @@ class StudentRepositoryImpl implements StudentRepository {
   }
 
   @override
+  Future<Result<void>> inactivateStudent({required String studentId}) async {
+    try {
+      await _remoteDataSource.inactivateStudent(studentId);
+      return Result.success(null);
+    } on PostgrestException catch (e) {
+      return Result.error(
+        Failure(
+          message: e.message.isNotEmpty ? e.message : 'Não foi possível inativar o aluno.',
+          code: e.code,
+        ),
+      );
+    } catch (_) {
+      return Result.error(const Failure(message: 'Sem conexão ou erro inesperado.'));
+    }
+  }
+
+  @override
+  Future<Result<void>> reactivateStudent({required String studentId}) async {
+    try {
+      await _remoteDataSource.reactivateStudent(studentId);
+      return Result.success(null);
+    } on PostgrestException catch (e) {
+      return Result.error(
+        Failure(
+          message: e.message.isNotEmpty ? e.message : 'Não foi possível reativar o aluno.',
+          code: e.code,
+        ),
+      );
+    } catch (_) {
+      return Result.error(const Failure(message: 'Sem conexão ou erro inesperado.'));
+    }
+  }
+
+  @override
+  Future<Result<void>> deleteStudent({required String studentId}) async {
+    try {
+      await _remoteDataSource.deleteStudent(studentId);
+      return Result.success(null);
+    } on PostgrestException catch (e) {
+      return Result.error(
+        Failure(
+          message: e.message.isNotEmpty ? e.message : 'Não foi possível deletar o aluno.',
+          code: e.code,
+        ),
+      );
+    } catch (_) {
+      return Result.error(const Failure(message: 'Sem conexão ou erro inesperado.'));
+    }
+  }
+
+  @override
   Future<Result<({int expectedCents, int receivedCents, int pendingCents})>>
   getMonthlyReport(DateTime month) async {
     try {

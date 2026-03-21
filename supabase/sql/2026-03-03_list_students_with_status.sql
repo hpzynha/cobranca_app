@@ -10,7 +10,8 @@ returns table (
   last_payment_date timestamptz,
   photo_url text,
   created_at timestamptz,
-  payment_status text
+  payment_status text,
+  is_active boolean
 )
 language sql
 security invoker
@@ -28,6 +29,7 @@ as $$
       s.last_payment_date,
       s.photo_url,
       s.created_at,
+      s.is_active,
       date_trunc('day', now())::date as today,
       case
         when s.next_due_date is null then null
@@ -42,6 +44,7 @@ as $$
       end as previous_due_date
     from public.students s
     where s.owner_id = auth.uid()
+      and s.is_active = true
   )
   select
     b.id,
@@ -64,7 +67,8 @@ as $$
       when b.today > b.next_due_date::date then 'overdue'
       when (b.next_due_date::date - b.today) <= 2 then 'due_soon'
       else 'pending'
-    end as payment_status
+    end as payment_status,
+    b.is_active
   from base b
   order by b.created_at desc;
 $$;

@@ -56,6 +56,33 @@ class StudentRemoteDataSource {
     );
   }
 
+  Future<void> inactivateStudent(String studentId) async {
+    final ownerId = _supabaseClient.auth.currentUser?.id;
+    await _supabaseClient
+        .from('students')
+        .update({'is_active': false})
+        .eq('id', studentId)
+        .eq('owner_id', ownerId ?? '');
+  }
+
+  Future<void> reactivateStudent(String studentId) async {
+    final ownerId = _supabaseClient.auth.currentUser?.id;
+    await _supabaseClient
+        .from('students')
+        .update({'is_active': true})
+        .eq('id', studentId)
+        .eq('owner_id', ownerId ?? '');
+  }
+
+  Future<void> deleteStudent(String studentId) async {
+    final ownerId = _supabaseClient.auth.currentUser?.id;
+    await _supabaseClient
+        .from('students')
+        .delete()
+        .eq('id', studentId)
+        .eq('owner_id', ownerId ?? '');
+  }
+
   Future<Map<String, dynamic>> getMonthlyReport(DateTime month) async {
     final monthStr =
         '${month.year}-${month.month.toString().padLeft(2, '0')}-01';

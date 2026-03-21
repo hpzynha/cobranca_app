@@ -9,6 +9,7 @@ class Student {
     this.lastPaymentDate,
     this.photoUrl,
     this.paymentStatusCode,
+    this.isActive = true,
   });
 
   final String id;
@@ -20,4 +21,5 @@ class Student {
   final DateTime? lastPaymentDate;
   final String? photoUrl;
   final String? paymentStatusCode;
+  final bool isActive;
 }

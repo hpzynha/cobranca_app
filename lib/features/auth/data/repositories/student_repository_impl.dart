@@ -65,6 +65,13 @@ class StudentRepositoryImpl implements StudentRepository {
     try {
       final students = await _remoteDataSource.fetchStudents();
       return Result.success(students.map((model) => model.toEntity()).toList());
+    } on AuthException {
+      return Result.error(
+        const Failure(
+          message: 'Sessão expirada. Faça login novamente.',
+          code: 'auth_error',
+        ),
+      );
     } on PostgrestException catch (e) {
       return Result.error(
         Failure(
@@ -78,7 +85,7 @@ class StudentRepositoryImpl implements StudentRepository {
     } catch (_) {
       return Result.error(
         const Failure(
-          message: 'Não foi possível carregar os alunos. Tente novamente.',
+          message: 'Sem conexão ou erro inesperado. Tente novamente.',
         ),
       );
     }
@@ -90,6 +97,13 @@ class StudentRepositoryImpl implements StudentRepository {
       await _remoteDataSource.markStudentAsPaid(studentId: studentId);
 
       return Result.success(null);
+    } on AuthException {
+      return Result.error(
+        const Failure(
+          message: 'Sessão expirada. Faça login novamente.',
+          code: 'auth_error',
+        ),
+      );
     } on PostgrestException catch (e) {
       return Result.error(
         Failure(
@@ -103,7 +117,7 @@ class StudentRepositoryImpl implements StudentRepository {
     } catch (_) {
       return Result.error(
         const Failure(
-          message: 'Não foi possível marcar o pagamento. Tente novamente.',
+          message: 'Sem conexão ou erro inesperado. Tente novamente.',
         ),
       );
     }

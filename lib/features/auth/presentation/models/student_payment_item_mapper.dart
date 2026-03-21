@@ -21,6 +21,7 @@ extension StudentPaymentItemMapper on List<Student> {
                 ? 'Sem vencimento definido'
                 : 'Venc. ${dueDateFormat.format(dueDate)}',
         amountLabel: currency.format(student.monthlyFeeCents / 100),
+        monthlyFeeCents: student.monthlyFeeCents,
         status: status,
         photoUrl: student.photoUrl,
         dueDay: student.dueDay,

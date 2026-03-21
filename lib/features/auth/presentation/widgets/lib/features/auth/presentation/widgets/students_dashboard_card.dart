@@ -26,6 +26,7 @@ class StudentPaymentItem {
     required this.whatsapp,
     required this.dueLabel,
     required this.amountLabel,
+    required this.monthlyFeeCents,
     required this.status,
     this.photoUrl,
     this.dueDay,
@@ -39,6 +40,7 @@ class StudentPaymentItem {
   final String whatsapp;
   final String dueLabel;
   final String amountLabel;
+  final int monthlyFeeCents;
   final StudentPaymentStatus status;
   final String? photoUrl;
   final int? dueDay;

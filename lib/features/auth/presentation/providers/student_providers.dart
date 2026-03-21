@@ -48,3 +48,8 @@ final studentPaymentItemsProvider = FutureProvider<List<StudentPaymentItem>>((
   final students = await ref.watch(studentsProvider.future);
   return students.toPaymentItems();
 });
+
+final monthlyBalanceProvider = FutureProvider<double>((ref) async {
+  final students = await ref.watch(studentsProvider.future);
+  return students.fold<double>(0, (sum, s) => sum + s.monthlyFeeCents / 100.0);
+});

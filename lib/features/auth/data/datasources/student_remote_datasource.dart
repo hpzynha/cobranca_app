@@ -19,13 +19,19 @@ class StudentRemoteDataSource {
     });
   }
 
-  Future<List<StudentModel>> fetchStudents() async {
+  Future<List<StudentModel>> fetchStudents({
+    int limit = 50,
+    int offset = 0,
+  }) async {
     final ownerId = _supabaseClient.auth.currentUser?.id;
     if (ownerId == null || ownerId.isEmpty) {
       throw const AuthException('Usuário não autenticado.');
     }
     try {
-      final response = await _supabaseClient.rpc('list_students_with_status');
+      final response = await _supabaseClient.rpc(
+        'list_students_with_status',
+        params: {'p_limit': limit, 'p_offset': offset},
+      );
       final rows = (response as List).cast<Map<String, dynamic>>();
       return rows.map(StudentModel.fromSupabaseMap).toList();
     } on PostgrestException {
@@ -35,7 +41,8 @@ class StudentRemoteDataSource {
             'id, owner_id, name, whatsapp, monthly_fee_cents, due_day, next_due_date, last_payment_date, photo_url, created_at',
           )
           .eq('owner_id', ownerId)
-          .order('created_at', ascending: false);
+          .order('created_at', ascending: false)
+          .range(offset, offset + limit - 1);
 
       final rows = (response as List).cast<Map<String, dynamic>>();
       return rows.map(StudentModel.fromSupabaseMap).toList();

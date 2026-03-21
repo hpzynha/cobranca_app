@@ -244,16 +244,11 @@ class _StudentDetailsPageState extends ConsumerState<StudentDetailsPage> {
                 ],
               ),
             ),
-            Text(currency.format(_amountFromLabel(student.amountLabel)), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 20)),
+            Text(currency.format(student.monthlyFeeCents / 100), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 20)),
           ],
         ),
       ),
     ];
-  }
-
-  double _amountFromLabel(String amountLabel) {
-    final normalized = amountLabel.replaceAll(RegExp(r'[^0-9,]'), '').replaceAll('.', '').replaceAll(',', '.');
-    return double.tryParse(normalized) ?? 0;
   }
 
   String _formatDueDate(StudentPaymentItem student) {

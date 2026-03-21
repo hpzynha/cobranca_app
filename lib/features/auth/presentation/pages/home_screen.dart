@@ -33,6 +33,7 @@ class HomeScreen extends ConsumerWidget {
     final sectionSpacing = AppResponsive.size(context, isCompact ? 14 : 16);
     final cardSpacing = isCompact ? AppSpacing.sm : 12.0;
     final studentsAsync = ref.watch(studentPaymentItemsProvider);
+    final balance = ref.watch(monthlyBalanceProvider).valueOrNull ?? 0.0;
 
     return Scaffold(
       extendBody: true,
@@ -49,7 +50,7 @@ class HomeScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: topSpacing),
-              const MonthlyBalanceHeader(amount: 4050.00),
+              MonthlyBalanceHeader(amount: balance),
               SizedBox(height: sectionSpacing),
 
               switch (studentsAsync) {

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:app_cobranca/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -11,10 +12,11 @@ import 'core/router/app_router.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('pt_BR');
+  await dotenv.load(fileName: '.env');
 
   await Supabase.initialize(
-    url: 'https://frwxnviutavcycklveex.supabase.co',
-    anonKey: 'sb_publishable_44kgQ12j75KTca88dMRmOg_DYzCyisN',
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
   runApp(const ProviderScope(child: MyApp()));
 }

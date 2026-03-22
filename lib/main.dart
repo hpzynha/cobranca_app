@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:app_cobranca/core/theme/app_theme.dart';
 import 'package:app_cobranca/core/theme/theme_provider.dart';
+import 'package:app_cobranca/features/notifications/presentation/providers/notification_providers.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,11 +12,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/router/app_router.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('pt_BR');
   await dotenv.load(fileName: '.env');
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL']!,
@@ -55,6 +60,9 @@ class _MyAppState extends ConsumerState<MyApp> {
         Supabase.instance.client.auth.onAuthStateChange.listen((data) {
       if (data.event == AuthChangeEvent.passwordRecovery) {
         appRouter.go('/reset-password');
+      }
+      if (data.event == AuthChangeEvent.signedIn) {
+        ref.read(fcmServiceProvider).registerToken();
       }
     });
   }

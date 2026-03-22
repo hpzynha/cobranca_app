@@ -143,6 +143,7 @@ class _AddPageState extends ConsumerState<AddPage> {
     );
     ref.invalidate(studentsProvider);
     ref.invalidate(studentPaymentItemsProvider);
+    ref.invalidate(monthlyReportProvider);
 
     _formKey.currentState?.reset();
     _nameController.clear();

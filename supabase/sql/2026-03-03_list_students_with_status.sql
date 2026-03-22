@@ -31,17 +31,11 @@ as $$
       s.created_at,
       s.is_active,
       date_trunc('day', now())::date as today,
-      case
-        when s.next_due_date is null then null
-        else make_date(
-          extract(year from (s.next_due_date - interval '1 month'))::int,
-          extract(month from (s.next_due_date - interval '1 month'))::int,
-          least(
-            greatest(s.due_day, 1),
-            extract(day from (date_trunc('month', s.next_due_date - interval '1 month') + interval '1 month - 1 day'))::int
-          )
-        )
-      end as previous_due_date
+      exists (
+        select 1 from public.payments p
+        where p.student_id = s.id
+          and date_trunc('month', p.competence_date) = date_trunc('month', now())
+      ) as paid_this_month
     from public.students s
     where s.owner_id = auth.uid()
       and s.is_active = true
@@ -58,14 +52,10 @@ as $$
     b.photo_url,
     b.created_at,
     case
+      when b.paid_this_month then 'paid'
       when b.next_due_date is null then 'pending'
-      when b.last_payment_date is not null and b.last_payment_date::date >= b.next_due_date::date then 'paid'
-      when b.last_payment_date is not null
-           and b.previous_due_date is not null
-           and b.last_payment_date::date >= b.previous_due_date
-           and b.last_payment_date::date < b.next_due_date::date then 'paid'
       when b.today > b.next_due_date::date then 'overdue'
-      when (b.next_due_date::date - b.today) <= 2 then 'due_soon'
+      when (b.next_due_date::date - b.today) <= 5 then 'due_soon'
       else 'pending'
     end as payment_status,
     b.is_active
@@ -157,6 +147,7 @@ create or replace function public.get_monthly_report(p_month date)
 returns table (
   expected_cents integer,
   received_cents integer,
+  due_soon_cents integer,
   pending_cents integer
 )
 language sql
@@ -167,18 +158,45 @@ as $$
     select coalesce(sum(monthly_fee_cents), 0)::integer as total
     from public.students
     where owner_id = auth.uid()
+      and is_active = true
   ),
   received as (
     select coalesce(sum(amount_cents), 0)::integer as total
     from public.payments
     where owner_id = auth.uid()
       and date_trunc('month', competence_date) = date_trunc('month', p_month)
+  ),
+  due_soon as (
+    select coalesce(sum(s.monthly_fee_cents), 0)::integer as total
+    from public.students s
+    where s.owner_id = auth.uid()
+      and s.is_active = true
+      and s.next_due_date::date >= current_date
+      and s.next_due_date::date <= current_date + interval '5 days'
+      and not exists (
+        select 1 from public.payments p
+        where p.student_id = s.id
+          and date_trunc('month', p.competence_date) = date_trunc('month', p_month)
+      )
+  ),
+  overdue as (
+    select coalesce(sum(s.monthly_fee_cents), 0)::integer as total
+    from public.students s
+    where s.owner_id = auth.uid()
+      and s.is_active = true
+      and s.next_due_date < now()
+      and not exists (
+        select 1 from public.payments p
+        where p.student_id = s.id
+          and date_trunc('month', p.competence_date) = date_trunc('month', p_month)
+      )
   )
   select
     expected.total as expected_cents,
     received.total as received_cents,
-    (expected.total - received.total)::integer as pending_cents
-  from expected, received;
+    due_soon.total as due_soon_cents,
+    overdue.total as pending_cents
+  from expected, received, due_soon, overdue;
 $$;
 
 grant execute on function public.get_monthly_report(date) to authenticated;

@@ -55,7 +55,7 @@ final monthlyBalanceProvider = FutureProvider<double>((ref) async {
 });
 
 final monthlyReportProvider = FutureProvider<
-  ({int expectedCents, int receivedCents, int pendingCents})
+  ({int expectedCents, int receivedCents, int dueSoonCents, int pendingCents})
 >((ref) async {
   final repo = ref.read(studentRepositoryProvider);
   final result = await repo.getMonthlyReport(DateTime.now());

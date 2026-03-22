@@ -69,7 +69,7 @@ StudentPaymentStatus _statusForStudent(Student student, DateTime now) {
   }
 
   final daysToDue = nextDueDate.difference(now).inDays;
-  if (daysToDue <= 2) {
+  if (daysToDue <= 5) {
     return StudentPaymentStatus.dueSoon;
   }
 

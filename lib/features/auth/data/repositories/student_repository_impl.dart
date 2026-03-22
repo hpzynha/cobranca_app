@@ -175,13 +175,14 @@ class StudentRepositoryImpl implements StudentRepository {
   }
 
   @override
-  Future<Result<({int expectedCents, int receivedCents, int pendingCents})>>
+  Future<Result<({int expectedCents, int receivedCents, int dueSoonCents, int pendingCents})>>
   getMonthlyReport(DateTime month) async {
     try {
       final data = await _remoteDataSource.getMonthlyReport(month);
       return Result.success((
         expectedCents: (data['expected_cents'] as num).toInt(),
         receivedCents: (data['received_cents'] as num).toInt(),
+        dueSoonCents: (data['due_soon_cents'] as num).toInt(),
         pendingCents: (data['pending_cents'] as num).toInt(),
       ));
     } on AuthException {

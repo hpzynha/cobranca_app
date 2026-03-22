@@ -44,6 +44,7 @@ class RelatoriosPage extends ConsumerWidget {
                     AsyncData(:final value) => _ReportCards(
                       expectedCents: value.expectedCents,
                       receivedCents: value.receivedCents,
+                      dueSoonCents: value.dueSoonCents,
                       pendingCents: value.pendingCents,
                     ),
                     AsyncError(:final error) => _ErrorCard(
@@ -74,11 +75,13 @@ class _ReportCards extends StatelessWidget {
   const _ReportCards({
     required this.expectedCents,
     required this.receivedCents,
+    required this.dueSoonCents,
     required this.pendingCents,
   });
 
   final int expectedCents;
   final int receivedCents;
+  final int dueSoonCents;
   final int pendingCents;
 
   @override
@@ -100,12 +103,17 @@ class _ReportCards extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         _FinanceCard(
-          label: 'Pendente',
+          label: 'Vence em breve',
+          amountCents: dueSoonCents,
+          color: AppColors.warning,
+          icon: Icons.access_time_rounded,
+        ),
+        const SizedBox(height: 12),
+        _FinanceCard(
+          label: 'Atrasado',
           amountCents: pendingCents,
-          color: pendingCents > 0 ? AppColors.danger : AppColors.success,
-          icon: pendingCents > 0
-              ? Icons.warning_amber_rounded
-              : Icons.check_circle_outline_rounded,
+          color: AppColors.danger,
+          icon: Icons.warning_amber_rounded,
         ),
       ],
     );

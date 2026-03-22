@@ -41,27 +41,9 @@ StudentPaymentStatus _statusForStudent(Student student, DateTime now) {
 
   final nextDueDate =
       student.nextDueDate == null ? null : _dateOnly(student.nextDueDate!);
-  final lastPaymentDate =
-      student.lastPaymentDate == null
-          ? null
-          : _dateOnly(student.lastPaymentDate!);
 
   if (nextDueDate == null) {
     return StudentPaymentStatus.pending;
-  }
-
-  if (lastPaymentDate != null) {
-    if (!lastPaymentDate.isBefore(nextDueDate)) {
-      return StudentPaymentStatus.paid;
-    }
-
-    final previousDueDate = _previousDueDate(nextDueDate, student.dueDay);
-    final paidCurrentCycle =
-        !lastPaymentDate.isBefore(previousDueDate) &&
-        lastPaymentDate.isBefore(nextDueDate);
-    if (paidCurrentCycle) {
-      return StudentPaymentStatus.paid;
-    }
   }
 
   if (now.isAfter(nextDueDate)) {
@@ -100,17 +82,6 @@ String _buildInitials(String name) {
 }
 
 DateTime _dateOnly(DateTime date) => DateTime(date.year, date.month, date.day);
-
-DateTime _previousDueDate(DateTime nextDueDate, int dueDay) {
-  final previousMonth = DateTime(nextDueDate.year, nextDueDate.month - 1);
-  final clampedDay = _clampDay(previousMonth.year, previousMonth.month, dueDay);
-  return DateTime(previousMonth.year, previousMonth.month, clampedDay);
-}
-
-int _clampDay(int year, int month, int day) {
-  final lastDay = DateTime(year, month + 1, 0).day;
-  return day.clamp(1, lastDay);
-}
 
 StudentPaymentStatus? _statusFromBackend(String? raw) {
   switch ((raw ?? '').trim().toLowerCase()) {

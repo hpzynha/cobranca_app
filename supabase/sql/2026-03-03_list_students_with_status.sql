@@ -55,7 +55,7 @@ as $$
       when b.paid_this_month then 'paid'
       when b.next_due_date is null then 'pending'
       when b.today > b.next_due_date::date then 'overdue'
-      when (b.next_due_date::date - b.today) <= 5 then 'due_soon'
+      when (b.next_due_date::date - b.today) <= 2 then 'due_soon'
       else 'pending'
     end as payment_status,
     b.is_active

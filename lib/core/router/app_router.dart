@@ -17,13 +17,17 @@ import '../../features/auth/presentation/pages/auth_landing_screen.dart';
 import '../../features/auth/presentation/pages/login_screen.dart';
 import '../../features/auth/presentation/pages/register_screen.dart';
 import '../../features/auth/presentation/pages/reset_password_screen.dart';
+import '../../features/auth/presentation/pages/splash_screen.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/splash',
   refreshListenable: GoRouterRefreshStream(
     Supabase.instance.client.auth.onAuthStateChange,
   ),
   redirect: (context, state) {
+    final isSplashRoute = state.matchedLocation == '/splash';
+    if (isSplashRoute) return null;
+
     final user = Supabase.instance.client.auth.currentUser;
     final isEmailConfirmed = user?.emailConfirmedAt != null;
 
@@ -54,6 +58,7 @@ final GoRouter appRouter = GoRouter(
     return null;
   },
   routes: [
+    GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
     GoRoute(path: '/', builder: (context, state) => const AuthLandingScreen()),
     GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
     GoRoute(

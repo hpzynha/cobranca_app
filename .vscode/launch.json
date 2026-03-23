@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "app_cobranca (Flutter Larissa's iPhone)",
+      "request": "launch",
+      "type": "dart",
+      "deviceId": "00008150-001461D91181401C",
+      "program": "lib/main.dart",
+      "args": []
+    },
+    {
+      "name": "app_cobranca (Debug)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart"
+    }
+  ]
+}

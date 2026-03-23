@@ -246,8 +246,6 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 				<string>K33TL86S93</string>
 				<key>ENABLE_BITCODE</key>
 				<string>NO</string>
-								<key>CODE_SIGN_ENTITLEMENTS</key>
-				<string>Runner/Runner.entitlements</string>
 <key>INFOPLIST_FILE</key>
 				<string>Runner/Info.plist</string>
 				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
@@ -1358,8 +1356,6 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 				<string>K33TL86S93</string>
 				<key>ENABLE_BITCODE</key>
 				<string>NO</string>
-								<key>CODE_SIGN_ENTITLEMENTS</key>
-				<string>Runner/Runner.entitlements</string>
 <key>INFOPLIST_FILE</key>
 				<string>Runner/Info.plist</string>
 				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
@@ -1403,8 +1399,6 @@ echo "SUCCESS" &gt; "${SCRIPT_OUTPUT_FILE_0}"
 				<string>K33TL86S93</string>
 				<key>ENABLE_BITCODE</key>
 				<string>NO</string>
-								<key>CODE_SIGN_ENTITLEMENTS</key>
-				<string>Runner/Runner.entitlements</string>
 <key>INFOPLIST_FILE</key>
 				<string>Runner/Info.plist</string>
 				<key>IPHONEOS_DEPLOYMENT_TARGET</key>

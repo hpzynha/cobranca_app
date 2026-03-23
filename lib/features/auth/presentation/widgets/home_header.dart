@@ -183,7 +183,7 @@ class _HomeHeaderState extends ConsumerState<HomeHeader> {
                     ref.read(themeModeProvider.notifier).toggle();
                     Navigator.of(context).pop();
                   },
-                  activeColor: AppColors.primary,
+                  activeThumbColor: AppColors.primary,
                 ),
               ),
             ],

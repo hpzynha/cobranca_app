@@ -40,9 +40,14 @@ class EmailVerificationPage extends ConsumerWidget {
     final state = ref.watch(emailVerificationNotifierProvider);
     final isLoading = state.isLoading;
 
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(title: const Text('Verificação de e-mail')),
+      backgroundColor: colorScheme.surface,
+      appBar: AppBar(
+        backgroundColor: colorScheme.surface,
+        title: const Text('Verificação de e-mail'),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -62,6 +67,7 @@ class EmailVerificationPage extends ConsumerWidget {
                 style: TextStyle(
                   fontSize: titleSize,
                   fontWeight: FontWeight.w700,
+                  color: colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 12),

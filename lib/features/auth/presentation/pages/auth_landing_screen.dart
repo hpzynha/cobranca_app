@@ -76,7 +76,7 @@ class _AuthLandingScreenState extends State<AuthLandingScreen> {
                             ),
                             alignment: Alignment.center,
                             child: const Text(
-                              'V',
+                              'M',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 30,
@@ -85,13 +85,28 @@ class _AuthLandingScreenState extends State<AuthLandingScreen> {
                             ),
                           ),
                           const SizedBox(height: 14),
-                          const Text(
-                            'Venzza',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 28,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: -0.5,
+                          RichText(
+                            text: const TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: 'mensal',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: -0.5,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: 'ify',
+                                  style: TextStyle(
+                                    color: Color(0xB3FFFFFF),
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.w300,
+                                    letterSpacing: -0.5,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                           const SizedBox(height: 8),

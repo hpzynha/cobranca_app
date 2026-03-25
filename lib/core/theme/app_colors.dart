@@ -3,42 +3,62 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  static const Color primary = Color(0xFF5B4CF5);
-  static const Color onPrimary = Color(0xFFFFFFFF);
+  // ── Roxo principal (brand Mensalify) ──────────────────────────────
+  static const Color primary        = Color(0xFF534AB7); // #534AB7 ★ principal
+  static const Color primaryHover   = Color(0xFF3C3489); // hover / pressed
+  static const Color primaryMid     = Color(0xFF7F77DD); // ícones secundários
+  static const Color primaryMuted   = Color(0xFFAFA9EC); // labels, placeholders
+  static const Color primarySurface = Color(0xFFEEEDFE); // backgrounds suaves
+  static const Color primaryLight   = Color(0xFFCECBF6); // bordas leves
 
-  static const Color secondary = Color(0xFFF0F1F5);
-  static const Color onSecondary = Color(0xFF1A1A1A);
+  static const Color onPrimary      = Color(0xFFFFFFFF);
 
-  static const Color accent = Color(0xFFF0F1F5);
-  static const Color onAccent = Color(0xFF1A1A1A);
+  // ── Coral (ação / urgência) ───────────────────────────────────────
+  static const Color action         = Color(0xFFD85A30); // botão "Cobrar agora"
+  static const Color actionHover    = Color(0xFF993C1D);
+  static const Color actionSurface  = Color(0xFFFAEEDA);
 
-  static const Color background = secondary;
-  static const Color surface = secondary;
-  static const Color textPrimary = onSecondary;
-  static const Color textSecondary = onSecondary;
-  static const Color border = Color(0xFFD9DCE3);
-  static const Color inputFill = surface;
+  // ── Semânticas ────────────────────────────────────────────────────
+  static const Color success        = Color(0xFF1D9E75); // Pago / confirmado
+  static const Color successSurface = Color(0xFFE1F5EE);
 
-  static const Color googleBorder = Color(0xFFDDDDDD);
+  static const Color danger         = Color(0xFFE24B4A); // Atrasado / erro
+  static const Color dangerSurface  = Color(0xFFFCEBEB);
 
-  // Semantic status colors
-  static const Color danger = Color(0xFFE5484D);
-  static const Color warning = Color(0xFFF5A524);
-  static const Color success = Color(0xFF2FBF71);
+  static const Color warning        = Color(0xFFD85A30); // mesmo coral
+  static const Color warningSurface = Color(0xFFFAEEDA);
 
-  // Extra neutrals used in dashboard widgets
-  static const Color textStrong = Color(0xFF1F2937);
-  static const Color textMuted = Color(0xFF6B7280);
-  static const Color bottomBarInactive = Color(0xFF7C8292);
+  // ── Neutros ───────────────────────────────────────────────────────
+  static const Color background     = Color(0xFFF5F4F0);
+  static const Color surface        = Color(0xFFFFFFFF);
+  static const Color border         = Color(0xFFE0DFD8);
+  static const Color inputFill      = Color(0xFFFFFFFF);
 
-  static const Color primaryShadow = Color(0x4D3D2FD9);
+  static const Color textPrimary    = Color(0xFF1A1A1A);
+  static const Color textSecondary  = Color(0xFF5F5E5A);
+  static const Color textMuted      = Color(0xFF888780);
+  static const Color textHint       = Color(0xFFB4B2A9);
 
-  // ── Dark palette ────────────────────────────────────────────
-  static const Color backgroundDark = Color(0xFF0F0F14);
-  static const Color surfaceDark = Color(0xFF1A1A28);
-  static const Color primaryOnDark = Color(0xFF7C6FF7);
-  static const Color textPrimaryDark = Color(0xFFE4E4F0);
-  static const Color textMutedDark = Color(0xFF8A8FA8);
-  static const Color borderDark = Color(0xFF252535);
-  static const Color bottomBarDark = Color(0xFF1E1E2E);
+  // ── Sombra do botão primário ──────────────────────────────────────
+  static const Color primaryShadow  = Color(0x40534AB7);
+
+  // ── Bottom bar ────────────────────────────────────────────────────
+  static const Color bottomBarInactive = Color(0xFF888780);
+
+  // ── Aliases de compatibilidade (não remover — usados em widgets) ──
+  static const Color secondary      = Color(0xFFF5F4F0);
+  static const Color onSecondary    = Color(0xFF1A1A1A);
+  static const Color accent         = Color(0xFFEEEDFE);
+  static const Color onAccent       = Color(0xFF3C3489);
+  static const Color textStrong     = Color(0xFF1A1A1A);
+  static const Color googleBorder   = Color(0xFFE0DFD8);
+
+  // ── Dark palette ─────────────────────────────────────────────────
+  static const Color backgroundDark   = Color(0xFF0F0F14);
+  static const Color surfaceDark      = Color(0xFF1A1A28);
+  static const Color primaryOnDark    = Color(0xFF7F77DD);
+  static const Color textPrimaryDark  = Color(0xFFE4E4F0);
+  static const Color textMutedDark    = Color(0xFF8A8FA8);
+  static const Color borderDark       = Color(0xFF252535);
+  static const Color bottomBarDark    = Color(0xFF1E1E2E);
 }

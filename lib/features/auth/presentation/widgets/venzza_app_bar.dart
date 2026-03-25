@@ -3,7 +3,7 @@ import 'package:app_cobranca/core/theme/app_responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// Barra superior com logo "Venzza" (→ /home) + título da página à direita.
+/// Barra superior com logo "mensalify" (→ /home) + título da página à direita.
 class VenzzaAppBar extends StatelessWidget {
   const VenzzaAppBar({super.key, required this.title});
 
@@ -34,7 +34,7 @@ class VenzzaAppBar extends StatelessWidget {
                   ),
                   alignment: Alignment.center,
                   child: Text(
-                    'V',
+                    'M',
                     style: TextStyle(
                       color: AppColors.primary,
                       fontSize: AppResponsive.fontSize(context, 12),
@@ -43,12 +43,26 @@ class VenzzaAppBar extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  'Venzza',
-                  style: TextStyle(
-                    color: AppColors.primary,
-                    fontSize: AppResponsive.fontSize(context, 13),
-                    fontWeight: FontWeight.w700,
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'mensal',
+                        style: TextStyle(
+                          color: AppColors.primaryHover,
+                          fontSize: AppResponsive.fontSize(context, 13),
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      TextSpan(
+                        text: 'ify',
+                        style: TextStyle(
+                          color: AppColors.primaryMid,
+                          fontSize: AppResponsive.fontSize(context, 13),
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

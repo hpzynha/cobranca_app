@@ -261,7 +261,7 @@ class _HomeHeaderState extends ConsumerState<HomeHeader> {
                             ),
                             alignment: Alignment.center,
                             child: Text(
-                              'V',
+                              'M',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: AppResponsive.fontSize(context, 12),
@@ -270,12 +270,26 @@ class _HomeHeaderState extends ConsumerState<HomeHeader> {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          Text(
-                            'Venzza',
-                            style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.9),
-                              fontSize: AppResponsive.fontSize(context, 13),
-                              fontWeight: FontWeight.w700,
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: 'mensal',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: AppResponsive.fontSize(context, 13),
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: 'ify',
+                                  style: TextStyle(
+                                    color: Colors.white.withValues(alpha: 0.7),
+                                    fontSize: AppResponsive.fontSize(context, 13),
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],

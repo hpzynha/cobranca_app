@@ -43,9 +43,27 @@ class _AnimatedLogoRowState extends State<AnimatedLogoRow> {
           child: SvgPicture.asset('assets/images/logo.svg', height: 40),
         ),
         const SizedBox(width: 12),
-        Text(
-          'Venzza',
-          style: TextStyle(fontSize: logoTextSize, fontWeight: FontWeight.w600),
+        RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text: 'mensal',
+                style: TextStyle(
+                  fontSize: logoTextSize,
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF3C3489),
+                ),
+              ),
+              TextSpan(
+                text: 'ify',
+                style: TextStyle(
+                  fontSize: logoTextSize,
+                  fontWeight: FontWeight.w300,
+                  color: const Color(0xFF7F77DD),
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );

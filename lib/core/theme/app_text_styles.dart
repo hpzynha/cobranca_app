@@ -57,6 +57,13 @@ class AppTextStyles {
     color: AppColors.danger,
   );
 
+  static TextStyle get labelCaps => const TextStyle(
+    fontSize: 11,
+    fontWeight: FontWeight.w600,
+    letterSpacing: 1.1,
+    color: AppColors.primaryMuted,
+  );
+
   static TextStyle responsive(
     BuildContext context,
     TextStyle baseStyle, {

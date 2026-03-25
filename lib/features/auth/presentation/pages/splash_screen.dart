@@ -210,7 +210,7 @@ class _SplashScreenState extends State<SplashScreen>
                     ),
                     alignment: Alignment.center,
                     child: const Text(
-                      'V',
+                      'M',
                       style: TextStyle(
                         fontSize: 38,
                         fontWeight: FontWeight.w800,
@@ -228,13 +228,28 @@ class _SplashScreenState extends State<SplashScreen>
                   position: _nameOffset,
                   child: FadeTransition(
                     opacity: _nameOpacity,
-                    child: Text(
-                      'Venzza',
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.w800,
-                        color: nameColor,
-                        letterSpacing: -0.5,
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'mensal',
+                            style: TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.w700,
+                              color: nameColor,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                          TextSpan(
+                            text: 'ify',
+                            style: TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.w300,
+                              color: nameColor.withValues(alpha: 0.7),
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),

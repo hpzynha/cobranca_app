@@ -63,26 +63,10 @@ class _AuthLandingScreenState extends State<AuthLandingScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           // Icon badge
-                          Container(
+                          Image.asset(
+                            'assets/images/mensalify_icon_appstore_1024.png',
                             width: 64,
                             height: 64,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.18),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.25),
-                                width: 1.5,
-                              ),
-                            ),
-                            alignment: Alignment.center,
-                            child: const Text(
-                              'M',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 30,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
                           ),
                           const SizedBox(height: 14),
                           RichText(

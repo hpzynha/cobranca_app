@@ -1,6 +1,6 @@
-# 📲 Venzza — Gestão Inteligente de Cobranças
+# 📲 Mensalify — Gestão Inteligente de Cobranças
 
-Venzza é um aplicativo mobile desenvolvido para simplificar a gestão de cobranças recorrentes, controle de inadimplência e organização financeira de pequenos negócios.
+Mensalify é um aplicativo mobile desenvolvido para simplificar a gestão de cobranças recorrentes, controle de inadimplência e organização financeira de pequenos negócios.
 
 O objetivo é resolver uma dor real: acompanhar pagamentos de forma simples, visual e eficiente.
 
@@ -8,7 +8,7 @@ O objetivo é resolver uma dor real: acompanhar pagamentos de forma simples, vis
 
 ## 🚀 Sobre o Projeto
 
-Venzza foi construído com foco em:
+Mensalify foi construído com foco em:
 
 * Simplicidade
 * Performance
@@ -102,7 +102,7 @@ Isso facilita manutenção e escalabilidade futura.
 
 ## 🎯 Objetivo do Produto
 
-Venzza não é apenas um app de cobrança.
+Mensalify não é apenas um app de cobrança.
 É uma ferramenta para organização financeira de pequenos negócios que precisam de controle simples e eficiente.
 
 ---

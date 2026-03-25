@@ -5,7 +5,7 @@ import 'package:app_cobranca/features/auth/presentation/widgets/bottom_bar.dart'
 import 'package:app_cobranca/features/auth/presentation/widgets/lib/features/auth/presentation/widgets/students_dashboard_card.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/students_filter_chips.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/students_search_field.dart';
-import 'package:app_cobranca/features/auth/presentation/widgets/venzza_app_bar.dart';
+import 'package:app_cobranca/features/auth/presentation/widgets/mensalify_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -66,7 +66,7 @@ class _AlunosPageState extends ConsumerState<AlunosPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const VenzzaAppBar(title: 'Alunos'),
+          const MensalifyAppBar(title: 'Alunos'),
           Expanded(
             child: Padding(
               padding: EdgeInsets.fromLTRB(

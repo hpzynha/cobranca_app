@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 /// Barra superior com logo "mensalify" (→ /home) + título da página à direita.
-class VenzzaAppBar extends StatelessWidget {
-  const VenzzaAppBar({super.key, required this.title});
+class MensalifyAppBar extends StatelessWidget {
+  const MensalifyAppBar({super.key, required this.title});
 
   final String title;
 

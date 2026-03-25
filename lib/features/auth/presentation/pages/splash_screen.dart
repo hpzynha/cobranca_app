@@ -126,21 +126,6 @@ class _SplashScreenState extends State<SplashScreen>
 
     final bgColor =
         isDark ? AppColors.backgroundDark : AppColors.primary;
-    final logoBoxColor = isDark
-        ? AppColors.primary
-        : Colors.white.withValues(alpha: 0.18);
-    final logoBoxBorder = isDark
-        ? Colors.transparent
-        : Colors.white.withValues(alpha: 0.28);
-    final logoBoxShadow = isDark
-        ? [
-            BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.5),
-              blurRadius: 32,
-              offset: const Offset(0, 8),
-            ),
-          ]
-        : null;
     final nameColor =
         isDark ? AppColors.textPrimaryDark : Colors.white;
     final taglineColor = isDark
@@ -199,25 +184,10 @@ class _SplashScreenState extends State<SplashScreen>
                       child: child,
                     ),
                   ),
-                  child: Container(
+                  child: Image.asset(
+                    'assets/images/mensalify_icon_appstore_1024.png',
                     width: 80,
                     height: 80,
-                    decoration: BoxDecoration(
-                      color: logoBoxColor,
-                      borderRadius: BorderRadius.circular(22),
-                      border: Border.all(color: logoBoxBorder, width: 1.5),
-                      boxShadow: logoBoxShadow,
-                    ),
-                    alignment: Alignment.center,
-                    child: const Text(
-                      'M',
-                      style: TextStyle(
-                        fontSize: 38,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                        letterSpacing: -1,
-                      ),
-                    ),
                   ),
                 ),
 

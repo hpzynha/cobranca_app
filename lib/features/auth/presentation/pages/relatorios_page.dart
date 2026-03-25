@@ -2,7 +2,7 @@ import 'package:app_cobranca/core/theme/app_colors.dart';
 import 'package:app_cobranca/core/theme/app_responsive.dart';
 import 'package:app_cobranca/features/auth/presentation/providers/student_providers.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/bottom_bar.dart';
-import 'package:app_cobranca/features/auth/presentation/widgets/venzza_app_bar.dart';
+import 'package:app_cobranca/features/auth/presentation/widgets/mensalify_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -26,7 +26,7 @@ class RelatoriosPage extends ConsumerWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const VenzzaAppBar(title: 'Relatórios'),
+          const MensalifyAppBar(title: 'Relatórios'),
           Expanded(
             child: SingleChildScrollView(
               padding: EdgeInsets.fromLTRB(padding, 20, padding, 100),

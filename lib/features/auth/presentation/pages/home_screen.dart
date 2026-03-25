@@ -1,6 +1,7 @@
 import 'package:app_cobranca/core/constants/app_strings.dart';
 import 'package:app_cobranca/core/theme/app_responsive.dart';
 import 'package:app_cobranca/core/theme/app_spacing.dart';
+import 'package:app_cobranca/core/theme/app_text_styles.dart';
 import 'package:app_cobranca/features/auth/presentation/providers/auth_providers.dart';
 import 'package:app_cobranca/features/auth/presentation/providers/student_providers.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/bottom_bar.dart';
@@ -39,54 +40,72 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       extendBody: true,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ── Header fixo ───────────────────────────────────
-          HomeHeader(balance: balance, userName: userName),
-
-          // ── Seção fixa (status + alerta + título) ─────────
-          Padding(
+      body: CustomScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        slivers: [
+          SliverToBoxAdapter(
+            child: HomeHeader(balance: balance, userName: userName),
+          ),
+          SliverPadding(
             padding: EdgeInsets.fromLTRB(
               horizontalPadding,
               sectionSpacing,
               horizontalPadding,
               0,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                switch (studentsAsync) {
-                  AsyncData(:final value) => _HomeStatusSection(
-                    students: value,
-                    cardSpacing: cardSpacing,
-                  ),
-                  AsyncError() => Text(
-                    'Não foi possível carregar os indicadores de alunos.',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  _ => const Center(child: CircularProgressIndicator()),
-                },
-                SizedBox(height: sectionSpacing),
-                if (overdueCount > 0) ...[
-                  OverdueAlertCard(overdueCount: overdueCount, onTap: () {}),
-                  SizedBox(height: sectionSpacing),
-                ],
-              ],
+            sliver: SliverToBoxAdapter(
+              child: switch (studentsAsync) {
+                AsyncData(:final value) => _HomeStatusSection(
+                  students: value,
+                  cardSpacing: cardSpacing,
+                ),
+                AsyncError() => Text(
+                  'Não foi possível carregar os indicadores de alunos.',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                _ => const Center(child: CircularProgressIndicator()),
+              },
             ),
           ),
-
-          // ── Lista de alunos (título + cards scrollam juntos) ─
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(horizontalPadding, 0, horizontalPadding, bottomContentPadding),
+          if (overdueCount > 0)
+            SliverPadding(
+              padding: EdgeInsets.fromLTRB(
+                horizontalPadding,
+                sectionSpacing,
+                horizontalPadding,
+                0,
+              ),
+              sliver: SliverToBoxAdapter(
+                child: OverdueAlertCard(overdueCount: overdueCount, onTap: () {}),
+              ),
+            ),
+          SliverPadding(
+            padding: EdgeInsets.fromLTRB(
+              horizontalPadding,
+              sectionSpacing,
+              horizontalPadding,
+              AppSpacing.md,
+            ),
+            sliver: SliverToBoxAdapter(
+              child: Text(
+                'Alunos',
+                style: AppTextStyles.heading.copyWith(fontSize: titleSize),
+              ),
+            ),
+          ),
+          SliverPadding(
+            padding: EdgeInsets.fromLTRB(
+              horizontalPadding,
+              0,
+              horizontalPadding,
+              bottomContentPadding + 80,
+            ),
+            sliver: SliverToBoxAdapter(
               child: StudentsList(
                 students: students,
-                showTitle: true,
-                titleSize: titleSize,
-                physics: const BouncingScrollPhysics(),
-                onStudentTap: (s) =>
-                    context.push('/alunos/${s.id}', extra: s),
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                onStudentTap: (s) => context.push('/alunos/${s.id}', extra: s),
               ),
             ),
           ),

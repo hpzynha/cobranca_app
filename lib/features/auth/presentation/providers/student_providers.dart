@@ -34,13 +34,36 @@ final markStudentAsPaidUseCaseProvider = Provider<MarkStudentAsPaidUseCase>((
   return MarkStudentAsPaidUseCase(ref.watch(studentRepositoryProvider));
 });
 
-final studentsProvider = FutureProvider<List<Student>>((ref) async {
-  final result = await ref.read(listStudentsUseCaseProvider).call();
-  if (!result.isSuccess) {
-    throw Exception(result.failure?.message ?? 'Erro ao carregar alunos.');
+class StudentsNotifier extends AsyncNotifier<List<Student>> {
+  @override
+  Future<List<Student>> build() async {
+    final result = await ref.read(listStudentsUseCaseProvider).call();
+    if (!result.isSuccess) {
+      throw Exception(result.failure?.message ?? 'Erro ao carregar alunos.');
+    }
+    return result.data ?? const [];
   }
-  return result.data ?? const [];
-});
+
+  void updateStudent(Student updated) {
+    final current = state.valueOrNull;
+    if (current == null) return;
+    state = AsyncData(
+      current.map((s) => s.id == updated.id ? updated : s).toList(),
+    );
+  }
+
+  Future<void> silentRefresh() async {
+    final result = await ref.read(listStudentsUseCaseProvider).call();
+    if (result.isSuccess) {
+      state = AsyncData(result.data ?? const []);
+    }
+  }
+}
+
+final studentsProvider =
+    AsyncNotifierProvider<StudentsNotifier, List<Student>>(
+      StudentsNotifier.new,
+    );
 
 final studentPaymentItemsProvider = FutureProvider<List<StudentPaymentItem>>((
   ref,

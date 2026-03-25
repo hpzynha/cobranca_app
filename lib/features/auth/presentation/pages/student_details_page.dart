@@ -304,8 +304,18 @@ class _StudentDetailsPageState extends ConsumerState<StudentDetailsPage> {
       _paidConfirmedLocal = true;
     });
 
-    ref.invalidate(studentsProvider);
-    ref.invalidate(studentPaymentItemsProvider);
+    // Optimistic update: patch the student in the cache immediately so the
+    // list reflects "Pago" before the background refresh completes.
+    final currentStudents = ref.read(studentsProvider).valueOrNull;
+    final matched = currentStudents?.where((s) => s.id == student.id).firstOrNull;
+    if (matched != null) {
+      ref
+          .read(studentsProvider.notifier)
+          .updateStudent(matched.copyWith(paymentStatusCode: 'paid'));
+    }
+
+    // Refresh the list silently (no loading indicator) and update the report.
+    ref.read(studentsProvider.notifier).silentRefresh();
     ref.invalidate(monthlyReportProvider);
   }
 

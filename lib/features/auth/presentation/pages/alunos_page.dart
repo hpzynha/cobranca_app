@@ -99,7 +99,7 @@ class _AlunosPageState extends ConsumerState<AlunosPage> {
                     Expanded(
                       child: StudentsList(
                         students: _filteredStudents(value),
-                        physics: const BouncingScrollPhysics(),
+                        physics: const AlwaysScrollableScrollPhysics(),
                         emptyMessage:
                             'Nenhum aluno encontrado para esta busca/filtro.',
                         onStudentTap: (student) {

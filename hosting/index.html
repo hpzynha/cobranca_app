@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mensalify — Sua cobrança simplificada</title>
+  <meta name="description" content="Gerencie cobranças mensais, acompanhe pagamentos e nunca perca um recebimento. Feito para professores e prestadores de serviço." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple: #534AB7;
+      --purple-dark: #3d3690;
+      --coral: #D85A30;
+      --green: #1D9E75;
+      --text: #1a1a2e;
+      --text-muted: #666;
+      --bg: #f8f7ff;
+      --white: #fff;
+      --radius: 16px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 5%;
+      background: var(--white);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.07);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--purple);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      margin-left: 24px;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--purple); }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 80px 5% 60px;
+      background: linear-gradient(160deg, #f0eeff 0%, #fff 60%);
+    }
+    .hero-badge {
+      display: inline-block;
+      background: #ede9ff;
+      color: var(--purple);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      color: var(--text);
+      max-width: 680px;
+      margin: 0 auto 20px;
+    }
+    .hero h1 span { color: var(--purple); }
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 520px;
+      margin: 0 auto 40px;
+    }
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(83,74,183,0.2); }
+    .btn-primary { background: var(--purple); color: var(--white); }
+    .btn-secondary { background: var(--white); color: var(--text); border: 1.5px solid #ddd; }
+
+    /* FEATURES */
+    .features {
+      padding: 70px 5%;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .section-title {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .section-title h2 {
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    .section-title p {
+      color: var(--text-muted);
+      margin-top: 8px;
+      font-size: 1.05rem;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .feature-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      transition: transform 0.2s;
+    }
+    .feature-card:hover { transform: translateY(-4px); }
+    .feature-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+    }
+    .icon-purple { background: #ede9ff; }
+    .icon-green  { background: #e0f5ee; }
+    .icon-coral  { background: #fdeee8; }
+    .feature-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .feature-card p { color: var(--text-muted); font-size: 0.95rem; }
+
+    /* HOW IT WORKS */
+    .how {
+      background: var(--white);
+      padding: 70px 5%;
+    }
+    .steps {
+      display: flex;
+      gap: 24px;
+      max-width: 900px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .step {
+      flex: 1;
+      min-width: 220px;
+      text-align: center;
+      padding: 20px;
+    }
+    .step-num {
+      width: 44px; height: 44px;
+      background: var(--purple);
+      color: white;
+      border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+    }
+    .step h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .step p  { color: var(--text-muted); font-size: 0.9rem; }
+
+    /* CTA */
+    .cta {
+      text-align: center;
+      padding: 80px 5%;
+      background: linear-gradient(135deg, var(--purple) 0%, #7c6fd4 100%);
+      color: white;
+    }
+    .cta h2 { font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 800; margin-bottom: 12px; }
+    .cta p { opacity: 0.85; margin-bottom: 36px; font-size: 1.05rem; }
+    .btn-white { background: white; color: var(--purple); }
+    .btn-outline { border: 1.5px solid rgba(255,255,255,0.6); color: white; }
+    .btn-outline:hover { background: rgba(255,255,255,0.1); box-shadow: none; }
+
+    /* FOOTER */
+    footer {
+      background: var(--text);
+      color: rgba(255,255,255,0.6);
+      text-align: center;
+      padding: 32px 5%;
+      font-size: 0.9rem;
+    }
+    footer a { color: rgba(255,255,255,0.7); text-decoration: none; margin: 0 12px; }
+    footer a:hover { color: white; }
+    .footer-links { margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a class="nav-logo" href="/">Mensalify</a>
+    <div class="nav-links">
+      <a href="#funcionalidades">Funcionalidades</a>
+      <a href="#como-funciona">Como funciona</a>
+      <a href="/privacidade">Privacidade</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge">Para professores e prestadores de serviço</div>
+    <h1>Sua cobrança mensal<br/><span>sem complicação</span></h1>
+    <p>Gerencie alunos e clientes, acompanhe pagamentos em dia, atrasados e pendentes — tudo num só lugar.</p>
+    <div class="btn-group">
+      <a href="#" class="btn btn-primary">
+        <svg width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+        App Store
+      </a>
+      <a href="#" class="btn btn-secondary">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#534AB7" d="M3.18 23.76c.3.17.65.18.96.04l13.1-7.57-2.8-2.8-11.26 10.33zM20.9 10.38 17.84 8.6 14.78 11.66l3.07 3.07 3.07-1.78a1.75 1.75 0 0 0 0-2.57zM2.1.28A1.75 1.75 0 0 0 1.75 1v22a1.75 1.75 0 0 0 .35.72L14.07 12 2.1.28zM4.14.2 17.24 7.78l-2.8 2.8L4.14.2z"/></svg>
+        Google Play
+      </a>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features" id="funcionalidades">
+    <div class="section-title">
+      <h2>Tudo que você precisa para cobrar bem</h2>
+      <p>Simples, rápido e feito para quem trabalha por conta própria.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon icon-purple">👥</div>
+        <h3>Gestão de alunos e clientes</h3>
+        <p>Cadastre seus alunos com nome, WhatsApp e valor da mensalidade. Tudo organizado num só lugar.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-green">✅</div>
+        <h3>Acompanhamento em tempo real</h3>
+        <p>Veja de forma clara quem pagou, quem está em atraso e quem vence em breve — sem planilhas.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon icon-coral">📊</div>
+        <h3>Relatórios financeiros</h3>
+        <p>Tenha uma visão clara do seu faturamento mensal e tome decisões baseadas em dados reais.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how" id="como-funciona">
+    <div class="section-title">
+      <h2>Como funciona</h2>
+      <p>Comece em menos de 5 minutos.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Crie sua conta</h3>
+        <p>Cadastre-se com e-mail ou Google em segundos, totalmente gratuito.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Adicione seus alunos</h3>
+        <p>Informe nome, WhatsApp e o valor da mensalidade de cada aluno.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Controle os pagamentos</h3>
+        <p>Marque quem pagou e acompanhe o status de todos no seu painel.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <h2>Comece a usar agora</h2>
+    <p>Baixe o app e simplifique sua cobrança hoje mesmo.</p>
+    <div class="btn-group">
+      <a href="#" class="btn btn-white">Baixar na App Store</a>
+      <a href="#" class="btn btn-outline">Baixar no Google Play</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-links">
+      <a href="/privacidade">Política de Privacidade</a>
+      <a href="/termos">Termos de Uso</a>
+      <a href="mailto:contato@mensalify.com.br">Contato</a>
+    </div>
+    <p>&copy; 2025 Mensalify. Todos os direitos reservados.</p>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.example.app_cobranca",
+    "sha256_cert_fingerprints": [
+      "35:A0:1E:EE:1F:3F:49:DB:87:95:31:D1:96:77:7D:54:1C:23:42:43:06:4A:0D:09:E2:BF:84:C6:7B:60:7F:A4"
+    ]
+  }
+}]

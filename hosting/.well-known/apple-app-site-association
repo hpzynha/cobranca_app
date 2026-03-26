@@ -1,0 +1,11 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "SUBSTITUA_PELO_TEAM_ID.com.example.appCobranca",
+        "paths": ["/auth/*"]
+      }
+    ]
+  }
+}

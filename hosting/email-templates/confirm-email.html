@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirme seu e-mail — Mensalify</title>
+</head>
+<body style="margin:0;padding:0;background:#F5F4F0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#F5F4F0;padding:40px 16px;">
+    <tr>
+      <td align="center">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;">
+
+          <!-- LOGO -->
+          <tr>
+            <td align="center" style="padding-bottom:32px;">
+              <table cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="background:#534AB7;border-radius:14px;width:44px;height:44px;text-align:center;vertical-align:middle;">
+                    <span style="font-family:Georgia,serif;font-size:24px;font-weight:700;color:#ffffff;line-height:44px;">M</span>
+                  </td>
+                  <td style="padding-left:10px;vertical-align:middle;">
+                    <span style="font-family:Georgia,serif;font-size:20px;color:#1a1830;letter-spacing:-0.3px;">
+                      <strong>mensal</strong><span style="font-weight:300;color:#7F77DD;">ify</span>
+                    </span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- CARD -->
+          <tr>
+            <td style="background:#ffffff;border-radius:20px;padding:40px 40px 36px;box-shadow:0 4px 24px rgba(0,0,0,0.07);">
+
+              <!-- ICON -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td align="center" style="padding-bottom:24px;">
+                    <div style="background:#f0edff;border-radius:50%;width:64px;height:64px;display:inline-block;text-align:center;line-height:64px;font-size:28px;">✉️</div>
+                  </td>
+                </tr>
+
+                <!-- HEADING -->
+                <tr>
+                  <td align="center" style="padding-bottom:12px;">
+                    <h1 style="margin:0;font-family:Georgia,serif;font-size:24px;font-weight:700;color:#1a1830;line-height:1.3;letter-spacing:-0.3px;">
+                      Confirme seu e-mail
+                    </h1>
+                  </td>
+                </tr>
+
+                <!-- BODY -->
+                <tr>
+                  <td align="center" style="padding-bottom:32px;">
+                    <p style="margin:0;font-size:15px;color:#6b6890;line-height:1.65;max-width:380px;text-align:center;">
+                      Falta pouco! Clique no botão abaixo para confirmar seu e-mail e começar a usar o Mensalify.
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- CTA -->
+                <tr>
+                  <td align="center" style="padding-bottom:28px;">
+                    <a href="{{ .ConfirmationURL }}"
+                       style="display:inline-block;background:#534AB7;color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:14px 36px;border-radius:12px;letter-spacing:-0.1px;">
+                      Confirmar meu e-mail →
+                    </a>
+                  </td>
+                </tr>
+
+                <!-- DIVIDER -->
+                <tr>
+                  <td style="border-top:1px solid #f0edf8;padding-top:24px;padding-bottom:8px;">
+                    <p style="margin:0;font-size:12px;color:#b0adc8;text-align:center;line-height:1.6;">
+                      Se você não criou uma conta no Mensalify, pode ignorar este e-mail com segurança.<br>
+                      O link expira em <strong>24 horas</strong>.
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- LINK FALLBACK -->
+                <tr>
+                  <td style="padding-top:12px;">
+                    <p style="margin:0;font-size:11px;color:#c8c5d8;text-align:center;line-height:1.6;word-break:break-all;">
+                      Ou copie e cole este link no navegador:<br>
+                      <span style="color:#7F77DD;">{{ .ConfirmationURL }}</span>
+                    </p>
+                  </td>
+                </tr>
+
+              </table>
+            </td>
+          </tr>
+
+          <!-- FOOTER -->
+          <tr>
+            <td align="center" style="padding-top:28px;">
+              <p style="margin:0;font-size:12px;color:#b0adc8;line-height:1.7;">
+                © 2025 Mensalify · <a href="https://mensalify.com.br/privacidade" style="color:#b0adc8;text-decoration:underline;">Privacidade</a> · <a href="https://mensalify.com.br/termos" style="color:#b0adc8;text-decoration:underline;">Termos</a>
+              </p>
+              <p style="margin:6px 0 0;font-size:11px;color:#c8c5d8;">
+                mensalify.com.br
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

@@ -19,14 +19,21 @@ import '../../features/auth/presentation/pages/register_screen.dart';
 import '../../features/auth/presentation/pages/reset_password_screen.dart';
 import '../../features/auth/presentation/pages/splash_screen.dart';
 
+final _refreshStream = GoRouterRefreshStream(
+  Supabase.instance.client.auth.onAuthStateChange,
+);
+
 final GoRouter appRouter = GoRouter(
   initialLocation: '/splash',
-  refreshListenable: GoRouterRefreshStream(
-    Supabase.instance.client.auth.onAuthStateChange,
-  ),
+  refreshListenable: _refreshStream,
   redirect: (context, state) {
     final isSplashRoute = state.matchedLocation == '/splash';
     if (isSplashRoute) return null;
+
+    // Redireciona para reset-password quando o deep link de recuperação chega
+    if (_refreshStream.lastEvent == AuthChangeEvent.passwordRecovery) {
+      return '/reset-password';
+    }
 
     final user = Supabase.instance.client.auth.currentUser;
     final isEmailConfirmed = user?.emailConfirmedAt != null;
@@ -97,12 +104,17 @@ final GoRouter appRouter = GoRouter(
 );
 
 class GoRouterRefreshStream extends ChangeNotifier {
-  GoRouterRefreshStream(Stream<dynamic> stream) {
+  GoRouterRefreshStream(Stream<AuthState> stream) {
     notifyListeners();
-    _subscription = stream.listen((dynamic _) => notifyListeners());
+    _subscription = stream.listen((AuthState state) {
+      _lastEvent = state.event;
+      notifyListeners();
+    });
   }
 
-  late final StreamSubscription<dynamic> _subscription;
+  late final StreamSubscription<AuthState> _subscription;
+  AuthChangeEvent? _lastEvent;
+  AuthChangeEvent? get lastEvent => _lastEvent;
 
   @override
   void dispose() {

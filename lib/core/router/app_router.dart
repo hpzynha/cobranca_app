@@ -31,7 +31,10 @@ final GoRouter appRouter = GoRouter(
     if (isSplashRoute) return null;
 
     // Redireciona para reset-password quando o deep link de recuperação chega
-    if (_refreshStream.lastEvent == AuthChangeEvent.passwordRecovery) {
+    // só uma vez (consumido após o primeiro redirect)
+    if (_refreshStream.shouldRedirectToPasswordRecovery &&
+        state.matchedLocation != '/reset-password') {
+      _refreshStream.consumePasswordRecovery();
       return '/reset-password';
     }
 
@@ -108,13 +111,21 @@ class GoRouterRefreshStream extends ChangeNotifier {
     notifyListeners();
     _subscription = stream.listen((AuthState state) {
       _lastEvent = state.event;
+      _consumed = false;
       notifyListeners();
     });
   }
 
   late final StreamSubscription<AuthState> _subscription;
   AuthChangeEvent? _lastEvent;
-  AuthChangeEvent? get lastEvent => _lastEvent;
+  bool _consumed = false;
+
+  bool get shouldRedirectToPasswordRecovery =>
+      _lastEvent == AuthChangeEvent.passwordRecovery && !_consumed;
+
+  void consumePasswordRecovery() {
+    _consumed = true;
+  }
 
   @override
   void dispose() {

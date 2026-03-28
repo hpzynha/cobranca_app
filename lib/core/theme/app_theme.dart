@@ -42,7 +42,7 @@ class AppTheme {
 
   static ThemeData get lightTheme => ThemeData(
         useMaterial3: true,
-        scaffoldBackgroundColor: AppColors.background,
+        scaffoldBackgroundColor: AppColors.surface,
         colorScheme: const ColorScheme.light(
           primary: AppColors.primary,
           onPrimary: AppColors.onPrimary,

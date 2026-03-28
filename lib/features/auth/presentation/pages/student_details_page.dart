@@ -1,6 +1,7 @@
 import 'package:app_cobranca/core/theme/app_colors.dart';
 import 'package:app_cobranca/core/widgets/app_toast.dart';
 import 'package:app_cobranca/core/theme/app_spacing.dart';
+import 'package:app_cobranca/features/auth/domain/services/calculate_next_due_date.dart';
 import 'package:app_cobranca/features/auth/presentation/providers/student_providers.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/lib/features/auth/presentation/widgets/students_dashboard_card.dart';
 import 'package:flutter/material.dart';
@@ -127,9 +128,33 @@ class _StudentDetailsPageState extends ConsumerState<StudentDetailsPage> {
                 ],
               ),
               const SizedBox(height: AppSpacing.lg),
-              _InfoTile(
-                label: 'Vencimento',
-                value: _formatDueDate(student),
+              GestureDetector(
+                onTap: () => _showEditDueDateSheet(student),
+                child: _InfoTile(
+                  label: 'Vencimento',
+                  value: _formatDueDate(student),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        _formatDueDate(student),
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? AppColors.textPrimaryDark
+                              : AppColors.textStrong,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Icon(
+                        Icons.edit_calendar_rounded,
+                        size: 16,
+                        color: AppColors.primaryMuted,
+                      ),
+                    ],
+                  ),
+                ),
               ),
               const SizedBox(height: 12),
               _InfoTile(
@@ -404,6 +429,52 @@ class _StudentDetailsPageState extends ConsumerState<StudentDetailsPage> {
     } else {
       setState(() => _isPerformingAction = false);
       AppToast.error(context, result.failure?.message ?? 'Erro ao deletar aluno.');
+    }
+  }
+
+  Future<void> _showEditDueDateSheet(StudentPaymentItem student) async {
+    final initial = student.nextDueDate ?? calculateNextDueDate(student.dueDay ?? 1);
+    final now = DateTime.now();
+
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: initial.isBefore(now) ? now : initial,
+      firstDate: now,
+      lastDate: DateTime(now.year + 2),
+      locale: const Locale('pt', 'BR'),
+      builder: (context, child) => Theme(
+        data: Theme.of(context).copyWith(
+          colorScheme: Theme.of(context).colorScheme.copyWith(
+            primary: AppColors.primary,
+            onPrimary: Colors.white,
+          ),
+        ),
+        child: child!,
+      ),
+    );
+
+    if (picked == null || !mounted) return;
+    _updateDueDate(student, picked);
+  }
+
+  Future<void> _updateDueDate(StudentPaymentItem student, DateTime newDate) async {
+    final result = await ref
+        .read(studentRepositoryProvider)
+        .updateDueDate(
+          studentId: student.id,
+          dueDay: newDate.day,
+          nextDueDate: newDate,
+        );
+    if (!mounted) return;
+    if (result.isSuccess) {
+      ref.invalidate(studentsProvider);
+      ref.invalidate(studentPaymentItemsProvider);
+      AppToast.success(
+        context,
+        'Vencimento atualizado para ${DateFormat('dd/MM/yyyy').format(newDate)}.',
+      );
+    } else {
+      AppToast.error(context, result.failure?.message ?? 'Erro ao atualizar vencimento.');
     }
   }
 

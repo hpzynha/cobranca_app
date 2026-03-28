@@ -34,7 +34,7 @@ class HomeScreen extends ConsumerWidget {
     final userName = ref.watch(currentUserNameProvider);
 
     final titleSize = AppResponsive.fontSize(context, isCompact ? 16 : 18);
-    final students = studentsAsync.valueOrNull ?? [];
+    final students = (studentsAsync.valueOrNull ?? []).where((s) => s.isActive).toList();
     final overdueCount =
         students.where((s) => s.status == StudentPaymentStatus.overdue).length;
 

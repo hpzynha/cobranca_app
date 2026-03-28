@@ -159,6 +159,7 @@ class _StudentRowCard extends StatelessWidget {
   final VoidCallback? onTap;
 
   Color get _avatarColor {
+    if (!student.isActive) return AppColors.textMuted;
     return switch (student.status) {
       StudentPaymentStatus.overdue => AppColors.danger,
       StudentPaymentStatus.paid => AppColors.success,
@@ -179,6 +180,8 @@ class _StudentRowCard extends StatelessWidget {
 
     final colorScheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isInactive = !student.isActive;
+    final contentOpacity = isInactive ? 0.5 : 1.0;
 
     return Material(
       color: colorScheme.surface,
@@ -186,89 +189,115 @@ class _StudentRowCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: onTap,
-        child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: isCompact ? 12 : 14,
-            vertical: 14,
-          ),
-          decoration: BoxDecoration(
-            color: colorScheme.surface,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: isDark
-                ? [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.25),
-                      blurRadius: 16,
-                      offset: const Offset(0, 4),
+        child: Opacity(
+          opacity: contentOpacity,
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: isCompact ? 12 : 14,
+              vertical: 14,
+            ),
+            decoration: BoxDecoration(
+              color: colorScheme.surface,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: isDark
+                  ? [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.25),
+                        blurRadius: 16,
+                        offset: const Offset(0, 4),
+                      ),
+                    ]
+                  : [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.07),
+                        blurRadius: 12,
+                        offset: const Offset(0, 2),
+                      ),
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.04),
+                        blurRadius: 3,
+                        offset: const Offset(0, 1),
+                      ),
+                    ],
+            ),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: avatarRadius,
+                  backgroundColor: _avatarColor,
+                  child: Text(
+                    student.initials,
+                    style: AppTextStyles.dashboardCardNumber.copyWith(
+                      fontSize: initialsSize,
+                      color: Colors.white,
                     ),
-                  ]
-                : [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.07),
-                      blurRadius: 12,
-                      offset: const Offset(0, 2),
-                    ),
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.04),
-                      blurRadius: 3,
-                      offset: const Offset(0, 1),
-                    ),
-                  ],
-          ),
-          child: Row(
-            children: [
-              CircleAvatar(
-                radius: avatarRadius,
-                backgroundColor: _avatarColor,
-                child: Text(
-                  student.initials,
-                  style: AppTextStyles.dashboardCardNumber.copyWith(
-                    fontSize: initialsSize,
-                    color: Colors.white,
                   ),
                 ),
-              ),
-              SizedBox(width: isCompact ? 10 : 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                SizedBox(width: isCompact ? 10 : 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        student.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.heading.copyWith(fontSize: nameSize),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        student.dueLabel,
+                        style: AppTextStyles.body.copyWith(
+                          fontSize: dueSize,
+                          color: AppColors.textMuted,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: isCompact ? 8 : 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      student.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.heading.copyWith(fontSize: nameSize),
+                      student.amountLabel,
+                      style: AppTextStyles.heading.copyWith(fontSize: amountSize),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      student.dueLabel,
-                      style: AppTextStyles.body.copyWith(
-                        fontSize: dueSize,
-                        color: AppColors.textMuted,
-                      ),
-                    ),
+                    const SizedBox(height: 8),
+                    if (isInactive)
+                      _InactivePill()
+                    else
+                      _StatusPill(status: student.status),
                   ],
                 ),
-              ),
-              SizedBox(width: isCompact ? 8 : 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    student.amountLabel,
-                    style: AppTextStyles.heading.copyWith(fontSize: amountSize),
-                  ),
-                  const SizedBox(height: 8),
-                  _StatusPill(status: student.status),
-                ],
-              ),
-              const SizedBox(width: 8),
-              const Icon(
-                Icons.chevron_right_rounded,
-                color: AppColors.textMuted,
-              ),
-            ],
+                const SizedBox(width: 8),
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  color: AppColors.textMuted,
+                ),
+              ],
+            ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _InactivePill extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
+      decoration: BoxDecoration(
+        color: AppColors.textMuted.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(AppRadius.pill),
+      ),
+      child: Text(
+        'Inativo',
+        style: AppTextStyles.dashboardAlert.copyWith(
+          color: AppColors.textMuted,
+          fontSize: 11,
         ),
       ),
     );

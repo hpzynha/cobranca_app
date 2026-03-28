@@ -202,6 +202,7 @@ class _AppToastWidgetState extends State<_AppToastWidget>
                             fontWeight: FontWeight.w500,
                             color: textColor,
                             height: 1.4,
+                            decoration: TextDecoration.none,
                           ),
                         ),
                       ),

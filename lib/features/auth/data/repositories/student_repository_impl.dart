@@ -175,6 +175,31 @@ class StudentRepositoryImpl implements StudentRepository {
   }
 
   @override
+  Future<Result<void>> updateDueDate({
+    required String studentId,
+    required int dueDay,
+    required DateTime nextDueDate,
+  }) async {
+    try {
+      await _remoteDataSource.updateDueDate(
+        studentId: studentId,
+        dueDay: dueDay,
+        nextDueDate: nextDueDate,
+      );
+      return Result.success(null);
+    } on PostgrestException catch (e) {
+      return Result.error(
+        Failure(
+          message: e.message.isNotEmpty ? e.message : 'Não foi possível atualizar o vencimento.',
+          code: e.code,
+        ),
+      );
+    } catch (_) {
+      return Result.error(const Failure(message: 'Sem conexão ou erro inesperado.'));
+    }
+  }
+
+  @override
   Future<Result<({int expectedCents, int receivedCents, int dueSoonCents, int pendingCents})>>
   getMonthlyReport(DateTime month) async {
     try {

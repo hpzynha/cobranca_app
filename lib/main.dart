@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:app_cobranca/core/theme/app_theme.dart';
 import 'package:app_cobranca/core/theme/theme_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -83,6 +84,9 @@ class _MyAppState extends ConsumerState<MyApp> {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
+      locale: const Locale('pt', 'BR'),
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      supportedLocales: const [Locale('pt', 'BR'), Locale('en')],
       builder: (context, child) {
         final mediaQuery = MediaQuery.of(context);
         final scaleFactor =

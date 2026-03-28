@@ -9,6 +9,11 @@ abstract class StudentRepository {
   Future<Result<void>> inactivateStudent({required String studentId});
   Future<Result<void>> reactivateStudent({required String studentId});
   Future<Result<void>> deleteStudent({required String studentId});
+  Future<Result<void>> updateDueDate({
+    required String studentId,
+    required int dueDay,
+    required DateTime nextDueDate,
+  });
   Future<Result<({int expectedCents, int receivedCents, int dueSoonCents, int pendingCents})>>
   getMonthlyReport(DateTime month);
 }

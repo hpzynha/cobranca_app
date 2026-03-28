@@ -38,7 +38,7 @@ class StudentRemoteDataSource {
       final response = await _supabaseClient
           .from('students')
           .select(
-            'id, owner_id, name, whatsapp, monthly_fee_cents, due_day, next_due_date, last_payment_date, photo_url, created_at',
+            'id, owner_id, name, whatsapp, monthly_fee_cents, due_day, next_due_date, last_payment_date, photo_url, created_at, is_active',
           )
           .eq('owner_id', ownerId)
           .order('created_at', ascending: false)
@@ -70,6 +70,22 @@ class StudentRemoteDataSource {
     await _supabaseClient
         .from('students')
         .update({'is_active': true})
+        .eq('id', studentId)
+        .eq('owner_id', ownerId ?? '');
+  }
+
+  Future<void> updateDueDate({
+    required String studentId,
+    required int dueDay,
+    required DateTime nextDueDate,
+  }) async {
+    final ownerId = _supabaseClient.auth.currentUser?.id;
+    await _supabaseClient
+        .from('students')
+        .update({
+          'due_day': dueDay,
+          'next_due_date': nextDueDate.toIso8601String().split('T').first,
+        })
         .eq('id', studentId)
         .eq('owner_id', ownerId ?? '');
   }

@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/router/app_router.dart';
+import 'features/auth/presentation/providers/student_providers.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,6 +56,13 @@ class _MyAppState extends ConsumerState<MyApp> {
         Supabase.instance.client.auth.onAuthStateChange.listen((data) {
       if (data.event == AuthChangeEvent.passwordRecovery) {
         appRouter.go('/reset-password');
+      }
+
+      // Limpa o cache de dados do usuário ao trocar de conta
+      if (data.event == AuthChangeEvent.signedOut ||
+          data.event == AuthChangeEvent.signedIn) {
+        ref.invalidate(studentsProvider);
+        ref.invalidate(monthlyReportProvider);
       }
     });
   }

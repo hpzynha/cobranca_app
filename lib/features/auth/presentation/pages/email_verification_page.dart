@@ -1,4 +1,5 @@
 import 'package:app_cobranca/core/theme/app_colors.dart';
+import 'package:app_cobranca/core/widgets/app_toast.dart';
 import 'package:app_cobranca/core/theme/app_responsive.dart';
 import 'package:app_cobranca/features/auth/presentation/providers/email_verification_notifier.dart';
 import 'package:flutter/material.dart';
@@ -19,15 +20,11 @@ class EmailVerificationPage extends ConsumerWidget {
       next.whenOrNull(
         data: (state) {
           if (state.errorMessage != null) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+            AppToast.error(context, state.errorMessage!);
           }
 
           if (state.infoMessage != null) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(SnackBar(content: Text(state.infoMessage!)));
+            AppToast.info(context, state.infoMessage!);
           }
 
           if (state.isVerified) {

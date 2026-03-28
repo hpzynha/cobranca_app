@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:app_cobranca/core/theme/app_colors.dart';
+import 'package:app_cobranca/core/widgets/app_toast.dart';
 import 'package:app_cobranca/features/auth/data/auth_service.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:flutter/material.dart';
@@ -102,15 +103,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   }
 
   void _showSnackBar(String message, {bool isError = false}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: isError ? AppColors.danger : AppColors.success,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-      ),
-    );
+    if (isError) {
+      AppToast.error(context, message);
+    } else {
+      AppToast.success(context, message);
+    }
   }
 
   @override

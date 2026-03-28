@@ -1,4 +1,5 @@
 import 'package:app_cobranca/core/theme/app_colors.dart';
+import 'package:app_cobranca/core/widgets/app_toast.dart';
 import 'package:app_cobranca/core/theme/app_responsive.dart';
 import 'package:app_cobranca/core/theme/app_spacing.dart';
 import 'package:app_cobranca/features/auth/domain/entities/student_registration_input.dart';
@@ -104,9 +105,7 @@ class _AddPageState extends ConsumerState<AddPage> {
         dueDay < 1 ||
         dueDay > 31 ||
         nextDueDate == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Revise os dados antes de cadastrar.')),
-      );
+      AppToast.warning(context, 'Revise os dados antes de cadastrar.');
       return;
     }
 
@@ -130,17 +129,11 @@ class _AddPageState extends ConsumerState<AddPage> {
     setState(() => _isSubmitting = false);
 
     if (!result.isSuccess) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(result.failure?.message ?? 'Erro ao cadastrar aluno.'),
-        ),
-      );
+      AppToast.error(context, result.failure?.message ?? 'Erro ao cadastrar aluno.');
       return;
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Aluno cadastrado com sucesso.')),
-    );
+    AppToast.success(context, 'Aluno cadastrado com sucesso.');
     ref.invalidate(studentsProvider);
     ref.invalidate(studentPaymentItemsProvider);
     ref.invalidate(monthlyReportProvider);
@@ -491,11 +484,7 @@ class _PhotoPickerPlaceholder extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Upload de foto será adicionado em breve.'),
-              ),
-            );
+            AppToast.info(context, 'Upload de foto será adicionado em breve.');
           },
           child: Container(
             width: size,

@@ -1,4 +1,5 @@
 import 'package:app_cobranca/core/theme/app_colors.dart';
+import 'package:app_cobranca/core/widgets/app_toast.dart';
 import 'package:app_cobranca/core/theme/app_spacing.dart';
 import 'package:app_cobranca/features/auth/presentation/providers/student_providers.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/lib/features/auth/presentation/widgets/students_dashboard_card.dart';
@@ -289,13 +290,7 @@ class _StudentDetailsPageState extends ConsumerState<StudentDetailsPage> {
 
     if (!result.isSuccess) {
       setState(() => _isMarkingAsPaid = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            result.failure?.message ?? 'Não foi possível marcar como pago.',
-          ),
-        ),
-      );
+      AppToast.error(context, result.failure?.message ?? 'Não foi possível marcar como pago.');
       return;
     }
 
@@ -373,11 +368,7 @@ class _StudentDetailsPageState extends ConsumerState<StudentDetailsPage> {
       ref.invalidate(studentsProvider);
       ref.invalidate(studentPaymentItemsProvider);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(result.failure?.message ?? 'Erro ao inativar aluno.'),
-        ),
-      );
+      AppToast.error(context, result.failure?.message ?? 'Erro ao inativar aluno.');
     }
   }
 
@@ -395,11 +386,7 @@ class _StudentDetailsPageState extends ConsumerState<StudentDetailsPage> {
       ref.invalidate(studentsProvider);
       ref.invalidate(studentPaymentItemsProvider);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(result.failure?.message ?? 'Erro ao reativar aluno.'),
-        ),
-      );
+      AppToast.error(context, result.failure?.message ?? 'Erro ao reativar aluno.');
     }
   }
 
@@ -416,11 +403,7 @@ class _StudentDetailsPageState extends ConsumerState<StudentDetailsPage> {
       context.pop();
     } else {
       setState(() => _isPerformingAction = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(result.failure?.message ?? 'Erro ao deletar aluno.'),
-        ),
-      );
+      AppToast.error(context, result.failure?.message ?? 'Erro ao deletar aluno.');
     }
   }
 

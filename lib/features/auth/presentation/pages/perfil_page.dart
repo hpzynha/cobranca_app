@@ -1,4 +1,5 @@
 import 'package:app_cobranca/core/theme/app_colors.dart';
+import 'package:app_cobranca/core/widgets/app_toast.dart';
 import 'package:app_cobranca/core/theme/app_responsive.dart';
 import 'package:app_cobranca/features/auth/presentation/providers/auth_providers.dart';
 import 'package:app_cobranca/features/auth/presentation/providers/student_providers.dart';
@@ -76,11 +77,7 @@ class _PerfilPageState extends ConsumerState<PerfilPage> {
       ref.invalidate(currentUserNameProvider);
       if (mounted) setState(() {});
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Não foi possível atualizar o nome.')),
-        );
-      }
+      if (mounted) AppToast.error(context, 'Não foi possível atualizar o nome.');
     } finally {
       if (mounted) setState(() => _isSavingName = false);
     }
@@ -91,17 +88,9 @@ class _PerfilPageState extends ConsumerState<PerfilPage> {
     setState(() => _isSendingReset = true);
     try {
       await Supabase.instance.client.auth.resetPasswordForEmail(_email);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Email de redefinição enviado para $_email')),
-        );
-      }
+      if (mounted) AppToast.success(context, 'Email de redefinição enviado para $_email');
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Não foi possível enviar o email.')),
-        );
-      }
+      if (mounted) AppToast.error(context, 'Não foi possível enviar o email.');
     } finally {
       if (mounted) setState(() => _isSendingReset = false);
     }
@@ -285,9 +274,7 @@ class _PerfilPageState extends ConsumerState<PerfilPage> {
                       loading: false,
                       textPrimary: textPrimary,
                       textMuted: textMuted,
-                      onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Em breve disponível.')),
-                      ),
+                      onTap: () => AppToast.info(context, 'Em breve disponível.'),
                       isFirst: false,
                       isLast: true,
                       borderColor: cardBorderColor,

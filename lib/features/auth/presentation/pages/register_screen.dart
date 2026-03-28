@@ -1,4 +1,5 @@
 import 'package:app_cobranca/core/theme/app_colors.dart';
+import 'package:app_cobranca/core/widgets/app_toast.dart';
 import 'package:app_cobranca/features/auth/domain/entities/signup_result.dart';
 import 'package:app_cobranca/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:app_cobranca/features/auth/presentation/providers/sign_up_notifier.dart';
@@ -27,9 +28,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     if (_passwordController.text != _confirmPasswordController.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('As senhas não coincidem')),
-      );
+      AppToast.error(context, 'As senhas não coincidem.');
       return;
     }
 
@@ -52,8 +51,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         context.go('/login');
       },
       error: (error, _) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(error.toString())));
+        AppToast.error(context, error.toString());
       },
     );
   }

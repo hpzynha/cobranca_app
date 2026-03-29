@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class BottomBar extends StatelessWidget {
-  /// Índices: 0 = Alunos, 1 = + (add), 2 = Relatórios.
+  /// Índices: 0 = Home, 1 = Alunos, 2 = Mensagens, 3 = Relatórios.
   /// Passe -1 para nenhum item ativo (ex: Config page).
   const BottomBar({required this.currentIndex, super.key});
 
@@ -49,31 +49,53 @@ class BottomBar extends StatelessWidget {
                 ],
               ),
               padding: EdgeInsets.symmetric(
-                horizontal: isCompact ? 16 : 24,
+                horizontal: isCompact ? 8 : 12,
                 vertical: isCompact ? 10 : 12,
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _NavItem(
-                    icon: Icons.groups_2_outlined,
-                    label: AppStrings.navStudents,
-                    isActive: currentIndex == 0,
-                    isDark: isDark,
-                    onTap: () => context.go('/alunos'),
-                    isCompact: isCompact,
+                  Expanded(
+                    child: _NavItem(
+                      icon: Icons.home_rounded,
+                      label: AppStrings.navHome,
+                      isActive: currentIndex == 0,
+                      isDark: isDark,
+                      onTap: () => context.go('/'),
+                    ),
                   ),
-                  _FabButton(
-                    isCompact: isCompact,
-                    onTap: () => context.go('/adicionar'),
+                  Expanded(
+                    child: _NavItem(
+                      icon: Icons.groups_2_outlined,
+                      label: AppStrings.navStudents,
+                      isActive: currentIndex == 1,
+                      isDark: isDark,
+                      onTap: () => context.go('/alunos'),
+                    ),
                   ),
-                  _NavItem(
-                    icon: Icons.bar_chart_outlined,
-                    label: AppStrings.navReports,
-                    isActive: currentIndex == 2,
-                    isDark: isDark,
-                    onTap: () => context.go('/relatorios'),
-                    isCompact: isCompact,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: _FabButton(
+                      isCompact: isCompact,
+                      onTap: () => context.go('/adicionar'),
+                    ),
+                  ),
+                  Expanded(
+                    child: _NavItem(
+                      icon: Icons.chat_bubble_outline_rounded,
+                      label: 'Mensagens',
+                      isActive: currentIndex == 2,
+                      isDark: isDark,
+                      onTap: () => context.go('/mensagens'),
+                    ),
+                  ),
+                  Expanded(
+                    child: _NavItem(
+                      icon: Icons.bar_chart_outlined,
+                      label: AppStrings.navReports,
+                      isActive: currentIndex == 3,
+                      isDark: isDark,
+                      onTap: () => context.go('/relatorios'),
+                    ),
                   ),
                 ],
               ),
@@ -92,7 +114,6 @@ class _NavItem extends StatelessWidget {
     required this.isActive,
     required this.isDark,
     required this.onTap,
-    required this.isCompact,
   });
 
   final IconData icon;
@@ -100,34 +121,29 @@ class _NavItem extends StatelessWidget {
   final bool isActive;
   final bool isDark;
   final VoidCallback onTap;
-  final bool isCompact;
 
   @override
   Widget build(BuildContext context) {
-    final activeColor =
-        isDark ? AppColors.primaryOnDark : AppColors.primary;
-    final inactiveColor = isDark
-        ? const Color(0xFF4a4a62)
-        : AppColors.bottomBarInactive;
+    final activeColor = isDark ? AppColors.primaryOnDark : AppColors.primary;
+    final inactiveColor = isDark ? const Color(0xFF4a4a62) : AppColors.bottomBarInactive;
     final color = isActive ? activeColor : inactiveColor;
 
     return InkWell(
       borderRadius: BorderRadius.circular(16),
       onTap: onTap,
       child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: isCompact ? 12 : 16,
-          vertical: 4,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: isCompact ? 22 : 24, color: color),
+            Icon(icon, size: 22, color: color),
             const SizedBox(height: 3),
             Text(
               label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: isCompact ? 10 : 11,
+                fontSize: 10,
                 fontWeight: FontWeight.w600,
                 color: color,
               ),

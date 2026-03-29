@@ -7,6 +7,7 @@ import 'package:app_cobranca/features/auth/presentation/pages/config_page.dart';
 import 'package:app_cobranca/features/auth/presentation/pages/home_screen.dart';
 import 'package:app_cobranca/features/auth/presentation/pages/perfil_page.dart';
 import 'package:app_cobranca/features/auth/presentation/pages/student_details_page.dart';
+import 'package:app_cobranca/features/auth/presentation/pages/mensagens_page.dart';
 import 'package:app_cobranca/features/auth/presentation/pages/relatorios_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -97,6 +98,7 @@ final GoRouter appRouter = GoRouter(
       ),
     ),
     GoRoute(path: '/adicionar', builder: (context, state) => const AddPage()),
+    GoRoute(path: '/mensagens', builder: (context, state) => const MensagensPage()),
     GoRoute(
       path: '/relatorios',
       builder: (context, state) => const RelatoriosPage(),

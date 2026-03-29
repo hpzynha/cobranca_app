@@ -121,7 +121,7 @@ class _AlunosPageState extends ConsumerState<AlunosPage> {
           ),
         ],
       ),
-      bottomNavigationBar: const BottomBar(currentIndex: 0),
+      bottomNavigationBar: const BottomBar(currentIndex: 1),
     );
   }
 }

@@ -63,7 +63,7 @@ class RelatoriosPage extends ConsumerWidget {
           ),
         ],
       ),
-      bottomNavigationBar: const BottomBar(currentIndex: 2),
+      bottomNavigationBar: const BottomBar(currentIndex: 3),
     );
   }
 

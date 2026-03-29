@@ -464,7 +464,7 @@ class _AddPageState extends ConsumerState<AddPage> {
           ),
         ),
       ),
-      bottomNavigationBar: const BottomBar(currentIndex: 1),
+      bottomNavigationBar: const BottomBar(currentIndex: -1),
     );
   }
 }

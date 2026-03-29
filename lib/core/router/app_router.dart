@@ -69,44 +69,80 @@ final GoRouter appRouter = GoRouter(
     return null;
   },
   routes: [
-    GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
-    GoRoute(path: '/', builder: (context, state) => const AuthLandingScreen()),
-    GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
+    GoRoute(path: '/splash', pageBuilder: (context, state) => _fadePage(state, const SplashScreen())),
+    GoRoute(path: '/', pageBuilder: (context, state) => _fadePage(state, const AuthLandingScreen())),
+    GoRoute(path: '/login', pageBuilder: (context, state) => _fadePage(state, const LoginScreen())),
     GoRoute(
       path: '/register',
-      builder: (context, state) => const RegisterScreen(),
+      pageBuilder: (context, state) => _slidePage(state, const RegisterScreen()),
     ),
     GoRoute(
       path: '/reset-password',
-      builder: (context, state) => const ResetPasswordScreen(),
+      pageBuilder: (context, state) => _slidePage(state, const ResetPasswordScreen()),
     ),
     GoRoute(
       path: '/email-verification',
-      builder: (context, state) {
+      pageBuilder: (context, state) {
         final email = state.extra as String?;
-        return EmailVerificationPage(email: email ?? '');
+        return _slidePage(state, EmailVerificationPage(email: email ?? ''));
       },
     ),
 
-    GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
-    GoRoute(path: '/alunos', builder: (context, state) => const AlunosPage()),
+    // Rotas da bottom bar — fade para sensação de troca de aba
+    GoRoute(path: '/home', pageBuilder: (context, state) => _fadePage(state, const HomeScreen())),
+    GoRoute(path: '/alunos', pageBuilder: (context, state) => _fadePage(state, const AlunosPage())),
     GoRoute(
       path: '/alunos/:id',
-      builder: (context, state) => StudentDetailsPage(
-        studentId: state.pathParameters['id']!,
-        initialStudent: state.extra as StudentPaymentItem?,
+      pageBuilder: (context, state) => _slidePage(
+        state,
+        StudentDetailsPage(
+          studentId: state.pathParameters['id']!,
+          initialStudent: state.extra as StudentPaymentItem?,
+        ),
       ),
     ),
-    GoRoute(path: '/adicionar', builder: (context, state) => const AddPage()),
-    GoRoute(path: '/mensagens', builder: (context, state) => const MensagensPage()),
-    GoRoute(
-      path: '/relatorios',
-      builder: (context, state) => const RelatoriosPage(),
-    ),
-    GoRoute(path: '/config', builder: (context, state) => const ConfigPage()),
-    GoRoute(path: '/perfil', builder: (context, state) => const PerfilPage()),
+    GoRoute(path: '/adicionar', pageBuilder: (context, state) => _fadePage(state, const AddPage())),
+    GoRoute(path: '/mensagens', pageBuilder: (context, state) => _fadePage(state, const MensagensPage())),
+    GoRoute(path: '/relatorios', pageBuilder: (context, state) => _fadePage(state, const RelatoriosPage())),
+    GoRoute(path: '/config', pageBuilder: (context, state) => _slidePage(state, const ConfigPage())),
+    GoRoute(path: '/perfil', pageBuilder: (context, state) => _slidePage(state, const PerfilPage())),
   ],
 );
+
+// Transição fade — usada nas rotas da bottom bar (sensação de troca de aba)
+CustomTransitionPage<void> _fadePage(GoRouterState state, Widget child) {
+  return CustomTransitionPage<void>(
+    key: state.pageKey,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 200),
+    reverseTransitionDuration: const Duration(milliseconds: 150),
+    transitionsBuilder: (context, animation, _, child) => FadeTransition(
+      opacity: CurveTween(curve: Curves.easeInOut).animate(animation),
+      child: child,
+    ),
+  );
+}
+
+// Transição slide da direita — usada em páginas de detalhe (push)
+CustomTransitionPage<void> _slidePage(GoRouterState state, Widget child) {
+  return CustomTransitionPage<void>(
+    key: state.pageKey,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 280),
+    reverseTransitionDuration: const Duration(milliseconds: 220),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final slide = Tween(
+        begin: const Offset(1.0, 0.0),
+        end: Offset.zero,
+      ).chain(CurveTween(curve: Curves.easeOutCubic)).animate(animation);
+      final fade = CurveTween(curve: const Interval(0.0, 0.5)).animate(animation);
+      return SlideTransition(
+        position: slide,
+        child: FadeTransition(opacity: fade, child: child),
+      );
+    },
+  );
+}
 
 class GoRouterRefreshStream extends ChangeNotifier {
   GoRouterRefreshStream(Stream<AuthState> stream) {

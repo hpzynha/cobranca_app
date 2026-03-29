@@ -80,10 +80,18 @@ final monthlyBalanceProvider = FutureProvider<double>((ref) async {
 final monthlyReportProvider = FutureProvider<
   ({int expectedCents, int receivedCents, int dueSoonCents, int pendingCents})
 >((ref) async {
-  final repo = ref.read(studentRepositoryProvider);
-  final result = await repo.getMonthlyReport(DateTime.now());
-  if (!result.isSuccess) {
-    throw Exception(result.failure?.message ?? 'Erro ao carregar relatório.');
-  }
-  return result.data!;
+  final items = await ref.watch(studentPaymentItemsProvider.future);
+  final active = items.where((s) => s.isActive);
+  return (
+    expectedCents: active.fold(0, (sum, s) => sum + s.monthlyFeeCents),
+    receivedCents: active
+        .where((s) => s.status == StudentPaymentStatus.paid)
+        .fold(0, (sum, s) => sum + s.monthlyFeeCents),
+    dueSoonCents: active
+        .where((s) => s.status == StudentPaymentStatus.dueSoon)
+        .fold(0, (sum, s) => sum + s.monthlyFeeCents),
+    pendingCents: active
+        .where((s) => s.status == StudentPaymentStatus.overdue)
+        .fold(0, (sum, s) => sum + s.monthlyFeeCents),
+  );
 });

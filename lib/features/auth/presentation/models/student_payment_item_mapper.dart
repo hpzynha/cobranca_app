@@ -34,35 +34,30 @@ extension StudentPaymentItemMapper on List<Student> {
 }
 
 StudentPaymentStatus _statusForStudent(Student student, DateTime now) {
-  // Se há um pagamento recente que cobre o ciclo atual, mostra "Pago"
-  // independente do que o backend retornar — resolve dessincronias após avanço
-  // de next_due_date.
+  // Pago no ciclo atual tem prioridade máxima
   if (_paidInCurrentCycle(student, now)) {
     return StudentPaymentStatus.paid;
   }
 
-  final backendStatus = _statusFromBackend(student.paymentStatusCode);
-  if (backendStatus != null) {
-    return backendStatus;
-  }
-
+  // Se temos a data de vencimento, calculamos localmente — mais confiável
+  // que o status do backend, que pode ter boundaries diferentes.
   final nextDueDate =
       student.nextDueDate == null ? null : _dateOnly(student.nextDueDate!);
 
-  if (nextDueDate == null) {
+  if (nextDueDate != null) {
+    if (now.isAfter(nextDueDate)) {
+      return StudentPaymentStatus.overdue;
+    }
+    final daysToDue = nextDueDate.difference(now).inDays;
+    if (daysToDue <= 5) {
+      return StudentPaymentStatus.dueSoon;
+    }
     return StudentPaymentStatus.pending;
   }
 
-  if (now.isAfter(nextDueDate)) {
-    return StudentPaymentStatus.overdue;
-  }
-
-  final daysToDue = nextDueDate.difference(now).inDays;
-  if (daysToDue <= 5) {
-    return StudentPaymentStatus.dueSoon;
-  }
-
-  return StudentPaymentStatus.pending;
+  // Sem data de vencimento: usa o status do backend como fallback
+  return _statusFromBackend(student.paymentStatusCode) ??
+      StudentPaymentStatus.pending;
 }
 
 /// Retorna true se o [lastPaymentDate] do aluno está dentro do ciclo atual,

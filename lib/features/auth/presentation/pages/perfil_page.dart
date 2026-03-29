@@ -17,6 +17,7 @@ class PerfilPage extends ConsumerStatefulWidget {
 
 class _PerfilPageState extends ConsumerState<PerfilPage> {
   bool _isSavingName = false;
+  bool _isSavingPix = false;
   bool _isSendingReset = false;
 
   String get _fullName {
@@ -83,6 +84,54 @@ class _PerfilPageState extends ConsumerState<PerfilPage> {
     }
   }
 
+  Future<void> _editPixKey(String currentKey) async {
+    final controller = TextEditingController(text: currentKey);
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Chave PIX'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: const InputDecoration(
+            labelText: 'Chave PIX',
+            hintText: 'CPF, e-mail, telefone ou chave aleatória',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Salvar'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+    final newKey = controller.text.trim();
+    if (newKey == currentKey) return;
+
+    setState(() => _isSavingPix = true);
+    try {
+      final userId = Supabase.instance.client.auth.currentUser!.id;
+      await Supabase.instance.client.from('profiles').upsert({
+        'id': userId,
+        'pix_key': newKey.isEmpty ? null : newKey,
+        'updated_at': DateTime.now().toIso8601String(),
+      });
+      ref.invalidate(pixKeyProvider);
+    } catch (e) {
+      if (mounted) AppToast.error(context, 'Não foi possível salvar a chave PIX.');
+    } finally {
+      if (mounted) setState(() => _isSavingPix = false);
+    }
+  }
+
   Future<void> _resetPassword() async {
     if (_email.isEmpty) return;
     setState(() => _isSendingReset = true);
@@ -101,6 +150,8 @@ class _PerfilPageState extends ConsumerState<PerfilPage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final studentsAsync = ref.watch(studentPaymentItemsProvider);
     final balanceAsync = ref.watch(monthlyBalanceProvider);
+    final pixKeyAsync = ref.watch(pixKeyProvider);
+    final currentPixKey = pixKeyAsync.valueOrNull ?? '';
     final currency = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
     final horizontalPadding = AppResponsive.size(context, 20).clamp(16.0, 28.0);
 
@@ -235,6 +286,37 @@ class _PerfilPageState extends ConsumerState<PerfilPage> {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 28),
+
+              // ── Seção PIX ────────────────────────────────────
+              Text(
+                'Pagamento',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: textMuted,
+                  letterSpacing: 0.5,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Container(
+                decoration: BoxDecoration(
+                  color: cardColor,
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: cardBorderColor),
+                ),
+                child: _AccountTile(
+                  icon: Icons.pix,
+                  label: currentPixKey.isNotEmpty ? 'PIX: $currentPixKey' : 'Chave PIX (não configurada)',
+                  loading: _isSavingPix,
+                  textPrimary: textPrimary,
+                  textMuted: textMuted,
+                  onTap: () => _editPixKey(currentPixKey),
+                  isFirst: true,
+                  isLast: true,
+                  borderColor: cardBorderColor,
+                ),
               ),
               const SizedBox(height: 28),
 

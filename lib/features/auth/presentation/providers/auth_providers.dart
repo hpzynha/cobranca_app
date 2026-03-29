@@ -47,3 +47,14 @@ final currentUserNameProvider = Provider<String>((ref) {
   final email = user?.email ?? '';
   return email.split('@').first;
 });
+
+final pixKeyProvider = FutureProvider<String>((ref) async {
+  final user = Supabase.instance.client.auth.currentUser;
+  if (user == null) return '';
+  final data = await Supabase.instance.client
+      .from('profiles')
+      .select('pix_key')
+      .eq('id', user.id)
+      .maybeSingle();
+  return (data?['pix_key'] as String?)?.trim() ?? '';
+});

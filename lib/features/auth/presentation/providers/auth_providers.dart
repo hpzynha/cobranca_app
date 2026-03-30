@@ -48,13 +48,26 @@ final currentUserNameProvider = Provider<String>((ref) {
   return email.split('@').first;
 });
 
-final pixKeyProvider = FutureProvider<String>((ref) async {
+/// Dados do perfil do professor vindos da tabela `profiles`.
+typedef ProfileData = ({String pixKey, String serviceType, String serviceCustom});
+
+final profileDataProvider = FutureProvider<ProfileData>((ref) async {
   final user = Supabase.instance.client.auth.currentUser;
-  if (user == null) return '';
+  if (user == null) return (pixKey: '', serviceType: '', serviceCustom: '');
   final data = await Supabase.instance.client
       .from('profiles')
-      .select('pix_key')
+      .select('pix_key, service_type, service_custom')
       .eq('id', user.id)
       .maybeSingle();
-  return (data?['pix_key'] as String?)?.trim() ?? '';
+  return (
+    pixKey: (data?['pix_key'] as String?)?.trim() ?? '',
+    serviceType: (data?['service_type'] as String?)?.trim() ?? '',
+    serviceCustom: (data?['service_custom'] as String?)?.trim() ?? '',
+  );
+});
+
+/// Mantido para compatibilidade com student_details_page.
+final pixKeyProvider = FutureProvider<String>((ref) async {
+  final profile = await ref.watch(profileDataProvider.future);
+  return profile.pixKey;
 });

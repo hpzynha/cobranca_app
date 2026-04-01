@@ -1,4 +1,5 @@
 import 'package:app_cobranca/core/errors/failure.dart';
+import 'package:app_cobranca/core/errors/plan_limit_exception.dart';
 import 'package:app_cobranca/core/errors/result.dart';
 import 'package:app_cobranca/features/auth/data/datasources/student_remote_datasource.dart';
 import 'package:app_cobranca/features/auth/data/models/student_registration_payload.dart';
@@ -41,6 +42,10 @@ class StudentRepositoryImpl implements StudentRepository {
       );
       await _remoteDataSource.createStudent(payload);
       return Result.success(null);
+    } on PlanLimitException catch (e) {
+      return Result.error(
+        Failure(message: e.message, code: 'plan_limit'),
+      );
     } on PostgrestException catch (e) {
       return Result.error(
         Failure(

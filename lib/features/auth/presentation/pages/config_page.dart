@@ -1,5 +1,6 @@
 import 'package:app_cobranca/core/theme/theme_provider.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/bottom_bar.dart';
+import 'package:app_cobranca/features/subscription/presentation/widgets/plan_badge_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -16,7 +17,10 @@ class ConfigPage extends ConsumerWidget {
       extendBody: true,
       appBar: AppBar(title: const Text('Configurações')),
       body: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
         children: [
+          const PlanBadgeWidget(),
+          const SizedBox(height: 16),
           const ListTile(
             leading: Icon(Icons.person_outline),
             title: Text('Perfil'),

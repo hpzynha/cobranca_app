@@ -129,6 +129,10 @@ class _AddPageState extends ConsumerState<AddPage> {
     setState(() => _isSubmitting = false);
 
     if (!result.isSuccess) {
+      if (result.failure?.code == 'plan_limit') {
+        context.push('/paywall');
+        return;
+      }
       AppToast.error(context, result.failure?.message ?? 'Erro ao cadastrar aluno.');
       return;
     }

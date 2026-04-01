@@ -9,6 +9,7 @@ import 'package:app_cobranca/features/auth/presentation/pages/perfil_page.dart';
 import 'package:app_cobranca/features/auth/presentation/pages/student_details_page.dart';
 import 'package:app_cobranca/features/auth/presentation/pages/mensagens_page.dart';
 import 'package:app_cobranca/features/auth/presentation/pages/relatorios_page.dart';
+import 'package:app_cobranca/features/subscription/presentation/pages/paywall_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -106,6 +107,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(path: '/relatorios', pageBuilder: (context, state) => _fadePage(state, const RelatoriosPage())),
     GoRoute(path: '/config', pageBuilder: (context, state) => _slidePage(state, const ConfigPage())),
     GoRoute(path: '/perfil', pageBuilder: (context, state) => _slidePage(state, const PerfilPage())),
+    GoRoute(path: '/paywall', pageBuilder: (context, state) => _slidePage(state, const PaywallPage())),
   ],
 );
 

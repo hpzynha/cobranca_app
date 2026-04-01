@@ -10,6 +10,7 @@ const corsHeaders = {
 }
 
 async function abacatePost(path: string, apiKey: string, body: object) {
+  console.log(`abacate POST ${path} REQUEST →`, JSON.stringify(body))
   const res = await fetch(`${ABACATEPAY_BASE}${path}`, {
     method: 'POST',
     headers: {
@@ -18,9 +19,14 @@ async function abacatePost(path: string, apiKey: string, body: object) {
     },
     body: JSON.stringify(body),
   })
-  const json = await res.json()
-  console.log(`abacate POST ${path} →`, JSON.stringify(json))
-  return json
+  const text = await res.text()
+  console.log(`abacate POST ${path} STATUS ${res.status} RESPONSE →`, text)
+  try {
+    return JSON.parse(text)
+  } catch {
+    console.error(`abacate POST ${path} non-JSON response`)
+    return null
+  }
 }
 
 serve(async (req) => {
@@ -67,7 +73,6 @@ serve(async (req) => {
 
     const fullName = (user.user_metadata?.full_name as string | undefined) ?? ''
 
-    // Create billing with inline customer (avoids customer lookup issues)
     const billingRes = await abacatePost('/billing/create', apiKey, {
       frequency: 'ONE_TIME',
       methods: ['PIX'],
@@ -86,8 +91,8 @@ serve(async (req) => {
       customer: {
         name: fullName.trim() || user.email,
         email: user.email,
-        cellphone: '+5511999999999',
-        taxId: '11144477735',
+        cellphone: '(11) 99999-9999',
+        taxId: '111.444.777-35',
       },
     })
 

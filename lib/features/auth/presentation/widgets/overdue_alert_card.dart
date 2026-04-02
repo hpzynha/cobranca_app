@@ -9,11 +9,13 @@ import 'package:flutter/material.dart';
 class OverdueAlertCard extends StatelessWidget {
   final int overdueCount;
   final VoidCallback onTap;
+  final bool isPro;
 
   const OverdueAlertCard({
     super.key,
     required this.overdueCount,
     required this.onTap,
+    this.isPro = false,
   });
 
   @override
@@ -74,6 +76,7 @@ class OverdueAlertCard extends StatelessWidget {
                           onTap: onTap,
                           danger: danger,
                           fontSize: buttonTextSize,
+                          label: isPro ? 'Ver mensagens' : AppStrings.collectNow,
                         ),
                       ),
                     ],
@@ -95,6 +98,7 @@ class OverdueAlertCard extends StatelessWidget {
                         onTap: onTap,
                         danger: danger,
                         fontSize: buttonTextSize,
+                        label: isPro ? 'Ver mensagens' : AppStrings.collectNow,
                       ),
                     ],
                   ),
@@ -109,11 +113,13 @@ class _ActionChip extends StatelessWidget {
     required this.onTap,
     required this.danger,
     required this.fontSize,
+    required this.label,
   });
 
   final VoidCallback onTap;
   final Color danger;
   final double fontSize;
+  final String label;
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +132,7 @@ class _ActionChip extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.pill),
         ),
         child: Text(
-          AppStrings.collectNow,
+          label,
           style: AppTextStyles.dashboardAlert.copyWith(fontSize: fontSize),
         ),
       ),

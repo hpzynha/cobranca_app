@@ -16,6 +16,9 @@ class AppStrings {
   static const collectNow = 'Cobrar agora';
 
   static String overdueChargesMessage(int overdueCount) {
+    if (overdueCount == 1) {
+      return 'Você tem 1 cobrança vencida';
+    }
     return 'Você tem $overdueCount cobranças vencidas';
   }
 }

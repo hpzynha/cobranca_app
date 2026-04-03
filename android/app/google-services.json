@@ -7,6 +7,42 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:732759318938:android:daab888fde86f7cdd79a23",
+        "android_client_info": {
+          "package_name": "br.com.mensalify.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "732759318938-kp3tfg2n7dae2am9opi9ufanu6udlis9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlO45Y60uQyJ_KJp4ON9xQW_Dwwi4mGMQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "732759318938-kp3tfg2n7dae2am9opi9ufanu6udlis9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "732759318938-rdb6vei2lniilb3c6cfophms9aa0v3q2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.appCobranca"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:732759318938:android:7aa743ac7c345846d79a23",
         "android_client_info": {
           "package_name": "com.example.app_cobranca"

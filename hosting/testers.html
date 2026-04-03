@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mensalify · Seja um Beta Tester</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --purple: #534AB7;
+      --purple-light: #6B62CE;
+      --purple-dark: #3D3591;
+      --off-white: #F5F4F0;
+      --text-dark: #1A1830;
+      --text-mid: #4A4760;
+      --text-light: #8A87A8;
+      --card-bg: #ffffff;
+      --border: rgba(83, 74, 183, 0.12);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Instrument Sans', sans-serif;
+      background: var(--off-white);
+      color: var(--text-dark);
+      overflow-x: hidden;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--purple);
+      position: relative;
+      overflow: hidden;
+      padding: 72px 24px 80px;
+      text-align: center;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -120px; right: -80px;
+      width: 400px; height: 400px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -80px; left: -60px;
+      width: 280px; height: 280px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+    }
+    .hero-badge span { font-size: 14px; }
+
+    .hero h1 {
+      font-family: 'Lora', serif;
+      font-size: clamp(32px, 7vw, 52px);
+      color: #fff;
+      line-height: 1.15;
+      max-width: 600px;
+      margin: 0 auto 20px;
+    }
+    .hero h1 em { font-style: normal; color: #FFD580; }
+
+    .hero p {
+      font-size: 17px;
+      color: rgba(255,255,255,0.8);
+      max-width: 480px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ── FORM ── */
+    .form-section {
+      max-width: 520px;
+      margin: -40px auto 0;
+      padding: 0 20px 64px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .form-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(83, 74, 183, 0.15), 0 4px 16px rgba(0,0,0,0.06);
+      padding: 36px 32px;
+    }
+
+    .form-card h2 {
+      font-family: 'Lora', serif;
+      font-size: 22px;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+    }
+
+    .form-subtitle {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    .field { margin-bottom: 18px; }
+
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-mid);
+      margin-bottom: 7px;
+      letter-spacing: 0.02em;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 13px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: 'Instrument Sans', sans-serif;
+      font-size: 15px;
+      color: var(--text-dark);
+      background: var(--off-white);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+    .field input:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(83, 74, 183, 0.12);
+      background: #fff;
+    }
+    .field input::placeholder { color: var(--text-light); }
+
+    .device-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 2px;
+    }
+
+    .device-option { position: relative; }
+    .device-option input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0; height: 0;
+    }
+    .device-option label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      background: var(--off-white);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-mid);
+      transition: all 0.2s;
+      margin-bottom: 0;
+    }
+    .device-option input[type="radio"]:checked + label {
+      border-color: var(--purple);
+      background: rgba(83, 74, 183, 0.07);
+      color: var(--purple);
+      font-weight: 600;
+    }
+    .device-option label .icon { font-size: 18px; }
+
+    .btn-submit {
+      width: 100%;
+      padding: 15px;
+      background: var(--purple);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Instrument Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 16px rgba(83, 74, 183, 0.35);
+      letter-spacing: 0.01em;
+    }
+    .btn-submit:hover {
+      background: var(--purple-light);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(83, 74, 183, 0.4);
+    }
+    .btn-submit:active { transform: translateY(0); }
+    .btn-submit:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+
+    .form-note {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+
+    .success-box {
+      display: none;
+      text-align: center;
+      padding: 20px 0 8px;
+    }
+    .success-box .success-icon { font-size: 48px; margin-bottom: 14px; }
+    .success-box h3 {
+      font-family: 'Lora', serif;
+      font-size: 22px;
+      color: var(--text-dark);
+      margin-bottom: 10px;
+    }
+    .success-box p { font-size: 15px; color: var(--text-mid); line-height: 1.6; }
+
+    /* ── HOW IT WORKS ── */
+    .section {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 16px 24px 64px;
+    }
+
+    .section-label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--purple);
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-family: 'Lora', serif;
+      font-size: clamp(26px, 5vw, 36px);
+      color: var(--text-dark);
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .section-desc {
+      font-size: 16px;
+      color: var(--text-mid);
+      max-width: 520px;
+      line-height: 1.65;
+      margin-bottom: 40px;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 64px;
+    }
+
+    .step-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px 20px;
+      border: 1.5px solid var(--border);
+    }
+
+    .step-num {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: var(--purple);
+      color: #fff;
+      font-weight: 700;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      font-family: 'Lora', serif;
+    }
+
+    .step-card h4 { font-size: 15px; font-weight: 600; color: var(--text-dark); margin-bottom: 6px; }
+    .step-card p { font-size: 13.5px; color: var(--text-mid); line-height: 1.55; }
+
+    /* ── SCREENSHOTS ── */
+    .screenshots-section {
+      background: var(--text-dark);
+      padding: 64px 24px;
+      overflow: hidden;
+    }
+    .screenshots-inner { max-width: 860px; margin: 0 auto; }
+    .screenshots-inner .section-label { color: #FFD580; }
+    .screenshots-inner .section-title { color: #fff; }
+    .screenshots-inner .section-desc { color: rgba(255,255,255,0.6); margin-bottom: 48px; }
+
+    .screens-scroll {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      padding-bottom: 16px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--purple) transparent;
+      scroll-snap-type: x mandatory;
+    }
+    .screens-scroll::-webkit-scrollbar { height: 4px; }
+    .screens-scroll::-webkit-scrollbar-track { background: transparent; }
+    .screens-scroll::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 4px; }
+
+    .screen-item { flex: 0 0 auto; width: 200px; scroll-snap-align: start; }
+    .screen-item .screen-img {
+      width: 200px;
+      height: 433px;
+      object-fit: cover;
+      object-position: top;
+      border-radius: 24px;
+      border: 3px solid rgba(255,255,255,0.08);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+      display: block;
+      background: rgba(83,74,183,0.3);
+    }
+    .screen-caption {
+      font-size: 12px;
+      color: rgba(255,255,255,0.45);
+      text-align: center;
+      margin-top: 12px;
+      font-weight: 500;
+    }
+
+    /* ── FOOTER CTA ── */
+    .footer-cta {
+      text-align: center;
+      padding: 64px 24px 48px;
+      background: var(--off-white);
+    }
+    .footer-cta h2 {
+      font-family: 'Lora', serif;
+      font-size: clamp(24px, 5vw, 36px);
+      color: var(--text-dark);
+      margin-bottom: 10px;
+    }
+    .footer-cta p { font-size: 16px; color: var(--text-mid); margin-bottom: 28px; }
+
+    .btn-cta-bottom {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--purple);
+      color: #fff;
+      padding: 15px 32px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+      box-shadow: 0 4px 16px rgba(83, 74, 183, 0.3);
+    }
+    .btn-cta-bottom:hover { background: var(--purple-light); transform: translateY(-1px); }
+
+    .footer-small {
+      padding: 24px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-light);
+      border-top: 1px solid var(--border);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate-in { opacity: 0; animation: fadeUp 0.5s ease forwards; }
+    .hero-badge  { animation-delay: 0s; }
+    .hero h1     { animation-delay: 0.1s; }
+    .hero p      { animation-delay: 0.2s; }
+    .form-card   { animation-delay: 0.3s; }
+
+    @media (max-width: 520px) {
+      .form-card { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-badge animate-in"><span>🧪</span> Beta Testers</div>
+  <h1 class="animate-in">Teste o Mensalify <em>antes</em> de todo mundo</h1>
+  <p class="animate-in">Você recebe o app gratuitamente, testa na prática e me ajuda a melhorar. É isso.</p>
+</section>
+
+<!-- ── FORM ── -->
+<section class="form-section">
+  <div class="form-card animate-in">
+    <h2>Quero ser tester</h2>
+    <p class="form-subtitle">Preenche os dados abaixo e te mando o link de instalação direto no seu email.</p>
+
+    <form id="testerForm">
+      <div class="field">
+        <label for="name">Seu nome</label>
+        <input type="text" id="name" name="name" placeholder="Ex: Maria Silva" required autocomplete="name" />
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="maria@email.com" required autocomplete="email" />
+      </div>
+
+      <div class="field">
+        <label>Tipo de celular</label>
+        <div class="device-toggle">
+          <div class="device-option">
+            <input type="radio" id="android" name="device" value="android" required />
+            <label for="android"><span class="icon">🤖</span> Android</label>
+          </div>
+          <div class="device-option">
+            <input type="radio" id="iphone" name="device" value="iphone" />
+            <label for="iphone"><span class="icon">🍎</span> iPhone</label>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit" id="submitBtn">
+        Quero testar o app →
+      </button>
+    </form>
+
+    <div class="success-box" id="successBox">
+      <div class="success-icon">🎉</div>
+      <h3>Você está dentro!</h3>
+      <p>Te mandei o link de instalação no seu email. Pode levar alguns minutinhos pra chegar. Qualquer coisa, me chama!</p>
+    </div>
+
+    <p class="form-note">Seus dados ficam só comigo. Nada de spam, juro.</p>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section class="section">
+  <span class="section-label">Como funciona</span>
+  <h2 class="section-title">O que você vai testar</h2>
+  <p class="section-desc">O Mensalify foi feito pra quem trabalha por conta e tem vergonha de cobrar. Você cadastra seus alunos ou clientes e o app envia os lembretes de cobrança automaticamente pelo WhatsApp.</p>
+
+  <div class="steps">
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <h4>Receba o link</h4>
+      <p>Assim que você se cadastrar, te mando o link de instalação por email.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <h4>Instale o app</h4>
+      <p>No Android via APK. No iPhone via TestFlight. Super simples, leva 2 minutos.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <h4>Use de verdade</h4>
+      <p>Cadastre seus alunos/clientes reais e teste as cobranças automáticas pelo WhatsApp.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">4</div>
+      <h4>Me dê feedback</h4>
+      <p>Qualquer bug, sugestão ou "isso aqui não faz sentido" — me conta. Isso é ouro pra mim.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── SCREENSHOTS ── -->
+<section class="screenshots-section">
+  <div class="screenshots-inner">
+    <span class="section-label">O app em ação</span>
+    <h2 class="section-title">Veja como é na prática</h2>
+    <p class="section-desc">Algumas telas do que você vai encontrar quando instalar.</p>
+
+    <div class="screens-scroll">
+      <div class="screen-item">
+        <img class="screen-img" src="/images/mensalify-splash.png" alt="Splash screen" />
+        <p class="screen-caption">Tela de entrada</p>
+      </div>
+      <div class="screen-item">
+        <img class="screen-img" src="/images/mensalify-dashboard.png" alt="Dashboard" />
+        <p class="screen-caption">Painel financeiro</p>
+      </div>
+      <div class="screen-item">
+        <img class="screen-img" src="/images/mensalify-alunos.png" alt="Lista de alunos" />
+        <p class="screen-caption">Seus alunos</p>
+      </div>
+      <div class="screen-item">
+        <img class="screen-img" src="/images/mensalify-cobranca.png" alt="Cobrança WhatsApp" />
+        <p class="screen-caption">Cobrar no WhatsApp</p>
+      </div>
+      <div class="screen-item">
+        <img class="screen-img" src="/images/mensalify-status.png" alt="Status de pagamento" />
+        <p class="screen-caption">Status de pagamentos</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER CTA ── -->
+<div class="footer-cta">
+  <h2>Bora testar?</h2>
+  <p>Leva menos de 1 minuto pra se cadastrar.</p>
+  <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" class="btn-cta-bottom">
+    ↑ Quero ser tester
+  </a>
+</div>
+
+<footer class="footer-small">
+  © 2025 Mensalify · Seu trabalho vale. Cobre por ele.
+</footer>
+
+<script>
+  const SUPABASE_URL = 'https://frwxnviutavcycklveex.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_44kgQ12j75KTca88dMRmOg_DYzCyisN';
+
+  const form = document.getElementById('testerForm');
+  const successBox = document.getElementById('successBox');
+  const submitBtn = document.getElementById('submitBtn');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const name   = document.getElementById('name').value.trim();
+    const email  = document.getElementById('email').value.trim();
+    const device = document.querySelector('input[name="device"]:checked')?.value;
+
+    if (!device) {
+      alert('Seleciona o tipo de celular antes de continuar.');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Enviando...';
+
+    try {
+      // 1. Salva no Supabase
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/beta_testers`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ name, email, device })
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        // Email duplicado: tratar graciosamente
+        if (err?.code === '23505') {
+          showSuccess();
+          return;
+        }
+        throw new Error(JSON.stringify(err));
+      }
+
+      // 2. Dispara a Edge Function que envia o email
+      await fetch(`${SUPABASE_URL}/functions/v1/send-tester-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+        },
+        body: JSON.stringify({ name, email, device })
+      });
+
+      showSuccess();
+
+    } catch (err) {
+      console.error(err);
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Quero testar o app →';
+      alert('Algo deu errado. Tenta de novo ou me manda um direct no Instagram.');
+    }
+  });
+
+  function showSuccess() {
+    form.style.display = 'none';
+    successBox.style.display = 'block';
+    successBox.animate([
+      { opacity: 0, transform: 'translateY(12px)' },
+      { opacity: 1, transform: 'translateY(0)' }
+    ], { duration: 400, fill: 'forwards', easing: 'ease' });
+  }
+</script>
+
+</body>
+</html>

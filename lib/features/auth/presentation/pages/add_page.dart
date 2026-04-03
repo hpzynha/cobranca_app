@@ -285,6 +285,7 @@ class _AddPageState extends ConsumerState<AddPage> {
                       final name = value?.trim() ?? '';
                       if (name.isEmpty) return 'Informe o nome do aluno';
                       if (name.length < 3) return 'Nome muito curto';
+                      if (name.length > 100) return 'Nome muito longo';
                       return null;
                     },
                   ),

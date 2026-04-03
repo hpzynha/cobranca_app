@@ -135,7 +135,7 @@ Deno.serve(async () => {
       }
       const ownerName = ownerNames.get(student.owner_id)!
 
-      const profile = profileMap.get(student.owner_id)!
+      const profile = profileMap.get(student.owner_id)! as { id: string; pix_key?: string | null; service_type?: string | null; service_custom?: string | null }
       const hasPix = !!(profile.pix_key?.trim())
       const service = profile.service_type === 'Outro'
         ? (profile.service_custom || 'Serviço')
@@ -166,10 +166,15 @@ Deno.serve(async () => {
             ])
           }
         } else if (diffDays < 0) {
-          // cobranca_atrasada_pix still in review — use cobranca_atrasada for all
-          await sendTemplate(phone, 'cobranca_atrasada', [
-            student.name, service, ownerName, valor, dueDateBR,
-          ])
+          if (hasPix) {
+            await sendTemplate(phone, 'cobranca_atrasada_pix', [
+              student.name, service, ownerName, valor, dueDateBR, profile.pix_key!,
+            ])
+          } else {
+            // cobranca_atrasada (sem pix) still in review — skip until approved
+            skipped++
+            continue
+          }
         }
         sent++
       } catch (err) {

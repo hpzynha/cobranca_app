@@ -125,7 +125,7 @@ class _PerfilPageState extends ConsumerState<PerfilPage> {
         'pix_key': newKey.isEmpty ? null : newKey,
         'updated_at': DateTime.now().toIso8601String(),
       });
-      ref.invalidate(pixKeyProvider);
+      ref.invalidate(profileDataProvider);
     } catch (e) {
       if (mounted) AppToast.error(context, 'Não foi possível salvar a chave PIX.');
     } finally {

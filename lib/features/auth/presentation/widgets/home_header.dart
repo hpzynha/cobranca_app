@@ -316,6 +316,9 @@ class _HomeHeaderState extends ConsumerState<HomeHeader> {
 
   @override
   Widget build(BuildContext context) {
+    // Mantém o provider vivo e com valor atualizado para quando o menu abrir
+    ref.watch(userPlanProvider);
+
     final currency = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
     final topPadding = MediaQuery.of(context).padding.top;
     final isDark = Theme.of(context).brightness == Brightness.dark;

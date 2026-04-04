@@ -17,6 +17,8 @@ class PerfilPage extends ConsumerStatefulWidget {
 
 class _PerfilPageState extends ConsumerState<PerfilPage> {
   bool _isSavingName = false;
+  bool _isSavingPix = false;
+  bool _isSavingService = false;
   bool _isSendingReset = false;
 
   String get _fullName {
@@ -83,6 +85,143 @@ class _PerfilPageState extends ConsumerState<PerfilPage> {
     }
   }
 
+  Future<void> _editPixKey(String currentKey) async {
+    final controller = TextEditingController(text: currentKey);
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Chave PIX'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: const InputDecoration(
+            labelText: 'Chave PIX',
+            hintText: 'CPF, e-mail, telefone ou chave aleatória',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Salvar'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+    final newKey = controller.text.trim();
+    if (newKey == currentKey) return;
+
+    setState(() => _isSavingPix = true);
+    try {
+      final userId = Supabase.instance.client.auth.currentUser!.id;
+      await Supabase.instance.client.from('profiles').upsert({
+        'id': userId,
+        'pix_key': newKey.isEmpty ? null : newKey,
+        'updated_at': DateTime.now().toIso8601String(),
+      });
+      ref.invalidate(profileDataProvider);
+    } catch (e) {
+      if (mounted) AppToast.error(context, 'Não foi possível salvar a chave PIX.');
+    } finally {
+      if (mounted) setState(() => _isSavingPix = false);
+    }
+  }
+
+  static const _serviceOptions = [
+    'Aulas de inglês',
+    'Personal trainer',
+    'Pilates',
+    'Reforço escolar',
+    'Outro',
+  ];
+
+  String _serviceLabel(String type, String custom) {
+    if (type.isEmpty) return 'Serviço não configurado';
+    if (type == 'Outro') return custom.isNotEmpty ? 'Outro: $custom' : 'Outro';
+    return type;
+  }
+
+  Future<void> _editService(String currentType, String currentCustom) async {
+    String selectedType = currentType.isNotEmpty ? currentType : _serviceOptions.first;
+    final customController = TextEditingController(text: currentCustom);
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          title: const Text('Tipo de serviço'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              InputDecorator(
+                decoration: const InputDecoration(labelText: 'Serviço'),
+                child: DropdownButton<String>(
+                  value: selectedType,
+                  isExpanded: true,
+                  underline: const SizedBox.shrink(),
+                  items: _serviceOptions
+                      .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                      .toList(),
+                  onChanged: (v) {
+                    if (v != null) setDialogState(() => selectedType = v);
+                  },
+                ),
+              ),
+              if (selectedType == 'Outro') ...[
+                const SizedBox(height: 12),
+                TextField(
+                  controller: customController,
+                  autofocus: true,
+                  textCapitalization: TextCapitalization.sentences,
+                  decoration: const InputDecoration(
+                    labelText: 'Qual serviço?',
+                    hintText: 'Ex: Aulas de violão',
+                  ),
+                ),
+              ],
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: const Text('Cancelar'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: const Text('Salvar'),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+    final newCustom = selectedType == 'Outro' ? customController.text.trim() : '';
+    if (selectedType == currentType && newCustom == currentCustom) return;
+
+    setState(() => _isSavingService = true);
+    try {
+      final userId = Supabase.instance.client.auth.currentUser!.id;
+      await Supabase.instance.client.from('profiles').upsert({
+        'id': userId,
+        'service_type': selectedType,
+        'service_custom': newCustom.isEmpty ? null : newCustom,
+        'updated_at': DateTime.now().toIso8601String(),
+      });
+      ref.invalidate(profileDataProvider);
+    } catch (e) {
+      if (mounted) AppToast.error(context, 'Não foi possível salvar o serviço.');
+    } finally {
+      if (mounted) setState(() => _isSavingService = false);
+    }
+  }
+
   Future<void> _resetPassword() async {
     if (_email.isEmpty) return;
     setState(() => _isSendingReset = true);
@@ -101,6 +240,10 @@ class _PerfilPageState extends ConsumerState<PerfilPage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final studentsAsync = ref.watch(studentPaymentItemsProvider);
     final balanceAsync = ref.watch(monthlyBalanceProvider);
+    final profileAsync = ref.watch(profileDataProvider);
+    final currentPixKey = profileAsync.valueOrNull?.pixKey ?? '';
+    final currentServiceType = profileAsync.valueOrNull?.serviceType ?? '';
+    final currentServiceCustom = profileAsync.valueOrNull?.serviceCustom ?? '';
     final currency = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$');
     final horizontalPadding = AppResponsive.size(context, 20).clamp(16.0, 28.0);
 
@@ -235,6 +378,52 @@ class _PerfilPageState extends ConsumerState<PerfilPage> {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 28),
+
+              // ── Seção Pagamento & Serviço ─────────────────────
+              Text(
+                'Pagamento',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: textMuted,
+                  letterSpacing: 0.5,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Container(
+                decoration: BoxDecoration(
+                  color: cardColor,
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: cardBorderColor),
+                ),
+                child: Column(
+                  children: [
+                    _AccountTile(
+                      icon: Icons.work_outline,
+                      label: _serviceLabel(currentServiceType, currentServiceCustom),
+                      loading: _isSavingService,
+                      textPrimary: textPrimary,
+                      textMuted: textMuted,
+                      onTap: () => _editService(currentServiceType, currentServiceCustom),
+                      isFirst: true,
+                      isLast: false,
+                      borderColor: cardBorderColor,
+                    ),
+                    _AccountTile(
+                      icon: Icons.pix,
+                      label: currentPixKey.isNotEmpty ? 'PIX: $currentPixKey' : 'Chave PIX (não configurada)',
+                      loading: _isSavingPix,
+                      textPrimary: textPrimary,
+                      textMuted: textMuted,
+                      onTap: () => _editPixKey(currentPixKey),
+                      isFirst: false,
+                      isLast: true,
+                      borderColor: cardBorderColor,
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 28),
 

@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>732759318938-rdb6vei2lniilb3c6cfophms9aa0v3q2.apps.googleusercontent.com</string>
+	<string>732759318938-hlm7okbkekub64dpiusr84rkkgeb61vm.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.732759318938-rdb6vei2lniilb3c6cfophms9aa0v3q2</string>
+	<string>com.googleusercontent.apps.732759318938-hlm7okbkekub64dpiusr84rkkgeb61vm</string>
 	<key>ANDROID_CLIENT_ID</key>
 	<string>732759318938-q47bprbep8f13j91obfu9353bgrn0o2s.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.appCobranca</string>
+	<string>com.mensalify.app</string>
 	<key>PROJECT_ID</key>
 	<string>cobranca-app-dc317</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:732759318938:ios:29056fd609a433dfd79a23</string>
+	<string>1:732759318938:ios:0b7fe6afe21bfd8dd79a23</string>
 </dict>
 </plist>

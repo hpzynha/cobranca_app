@@ -35,8 +35,8 @@ class HomeScreen extends ConsumerWidget {
 
     final titleSize = AppResponsive.fontSize(context, isCompact ? 16 : 18);
     final students = (studentsAsync.valueOrNull ?? []).where((s) => s.isActive).toList();
-    final overdueCount =
-        students.where((s) => s.status == StudentPaymentStatus.overdue).length;
+    final overdueStudents = students.where((s) => s.status == StudentPaymentStatus.overdue).toList();
+    final overdueCount = overdueStudents.length;
 
     return Scaffold(
       extendBody: true,
@@ -55,8 +55,8 @@ class HomeScreen extends ConsumerWidget {
             ),
             sliver: SliverToBoxAdapter(
               child: switch (studentsAsync) {
-                AsyncData(:final value) => _HomeStatusSection(
-                  students: value,
+                AsyncData() => _HomeStatusSection(
+                  students: students,
                   cardSpacing: cardSpacing,
                 ),
                 AsyncError() => Text(
@@ -76,7 +76,10 @@ class HomeScreen extends ConsumerWidget {
                 0,
               ),
               sliver: SliverToBoxAdapter(
-                child: OverdueAlertCard(overdueCount: overdueCount, onTap: () {}),
+                child: OverdueAlertCard(
+                  overdueCount: overdueCount,
+                  onTap: () => context.push('/mensagens'),
+                ),
               ),
             ),
           SliverPadding(
@@ -185,3 +188,4 @@ class _HomeStatusSection extends StatelessWidget {
     );
   }
 }
+

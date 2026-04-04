@@ -74,6 +74,7 @@ class OverdueAlertCard extends StatelessWidget {
                           onTap: onTap,
                           danger: danger,
                           fontSize: buttonTextSize,
+                          label: 'Ver mensagens',
                         ),
                       ),
                     ],
@@ -95,6 +96,7 @@ class OverdueAlertCard extends StatelessWidget {
                         onTap: onTap,
                         danger: danger,
                         fontSize: buttonTextSize,
+                        label: 'Ver mensagens',
                       ),
                     ],
                   ),
@@ -109,11 +111,13 @@ class _ActionChip extends StatelessWidget {
     required this.onTap,
     required this.danger,
     required this.fontSize,
+    required this.label,
   });
 
   final VoidCallback onTap;
   final Color danger;
   final double fontSize;
+  final String label;
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +130,7 @@ class _ActionChip extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadius.pill),
         ),
         child: Text(
-          AppStrings.collectNow,
+          label,
           style: AppTextStyles.dashboardAlert.copyWith(fontSize: fontSize),
         ),
       ),

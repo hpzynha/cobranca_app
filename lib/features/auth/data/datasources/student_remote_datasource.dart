@@ -1,6 +1,10 @@
+import 'package:app_cobranca/core/errors/plan_limit_exception.dart';
 import 'package:app_cobranca/features/auth/data/models/student_model.dart';
 import 'package:app_cobranca/features/auth/data/models/student_registration_payload.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+const _kFreePlanStudentLimit = 3;
+const _kProPlanStudentLimit = 50;
 
 class StudentRemoteDataSource {
   StudentRemoteDataSource(this._supabaseClient);
@@ -11,6 +15,25 @@ class StudentRemoteDataSource {
     final ownerId = Supabase.instance.client.auth.currentUser?.id;
     if (ownerId == null || ownerId.isEmpty) {
       throw const AuthException('Usuário não autenticado.');
+    }
+
+    // Check plan limit
+    final profileRow = await _supabaseClient
+        .from('profiles')
+        .select('plan')
+        .eq('id', ownerId)
+        .maybeSingle();
+
+    final plan = (profileRow?['plan'] as String?) ?? 'free';
+    final limit = plan == 'pro' ? _kProPlanStudentLimit : _kFreePlanStudentLimit;
+
+    final countResponse = await _supabaseClient
+        .from('students')
+        .select('id')
+        .eq('owner_id', ownerId);
+    final count = (countResponse as List).length;
+    if (count >= limit) {
+      throw const PlanLimitException();
     }
 
     await _supabaseClient.from('students').insert({

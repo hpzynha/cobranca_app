@@ -2,6 +2,7 @@ import 'package:app_cobranca/core/theme/app_colors.dart';
 import 'package:app_cobranca/core/widgets/app_toast.dart';
 import 'package:app_cobranca/core/theme/app_spacing.dart';
 import 'package:app_cobranca/features/auth/domain/services/calculate_next_due_date.dart';
+import 'package:app_cobranca/features/auth/presentation/providers/auth_providers.dart';
 import 'package:app_cobranca/features/auth/presentation/providers/student_providers.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/lib/features/auth/presentation/widgets/students_dashboard_card.dart';
 import 'package:flutter/material.dart';
@@ -564,9 +565,11 @@ class _StudentDetailsPageState extends ConsumerState<StudentDetailsPage> {
 
   Future<void> _openWhatsApp(StudentPaymentItem student) async {
     final phone = student.whatsapp.replaceAll(RegExp(r'[^0-9]'), '');
+    final pixKey = await ref.read(pixKeyProvider.future);
+    final pixLine = pixKey.isNotEmpty ? '\nChave PIX para pagamento: $pixKey' : '';
     final message =
         'Olá, ${student.name}! Tudo bem?\n'
-        'Seu pagamento de ${student.amountLabel} está com status "${student.status.label}".\n'
+        'Seu pagamento de ${student.amountLabel} está com status "${student.status.label}".$pixLine\n'
         'Pode me confirmar por aqui, por favor?';
     final uri = Uri.parse(
       'https://wa.me/$phone?text=${Uri.encodeComponent(message)}',

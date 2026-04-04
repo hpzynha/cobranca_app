@@ -129,6 +129,10 @@ class _AddPageState extends ConsumerState<AddPage> {
     setState(() => _isSubmitting = false);
 
     if (!result.isSuccess) {
+      if (result.failure?.code == 'plan_limit') {
+        context.push('/paywall');
+        return;
+      }
       AppToast.error(context, result.failure?.message ?? 'Erro ao cadastrar aluno.');
       return;
     }
@@ -281,6 +285,7 @@ class _AddPageState extends ConsumerState<AddPage> {
                       final name = value?.trim() ?? '';
                       if (name.isEmpty) return 'Informe o nome do aluno';
                       if (name.length < 3) return 'Nome muito curto';
+                      if (name.length > 100) return 'Nome muito longo';
                       return null;
                     },
                   ),

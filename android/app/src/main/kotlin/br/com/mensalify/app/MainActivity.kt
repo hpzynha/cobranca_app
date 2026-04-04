@@ -1,4 +1,4 @@
-package com.example.app_cobranca
+package br.com.mensalify.app
 
 import io.flutter.embedding.android.FlutterActivity
 

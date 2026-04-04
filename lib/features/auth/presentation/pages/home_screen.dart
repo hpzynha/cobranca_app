@@ -9,11 +9,9 @@ import 'package:app_cobranca/features/auth/presentation/widgets/dashboard_status
 import 'package:app_cobranca/features/auth/presentation/widgets/home_header.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/lib/features/auth/presentation/widgets/students_dashboard_card.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/overdue_alert_card.dart';
-import 'package:app_cobranca/features/subscription/presentation/providers/user_plan_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -39,7 +37,6 @@ class HomeScreen extends ConsumerWidget {
     final students = (studentsAsync.valueOrNull ?? []).where((s) => s.isActive).toList();
     final overdueStudents = students.where((s) => s.status == StudentPaymentStatus.overdue).toList();
     final overdueCount = overdueStudents.length;
-    final isPro = ref.watch(userPlanProvider).valueOrNull?.isPro ?? false;
 
     return Scaffold(
       extendBody: true,
@@ -81,21 +78,7 @@ class HomeScreen extends ConsumerWidget {
               sliver: SliverToBoxAdapter(
                 child: OverdueAlertCard(
                   overdueCount: overdueCount,
-                  isPro: isPro,
-                  onTap: isPro
-                      ? () => context.push('/mensagens')
-                      : () {
-                          if (overdueStudents.length == 1) {
-                            _openWhatsApp(overdueStudents.first, ref);
-                          } else {
-                            showModalBottomSheet(
-                              context: context,
-                              builder: (_) => _OverdueStudentsSheet(
-                                students: overdueStudents,
-                              ),
-                            );
-                          }
-                        },
+                  onTap: () => context.push('/mensagens'),
                 ),
               ),
             ),
@@ -206,56 +189,3 @@ class _HomeStatusSection extends StatelessWidget {
   }
 }
 
-Future<void> _openWhatsApp(StudentPaymentItem student, WidgetRef ref) async {
-  final phone = student.whatsapp.replaceAll(RegExp(r'[^0-9]'), '');
-  final pixKey = await ref.read(pixKeyProvider.future);
-  final pixLine = pixKey.isNotEmpty ? '\nChave PIX para pagamento: $pixKey' : '';
-  final message =
-      'Olá, ${student.name}! Tudo bem?\n'
-      'Seu pagamento de ${student.amountLabel} está com status "${student.status.label}".$pixLine\n'
-      'Pode me confirmar por aqui, por favor?';
-  final uri = Uri.parse('https://wa.me/$phone?text=${Uri.encodeComponent(message)}');
-  await launchUrl(uri, mode: LaunchMode.externalApplication);
-}
-
-class _OverdueStudentsSheet extends ConsumerWidget {
-  const _OverdueStudentsSheet({required this.students});
-
-  final List<StudentPaymentItem> students;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Cobranças vencidas', style: AppTextStyles.heading),
-            const SizedBox(height: 4),
-            Text(
-              'Selecione um aluno para enviar mensagem no WhatsApp',
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-            const SizedBox(height: 16),
-            ...students.map(
-              (s) => ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(s.name),
-                subtitle: Text(s.amountLabel),
-                trailing: IconButton(
-                  icon: const Icon(Icons.chat_rounded, color: Color(0xFF25D366)),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    _openWhatsApp(s, ref);
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

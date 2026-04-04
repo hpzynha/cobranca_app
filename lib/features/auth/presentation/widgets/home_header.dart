@@ -115,6 +115,7 @@ class _HomeHeaderState extends ConsumerState<HomeHeader> {
     final screenSize = MediaQuery.of(context).size;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isDarkMode = ref.read(themeModeProvider) == ThemeMode.dark;
+    final isPro = ref.read(userPlanProvider).valueOrNull?.isPro ?? false;
 
     showMenu<String>(
       context: context,
@@ -209,15 +210,19 @@ class _HomeHeaderState extends ConsumerState<HomeHeader> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
+                  color: isPro
+                      ? AppColors.primary.withValues(alpha: 0.1)
+                      : (isDark ? const Color(0xFF2a2a45) : const Color(0xFFEEEEEE)),
                   borderRadius: BorderRadius.circular(5),
                 ),
-                child: const Text(
-                  'Pro',
+                child: Text(
+                  isPro ? 'Pro' : 'Free',
                   style: TextStyle(
                     fontSize: 9,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.primary,
+                    color: isPro
+                        ? AppColors.primary
+                        : (isDark ? AppColors.textMutedDark : AppColors.textMuted),
                   ),
                 ),
               ),

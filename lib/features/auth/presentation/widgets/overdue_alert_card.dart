@@ -9,13 +9,11 @@ import 'package:flutter/material.dart';
 class OverdueAlertCard extends StatelessWidget {
   final int overdueCount;
   final VoidCallback onTap;
-  final bool isPro;
 
   const OverdueAlertCard({
     super.key,
     required this.overdueCount,
     required this.onTap,
-    this.isPro = false,
   });
 
   @override
@@ -76,7 +74,7 @@ class OverdueAlertCard extends StatelessWidget {
                           onTap: onTap,
                           danger: danger,
                           fontSize: buttonTextSize,
-                          label: isPro ? 'Ver mensagens' : AppStrings.collectNow,
+                          label: 'Ver mensagens',
                         ),
                       ),
                     ],
@@ -98,7 +96,7 @@ class OverdueAlertCard extends StatelessWidget {
                         onTap: onTap,
                         danger: danger,
                         fontSize: buttonTextSize,
-                        label: isPro ? 'Ver mensagens' : AppStrings.collectNow,
+                        label: 'Ver mensagens',
                       ),
                     ],
                   ),

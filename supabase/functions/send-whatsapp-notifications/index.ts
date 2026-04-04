@@ -61,26 +61,25 @@ Deno.serve(async () => {
     const todayUTC = new Date()
     const todayStr = todayUTC.toISOString().split('T')[0] // "2026-04-02" in UTC (= BRT at 08:00)
 
-    // 1. Get all Pro owners
-    const { data: proProfiles, error: profilesError } = await supabase
+    // 1. Get all owners with profiles
+    const { data: allProfiles, error: profilesError } = await supabase
       .from('profiles')
-      .select('id, pix_key, service_type, service_custom')
-      .eq('plan', 'pro')
+      .select('id, plan, pix_key, service_type, service_custom')
 
     if (profilesError) throw profilesError
-    if (!proProfiles || proProfiles.length === 0) {
-      return new Response(JSON.stringify({ sent: 0, message: 'No pro owners' }), { status: 200 })
+    if (!allProfiles || allProfiles.length === 0) {
+      return new Response(JSON.stringify({ sent: 0, message: 'No owners' }), { status: 200 })
     }
 
-    const profileMap = new Map(proProfiles.map((p) => [p.id, p]))
-    const proOwnerIds = proProfiles.map((p) => p.id)
+    const profileMap = new Map(allProfiles.map((p) => [p.id, p]))
+    const allOwnerIds = allProfiles.map((p) => p.id)
 
-    // 2. Get active students from Pro owners with WhatsApp
+    // 2. Get active students from all owners with WhatsApp
     const { data: students, error: studentsError } = await supabase
       .from('students')
       .select('id, owner_id, name, whatsapp, monthly_fee_cents, next_due_date')
       .eq('is_active', true)
-      .in('owner_id', proOwnerIds)
+      .in('owner_id', allOwnerIds)
       .not('whatsapp', 'is', null)
       .neq('whatsapp', '')
       .not('next_due_date', 'is', null)
@@ -106,10 +105,21 @@ Deno.serve(async () => {
       const dueMs = new Date(nextDueStr + 'T00:00:00Z').getTime()
       const diffDays = Math.round((dueMs - todayMs) / (1000 * 60 * 60 * 24))
 
-      // Only act on: 3 days before, due today, or overdue (up to 30 days)
-      if (diffDays > 3 || (diffDays > 0 && diffDays < 3) || diffDays < -30) {
-        skipped++
-        continue
+      const ownerPlan = (profileMap.get(student.owner_id) as any)?.plan ?? 'free'
+      const isPro = ownerPlan === 'pro'
+
+      // Free: only send on due date (diffDays === 0)
+      // Pro: 3 days before, due today, or overdue (up to 30 days)
+      if (isPro) {
+        if (diffDays > 3 || (diffDays > 0 && diffDays < 3) || diffDays < -30) {
+          skipped++
+          continue
+        }
+      } else {
+        if (diffDays !== 0) {
+          skipped++
+          continue
+        }
       }
 
       // Skip if already paid this month

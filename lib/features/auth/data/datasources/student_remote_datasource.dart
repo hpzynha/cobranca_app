@@ -4,6 +4,7 @@ import 'package:app_cobranca/features/auth/data/models/student_registration_payl
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 const _kFreePlanStudentLimit = 3;
+const _kProPlanStudentLimit = 50;
 
 class StudentRemoteDataSource {
   StudentRemoteDataSource(this._supabaseClient);
@@ -16,7 +17,7 @@ class StudentRemoteDataSource {
       throw const AuthException('Usuário não autenticado.');
     }
 
-    // Check plan limit for free users
+    // Check plan limit
     final profileRow = await _supabaseClient
         .from('profiles')
         .select('plan')
@@ -24,16 +25,15 @@ class StudentRemoteDataSource {
         .maybeSingle();
 
     final plan = (profileRow?['plan'] as String?) ?? 'free';
+    final limit = plan == 'pro' ? _kProPlanStudentLimit : _kFreePlanStudentLimit;
 
-    if (plan == 'free') {
-      final countResponse = await _supabaseClient
-          .from('students')
-          .select('id')
-          .eq('owner_id', ownerId);
-      final count = (countResponse as List).length;
-      if (count >= _kFreePlanStudentLimit) {
-        throw const PlanLimitException();
-      }
+    final countResponse = await _supabaseClient
+        .from('students')
+        .select('id')
+        .eq('owner_id', ownerId);
+    final count = (countResponse as List).length;
+    if (count >= limit) {
+      throw const PlanLimitException();
     }
 
     await _supabaseClient.from('students').insert({

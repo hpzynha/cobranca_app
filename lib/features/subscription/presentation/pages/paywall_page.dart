@@ -190,7 +190,7 @@ class _PaywallPageState extends ConsumerState<PaywallPage> {
                   children: [
                     _BenefitRow(
                       icon: Icons.people_alt_outlined,
-                      text: 'Alunos ilimitados',
+                      text: 'Até 50 alunos',
                       isDark: isDark,
                     ),
                     const SizedBox(height: 14),

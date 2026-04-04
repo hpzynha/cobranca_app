@@ -4,6 +4,7 @@ create table if not exists public.beta_testers (
   name        text not null,
   email       text not null unique,
   device      text not null check (device in ('android', 'iphone')),
+  whatsapp    text,
   created_at  timestamptz not null default now()
 );
 

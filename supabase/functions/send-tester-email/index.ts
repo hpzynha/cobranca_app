@@ -23,28 +23,7 @@ serve(async (req) => {
     }
 
     const firstName = name.split(' ')[0]
-    const isAndroid = device === 'android'
-
-    const installInstructions = isAndroid
-      ? `<p style="margin:0 0 12px;">Para instalar no <strong>Android</strong>, siga os passos:</p>
-         <ol style="margin:0 0 20px;padding-left:20px;line-height:1.8;">
-           <li>Baixe o arquivo APK pelo link abaixo</li>
-           <li>Abra o arquivo no seu celular</li>
-           <li>Se aparecer um aviso de segurança, toque em <em>"Instalar mesmo assim"</em></li>
-           <li>Pronto, o app estará instalado!</li>
-         </ol>`
-      : `<p style="margin:0 0 12px;">Para instalar no <strong>iPhone</strong> via TestFlight:</p>
-         <ol style="margin:0 0 20px;padding-left:20px;line-height:1.8;">
-           <li>Instale o app <strong>TestFlight</strong> na App Store (gratuito)</li>
-           <li>Clique no link de convite abaixo no seu iPhone</li>
-           <li>Toque em <em>"Aceitar"</em> e depois em <em>"Instalar"</em></li>
-           <li>Pronto!</li>
-         </ol>`
-
-    // TODO: troque estes links pelos seus links reais de distribuição
-    const installLink = isAndroid
-      ? 'https://mensalify.com.br/beta/mensalify-beta.apk'
-      : 'https://testflight.apple.com/join/SEU_CODIGO_AQUI'
+    const deviceLabel = device === 'android' ? 'Android' : 'iPhone'
 
     const html = `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -80,33 +59,28 @@ serve(async (req) => {
           <tr>
             <td style="background:#ffffff;border-radius:20px;padding:40px 40px 36px;box-shadow:0 4px 24px rgba(0,0,0,0.07);">
 
-              <!-- ICON -->
-              <p style="text-align:center;font-size:48px;margin:0 0 20px;">🧪</p>
+              <p style="text-align:center;font-size:48px;margin:0 0 20px;">🎉</p>
 
-              <!-- HEADING -->
               <h1 style="font-family:Georgia,serif;font-size:26px;color:#1A1830;margin:0 0 8px;text-align:center;line-height:1.2;">
-                Você está dentro, ${firstName}!
+                Você está na lista, ${firstName}!
               </h1>
               <p style="font-size:15px;color:#4A4760;text-align:center;margin:0 0 32px;line-height:1.6;">
-                Obrigado por embarcar como beta tester do Mensalify. Aqui está tudo que você precisa pra começar.
+                Obrigado por se cadastrar como beta tester do Mensalify. Anotei aqui que você usa <strong>${deviceLabel}</strong>.
               </p>
 
-              <!-- INSTALL -->
               <div style="background:#F5F4F0;border-radius:12px;padding:24px 20px;margin-bottom:28px;">
-                <p style="font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#534AB7;margin:0 0 14px;">Como instalar</p>
-                ${installInstructions}
-                <a href="${installLink}"
-                   style="display:inline-block;background:#534AB7;color:#fff;text-decoration:none;padding:14px 28px;border-radius:10px;font-size:15px;font-weight:600;letter-spacing:0.01em;">
-                  ${isAndroid ? '⬇️ Baixar APK' : '🍎 Abrir no TestFlight'}
-                </a>
+                <p style="font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#534AB7;margin:0 0 12px;">O que acontece agora</p>
+                <p style="font-size:14px;color:#4A4760;margin:0;line-height:1.75;">
+                  Estou finalizando os últimos ajustes no app. Assim que estiver pronto,
+                  te mando o link de instalação direto nesse email. Pode ser que leve alguns dias.
+                </p>
               </div>
 
-              <!-- FEEDBACK -->
               <div style="border-left:3px solid #534AB7;padding-left:16px;margin-bottom:28px;">
                 <p style="font-size:14px;color:#4A4760;margin:0;line-height:1.65;">
-                  Encontrou um bug? Tem uma sugestão? Qualquer coisa me manda um direct no Instagram
+                  Enquanto isso, se tiver alguma dúvida ou quiser conversar, me manda um direct no Instagram
                   <a href="https://instagram.com/mensalify" style="color:#534AB7;text-decoration:none;font-weight:600;">@mensalify</a>
-                  ou responde esse email. Cada feedback vale ouro.
+                  ou é só responder esse email.
                 </p>
               </div>
 
@@ -141,8 +115,9 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         from: 'Mensalify <oi@mensalify.com.br>',
+        reply_to: 'oi@mensalify.com.br',
         to: [email],
-        subject: `${firstName}, seu acesso beta chegou! 🧪`,
+        subject: `${firstName}, você está na lista do beta! 🎉`,
         html,
       }),
     })

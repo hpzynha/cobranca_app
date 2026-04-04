@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mensalify · Seja um Beta Tester</title>
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
   <link href="https://fonts.googleapis.com/css2?family=Lora:wght@700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -419,6 +421,11 @@
       </div>
 
       <div class="field">
+        <label for="whatsapp">WhatsApp (com DDD)</label>
+        <input type="tel" id="whatsapp" name="whatsapp" placeholder="(11) 99999-9999" autocomplete="tel" />
+      </div>
+
+      <div class="field">
         <label>Tipo de celular</label>
         <div class="device-toggle">
           <div class="device-option">
@@ -533,9 +540,10 @@
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const name   = document.getElementById('name').value.trim();
-    const email  = document.getElementById('email').value.trim();
-    const device = document.querySelector('input[name="device"]:checked')?.value;
+    const name     = document.getElementById('name').value.trim();
+    const email    = document.getElementById('email').value.trim();
+    const whatsapp = document.getElementById('whatsapp').value.trim();
+    const device   = document.querySelector('input[name="device"]:checked')?.value;
 
     if (!device) {
       alert('Seleciona o tipo de celular antes de continuar.');
@@ -555,7 +563,7 @@
           'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
           'Prefer': 'return=minimal'
         },
-        body: JSON.stringify({ name, email, device })
+        body: JSON.stringify({ name, email, device, whatsapp })
       });
 
       if (!res.ok) {
@@ -575,7 +583,7 @@
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
         },
-        body: JSON.stringify({ name, email, device })
+        body: JSON.stringify({ name, email, device, whatsapp })
       });
 
       showSuccess();

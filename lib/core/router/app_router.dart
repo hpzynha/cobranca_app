@@ -9,6 +9,7 @@ import 'package:app_cobranca/features/auth/presentation/pages/perfil_page.dart';
 import 'package:app_cobranca/features/auth/presentation/pages/student_details_page.dart';
 import 'package:app_cobranca/features/auth/presentation/pages/mensagens_page.dart';
 import 'package:app_cobranca/features/auth/presentation/pages/relatorios_page.dart';
+import 'package:app_cobranca/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:app_cobranca/features/subscription/presentation/pages/paywall_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -21,21 +22,26 @@ import '../../features/auth/presentation/pages/register_screen.dart';
 import '../../features/auth/presentation/pages/reset_password_screen.dart';
 import '../../features/auth/presentation/pages/splash_screen.dart';
 
+// ── Refresh stream para mudanças de auth ────────────────────────────────────
 final _refreshStream = GoRouterRefreshStream(
   Supabase.instance.client.auth.onAuthStateChange,
 );
 
+// ── Notifier de status de onboarding (cache síncrono para o redirect) ───────
+/// Exposto publicamente para que a OnboardingPage possa chamar [refresh()]
+/// após concluir o onboarding e liberar a navegação para /home.
+final onboardingStatusNotifier = OnboardingStatusNotifier();
+
 final GoRouter appRouter = GoRouter(
   initialLocation: '/splash',
-  refreshListenable: _refreshStream,
+  refreshListenable: Listenable.merge([_refreshStream, onboardingStatusNotifier]),
   redirect: (context, state) {
-    final isSplashRoute = state.matchedLocation == '/splash';
-    if (isSplashRoute) return null;
+    final location = state.matchedLocation;
+    if (location == '/splash') return null;
 
     // Redireciona para reset-password quando o deep link de recuperação chega
-    // só uma vez (consumido após o primeiro redirect)
     if (_refreshStream.shouldRedirectToPasswordRecovery &&
-        state.matchedLocation != '/reset-password') {
+        location != '/reset-password') {
       _refreshStream.consumePasswordRecovery();
       return '/reset-password';
     }
@@ -43,28 +49,43 @@ final GoRouter appRouter = GoRouter(
     final user = Supabase.instance.client.auth.currentUser;
     final isEmailConfirmed = user?.emailConfirmedAt != null;
 
-    final isResetPasswordRoute = state.matchedLocation == '/reset-password';
-    final isAuthRoute =
-        state.matchedLocation == '/' ||
-        state.matchedLocation == '/login' ||
-        state.matchedLocation == '/register' ||
+    final isResetPasswordRoute = location == '/reset-password';
+    final isAuthRoute = location == '/' ||
+        location == '/login' ||
+        location == '/register' ||
         isResetPasswordRoute;
+    final isVerificationRoute = location == '/email-verification';
+    final isOnboardingRoute = location == '/onboarding';
 
-    final isVerificationRoute = state.matchedLocation == '/email-verification';
-    if (isVerificationRoute && isEmailConfirmed) {
-      return '/login';
-    }
+    if (isVerificationRoute && isEmailConfirmed) return '/login';
 
-    if (user != null && !isEmailConfirmed && !isVerificationRoute && !isResetPasswordRoute) {
+    if (user != null &&
+        !isEmailConfirmed &&
+        !isVerificationRoute &&
+        !isResetPasswordRoute) {
       return '/email-verification';
     }
 
-    if (user == null && !isAuthRoute && !isVerificationRoute) {
-      return '/';
-    }
+    if (user == null && !isAuthRoute && !isVerificationRoute) return '/';
 
-    if (user != null && isEmailConfirmed && isAuthRoute && !isResetPasswordRoute) {
-      return '/home';
+    // Usuário autenticado + email confirmado
+    if (user != null && isEmailConfirmed) {
+      final onboardingDone = onboardingStatusNotifier.onboardingCompleted;
+
+      // Rota de auth → decide para onde ir com base no onboarding
+      if (isAuthRoute && !isResetPasswordRoute) {
+        return (onboardingDone == false) ? '/onboarding' : '/home';
+      }
+
+      // Rotas internas → onboarding ainda não concluído
+      if (onboardingDone == false && !isOnboardingRoute) {
+        return '/onboarding';
+      }
+
+      // Já concluiu onboarding mas voltou para /onboarding (não deve acontecer)
+      if (onboardingDone == true && isOnboardingRoute) {
+        return '/home';
+      }
     }
 
     return null;
@@ -89,6 +110,12 @@ final GoRouter appRouter = GoRouter(
       },
     ),
 
+    // Onboarding — exibido uma única vez após o primeiro login
+    GoRoute(
+      path: '/onboarding',
+      pageBuilder: (context, state) => _fadePage(state, const OnboardingPage()),
+    ),
+
     // Rotas da bottom bar — fade para sensação de troca de aba
     GoRoute(path: '/home', pageBuilder: (context, state) => _fadePage(state, const HomeScreen())),
     GoRoute(path: '/alunos', pageBuilder: (context, state) => _fadePage(state, const AlunosPage())),
@@ -111,7 +138,8 @@ final GoRouter appRouter = GoRouter(
   ],
 );
 
-// Transição fade — usada nas rotas da bottom bar (sensação de troca de aba)
+// ── Transições ───────────────────────────────────────────────────────────────
+
 CustomTransitionPage<void> _fadePage(GoRouterState state, Widget child) {
   return CustomTransitionPage<void>(
     key: state.pageKey,
@@ -125,7 +153,6 @@ CustomTransitionPage<void> _fadePage(GoRouterState state, Widget child) {
   );
 }
 
-// Transição slide da direita — usada em páginas de detalhe (push)
 CustomTransitionPage<void> _slidePage(GoRouterState state, Widget child) {
   return CustomTransitionPage<void>(
     key: state.pageKey,
@@ -146,6 +173,8 @@ CustomTransitionPage<void> _slidePage(GoRouterState state, Widget child) {
   );
 }
 
+// ── GoRouterRefreshStream ────────────────────────────────────────────────────
+
 class GoRouterRefreshStream extends ChangeNotifier {
   GoRouterRefreshStream(Stream<AuthState> stream) {
     notifyListeners();
@@ -165,6 +194,66 @@ class GoRouterRefreshStream extends ChangeNotifier {
 
   void consumePasswordRecovery() {
     _consumed = true;
+  }
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
+}
+
+// ── OnboardingStatusNotifier ─────────────────────────────────────────────────
+
+/// Cache síncrono do status de onboarding.
+/// Escuta mudanças de auth e re-busca o perfil quando necessário.
+/// O valor [onboardingCompleted] é [null] enquanto ainda está carregando.
+class OnboardingStatusNotifier extends ChangeNotifier {
+  OnboardingStatusNotifier() {
+    // Busca imediata se já há um usuário autenticado
+    if (Supabase.instance.client.auth.currentUser != null) {
+      _fetch();
+    }
+    _subscription =
+        Supabase.instance.client.auth.onAuthStateChange.listen((authState) {
+      if (authState.event == AuthChangeEvent.signedIn ||
+          authState.event == AuthChangeEvent.tokenRefreshed) {
+        _fetch();
+      } else if (authState.event == AuthChangeEvent.signedOut) {
+        _onboardingCompleted = null;
+        notifyListeners();
+      }
+    });
+  }
+
+  late final StreamSubscription<AuthState> _subscription;
+  bool? _onboardingCompleted;
+
+  /// [null] = ainda carregando; [false] = não concluído; [true] = concluído.
+  bool? get onboardingCompleted => _onboardingCompleted;
+
+  /// Força re-busca — chamado pela OnboardingPage após salvar o perfil.
+  Future<void> refresh() => _fetch();
+
+  Future<void> _fetch() async {
+    final userId = Supabase.instance.client.auth.currentUser?.id;
+    if (userId == null) {
+      _onboardingCompleted = null;
+      notifyListeners();
+      return;
+    }
+    try {
+      final result = await Supabase.instance.client
+          .from('profiles')
+          .select('onboarding_completed')
+          .eq('id', userId)
+          .maybeSingle();
+      _onboardingCompleted = result?['onboarding_completed'] == true;
+    } catch (_) {
+      // Fail-safe: em caso de erro, não bloqueia o usuário
+      _onboardingCompleted = true;
+    }
+    notifyListeners();
   }
 
   @override

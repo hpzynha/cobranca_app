@@ -1,6 +1,7 @@
 import 'package:app_cobranca/core/theme/app_colors.dart';
 import 'package:app_cobranca/core/theme/app_responsive.dart';
 import 'package:app_cobranca/core/theme/theme_provider.dart';
+import 'package:app_cobranca/features/subscription/presentation/providers/user_plan_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -30,6 +31,79 @@ class _HomeHeaderState extends ConsumerState<HomeHeader> {
     if (parts.isEmpty || parts.first.isEmpty) return '?';
     if (parts.length == 1) return parts.first[0].toUpperCase();
     return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
+  }
+
+  void _showProConfirmation(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: isDark ? const Color(0xFF1A1A28) : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (_) => Padding(
+        padding: const EdgeInsets.fromLTRB(24, 28, 24, 40),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: AppColors.primarySurface,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.workspace_premium_rounded,
+                color: AppColors.primary,
+                size: 34,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Você já é Pro!',
+              style: TextStyle(
+                fontSize: AppResponsive.fontSize(context, 22),
+                fontWeight: FontWeight.w800,
+                color: isDark ? AppColors.textPrimaryDark : AppColors.textStrong,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Sua assinatura está ativa. Aproveite todos os recursos sem limites.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: AppResponsive.fontSize(context, 14),
+                color: isDark ? AppColors.textMutedDark : AppColors.textMuted,
+                height: 1.4,
+              ),
+            ),
+            const SizedBox(height: 28),
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: FilledButton(
+                onPressed: () => Navigator.of(context).pop(),
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(22),
+                  ),
+                ),
+                child: Text(
+                  'Entendido',
+                  style: TextStyle(
+                    fontSize: AppResponsive.fontSize(context, 15),
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _showProfileMenu(BuildContext context) {
@@ -218,6 +292,14 @@ class _HomeHeaderState extends ConsumerState<HomeHeader> {
       switch (value) {
         case 'profile':
           context.push('/perfil');
+        case 'subscription':
+          final planAsync = ref.read(userPlanProvider);
+          final isPro = planAsync.valueOrNull?.isPro ?? false;
+          if (isPro) {
+            _showProConfirmation(context);
+          } else {
+            context.push('/paywall');
+          }
         case 'config':
           context.push('/config');
         case 'signout':

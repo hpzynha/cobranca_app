@@ -160,7 +160,7 @@ class _AuthLandingScreenState extends State<AuthLandingScreen> {
                         text: 'Continuar com Google',
                         logoPath: 'assets/images/google_logo.svg',
                         onPressed: () =>
-                            _authController.signInWithGoogle(context),
+                            _authController.signInWithGoogle(),
                       ),
                       const SizedBox(height: 10),
 

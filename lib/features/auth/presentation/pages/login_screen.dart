@@ -317,7 +317,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         text: 'Continuar com Google',
                         logoPath: 'assets/images/google_logo.svg',
                         onPressed: () =>
-                            _authController.signInWithGoogle(context),
+                            _authController.signInWithGoogle(),
                       ),
                       const SizedBox(height: 20),
 

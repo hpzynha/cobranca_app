@@ -37,7 +37,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "br.com.mensalify.app"
+        applicationId = "com.mensalify.app"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

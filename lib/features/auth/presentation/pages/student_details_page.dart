@@ -818,7 +818,6 @@ class _StudentAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasPhoto = student.photoUrl != null && student.photoUrl!.isNotEmpty;
     return ColorFiltered(
       colorFilter: isActive
           ? const ColorFilter.mode(Colors.transparent, BlendMode.saturation)
@@ -831,17 +830,14 @@ class _StudentAvatar extends StatelessWidget {
       child: CircleAvatar(
         radius: 52,
         backgroundColor: AppColors.primary,
-        backgroundImage: hasPhoto ? NetworkImage(student.photoUrl!) : null,
-        child: hasPhoto
-            ? null
-            : Text(
-                student.initials,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 28,
-                  color: Colors.white,
-                ),
-              ),
+        child: Text(
+          student.initials,
+          style: const TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 28,
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }

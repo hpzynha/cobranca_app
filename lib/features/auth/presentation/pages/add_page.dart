@@ -271,8 +271,6 @@ class _AddPageState extends ConsumerState<AddPage> {
                     ),
                   ),
                   SizedBox(height: sectionGap),
-                  const _PhotoPickerPlaceholder(),
-                  SizedBox(height: sectionGap),
                   _FormLabel(text: 'Nome do aluno *'),
                   const SizedBox(height: 8),
                   TextFormField(
@@ -470,52 +468,6 @@ class _AddPageState extends ConsumerState<AddPage> {
         ),
       ),
       bottomNavigationBar: const BottomBar(currentIndex: -1),
-    );
-  }
-}
-
-class _PhotoPickerPlaceholder extends StatelessWidget {
-  const _PhotoPickerPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    final size = AppResponsive.size(context, 140).clamp(120.0, 160.0);
-    final iconSize = AppResponsive.size(context, 34).clamp(30.0, 38.0);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final borderColor = isDark ? const Color(0xFF2a2a45) : const Color(0xFFD9DCE3);
-    final iconColor = isDark ? AppColors.textMutedDark : const Color(0xFF6B7280);
-
-    return Column(
-      children: [
-        GestureDetector(
-          onTap: () {
-            AppToast.info(context, 'Upload de foto será adicionado em breve.');
-          },
-          child: Container(
-            width: size,
-            height: size,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: isDark ? const Color(0xFF1A1A28) : null,
-              border: Border.all(color: borderColor, width: 2),
-            ),
-            child: Icon(
-              Icons.photo_camera_outlined,
-              size: iconSize,
-              color: iconColor,
-            ),
-          ),
-        ),
-        const SizedBox(height: 10),
-        Text(
-          'Adicionar foto (opcional)',
-          style: TextStyle(
-            fontSize: AppResponsive.fontSize(context, 14),
-            fontWeight: FontWeight.w600,
-            color: AppColors.primary,
-          ),
-        ),
-      ],
     );
   }
 }

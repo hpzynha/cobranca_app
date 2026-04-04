@@ -171,9 +171,9 @@ Deno.serve(async () => {
               student.name, service, ownerName, valor, dueDateBR, profile.pix_key!,
             ])
           } else {
-            // cobranca_atrasada (sem pix) still in review — skip until approved
-            skipped++
-            continue
+            await sendTemplate(phone, 'cobranca_atrasada', [
+              student.name, service, ownerName, valor, dueDateBR,
+            ])
           }
         }
         sent++

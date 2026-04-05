@@ -1,4 +1,5 @@
 import 'package:app_cobranca/core/theme/app_colors.dart';
+import 'package:app_cobranca/core/widgets/app_toast.dart';
 import 'package:app_cobranca/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/social_auth_button.dart';
 import 'package:flutter/material.dart';
@@ -159,8 +160,15 @@ class _AuthLandingScreenState extends State<AuthLandingScreen> {
                       SocialAuthButton(
                         text: 'Continuar com Google',
                         logoPath: 'assets/images/google_logo.svg',
-                        onPressed: () =>
-                            _authController.signInWithGoogle(),
+                        onPressed: () async {
+                          try {
+                            await _authController.signInWithGoogle();
+                          } catch (e) {
+                            if (context.mounted) {
+                              AppToast.error(context, 'Erro ao entrar com Google: $e');
+                            }
+                          }
+                        },
                       ),
                       const SizedBox(height: 10),
 

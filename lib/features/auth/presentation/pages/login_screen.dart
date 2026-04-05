@@ -316,8 +316,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       SocialAuthButton(
                         text: 'Continuar com Google',
                         logoPath: 'assets/images/google_logo.svg',
-                        onPressed: () =>
-                            _authController.signInWithGoogle(),
+                        onPressed: () async {
+                          try {
+                            await _authController.signInWithGoogle();
+                          } catch (e) {
+                            if (context.mounted) {
+                              AppToast.error(context, 'Erro ao entrar com Google: $e');
+                            }
+                          }
+                        },
                       ),
                       const SizedBox(height: 20),
 

@@ -5,6 +5,7 @@ import 'package:app_cobranca/core/theme/app_spacing.dart';
 import 'package:app_cobranca/features/auth/domain/entities/student_registration_input.dart';
 import 'package:app_cobranca/features/auth/presentation/providers/student_providers.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/bottom_bar.dart';
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -134,7 +135,10 @@ class _AddPageState extends ConsumerState<AddPage> {
         context.push('/paywall');
         return;
       }
-      AppToast.error(context, result.failure?.message ?? 'Erro ao cadastrar aluno.');
+      AppToast.error(
+        context,
+        result.failure?.message ?? 'Erro ao cadastrar aluno.',
+      );
       return;
     }
 
@@ -166,10 +170,14 @@ class _AddPageState extends ConsumerState<AddPage> {
     final titleSize = AppResponsive.fontSize(context, isCompact ? 24 : 28);
     final subtitleSize = AppResponsive.fontSize(context, 14);
     final sectionGap = AppResponsive.size(context, isCompact ? 18 : 22);
-    final pageBackground = isDark ? AppColors.backgroundDark : const Color(0xFFF3F4F6);
-    final fieldBackground = isDark ? const Color(0xFF1A1A28) : const Color(0xFFF3F4F6);
-    final fieldBorder = isDark ? const Color(0xFF2a2a45) : const Color(0xFFD9DCE3);
-    final focusedBorderColor = isDark ? AppColors.primary : const Color(0xFFC9CED8);
+    final pageBackground =
+        isDark ? AppColors.backgroundDark : const Color(0xFFF3F4F6);
+    final fieldBackground =
+        isDark ? const Color(0xFF1A1A28) : const Color(0xFFF3F4F6);
+    final fieldBorder =
+        isDark ? const Color(0xFF2a2a45) : const Color(0xFFD9DCE3);
+    final focusedBorderColor =
+        isDark ? AppColors.primary : const Color(0xFFC9CED8);
     final muted = isDark ? AppColors.textMutedDark : const Color(0xFF6B7280);
     final bottomScrollPadding =
         (isCompact ? 128.0 : 140.0) +
@@ -234,11 +242,7 @@ class _AddPageState extends ConsumerState<AddPage> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(
-                              Icons.arrow_back,
-                              color: muted,
-                              size: 28,
-                            ),
+                            Icon(Icons.arrow_back, color: muted, size: 28),
                             const SizedBox(width: 8),
                             Text(
                               'Voltar',
@@ -259,7 +263,10 @@ class _AddPageState extends ConsumerState<AddPage> {
                     style: TextStyle(
                       fontSize: titleSize,
                       fontWeight: FontWeight.w800,
-                      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                      color:
+                          isDark
+                              ? AppColors.textPrimaryDark
+                              : AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -300,7 +307,10 @@ class _AddPageState extends ConsumerState<AddPage> {
                       Icons.arrow_drop_down_rounded,
                       color: muted,
                     ),
-                    flagsButtonPadding: const EdgeInsets.only(left: 12, right: 8),
+                    flagsButtonPadding: const EdgeInsets.only(
+                      left: 12,
+                      right: 8,
+                    ),
                     disableLengthCheck: false,
                     keyboardType: TextInputType.phone,
                     decoration: const InputDecoration(
@@ -317,8 +327,12 @@ class _AddPageState extends ConsumerState<AddPage> {
                       final completeNumber =
                           phone?.completeNumber.trim() ??
                           _whatsappCompleteNumber.trim();
-                      final digits = completeNumber.replaceAll(RegExp(r'\D'), '');
-                      if (!completeNumber.startsWith('+') || digits.length < 10) {
+                      final digits = completeNumber.replaceAll(
+                        RegExp(r'\D'),
+                        '',
+                      );
+                      if (!completeNumber.startsWith('+') ||
+                          digits.length < 10) {
                         return 'Informe um WhatsApp válido com código do país';
                       }
                       return null;
@@ -342,8 +356,13 @@ class _AddPageState extends ConsumerState<AddPage> {
                       decimal: true,
                     ),
                     inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9., ]')),
+                      CurrencyTextInputFormatter.currency(
+                        locale: 'pt_BR',
+                        symbol: 'R\$',
+                        decimalDigits: 2,
+                      ),
                     ],
+                    textAlign: TextAlign.start,
                     decoration: const InputDecoration(hintText: 'R\$ 150,00'),
                     validator: (value) {
                       final cents = _parseMonthlyFeeToCents(value ?? '');

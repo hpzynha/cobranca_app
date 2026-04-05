@@ -93,6 +93,7 @@ class _AddPageState extends ConsumerState<AddPage> {
   }
 
   Future<void> _submit() async {
+    if (_isSubmitting) return;
     FocusScope.of(context).unfocus();
     if (!_formKey.currentState!.validate()) return;
 

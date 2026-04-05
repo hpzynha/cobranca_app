@@ -165,7 +165,7 @@ class _AuthLandingScreenState extends State<AuthLandingScreen> {
                             await _authController.signInWithGoogle();
                           } catch (e) {
                             if (context.mounted) {
-                              AppToast.error(context, 'Erro ao entrar com Google: $e');
+                              AppToast.error(context, 'Não foi possível entrar com o Google. Tente novamente.');
                             }
                           }
                         },

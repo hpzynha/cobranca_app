@@ -2,6 +2,7 @@ import 'package:app_cobranca/core/theme/app_colors.dart';
 import 'package:app_cobranca/core/widgets/app_toast.dart';
 import 'package:app_cobranca/features/auth/data/auth_service.dart';
 import 'package:app_cobranca/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:app_cobranca/features/auth/presentation/utils/auth_error_handler.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/auth_options_row.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/social_auth_button.dart';
@@ -65,10 +66,10 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } on AuthException catch (e) {
       if (!mounted) return;
-      AppToast.error(context, e.message);
-    } catch (_) {
+      AppToast.error(context, AuthErrorHandler.translate(e.message));
+    } catch (e) {
       if (!mounted) return;
-      AppToast.error(context, 'Erro inesperado. Tente novamente.');
+      AppToast.error(context, AuthErrorHandler.translate(e));
     }
     if (!mounted) return;
     setState(() => _isLoading = false);
@@ -321,7 +322,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             await _authController.signInWithGoogle();
                           } catch (e) {
                             if (context.mounted) {
-                              AppToast.error(context, 'Erro ao entrar com Google: $e');
+                              AppToast.error(context, 'Não foi possível entrar com o Google. Tente novamente.');
                             }
                           }
                         },

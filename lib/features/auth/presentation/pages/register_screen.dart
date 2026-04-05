@@ -3,6 +3,7 @@ import 'package:app_cobranca/core/widgets/app_toast.dart';
 import 'package:app_cobranca/features/auth/domain/entities/signup_result.dart';
 import 'package:app_cobranca/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:app_cobranca/features/auth/presentation/providers/sign_up_notifier.dart';
+import 'package:app_cobranca/features/auth/presentation/utils/auth_error_handler.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/social_auth_button.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +52,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         context.go('/login');
       },
       error: (error, _) {
-        AppToast.error(context, error.toString());
+        AppToast.error(context, AuthErrorHandler.translate(error));
       },
     );
   }
@@ -319,7 +320,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             await _authController.signInWithGoogle();
                           } catch (e) {
                             if (context.mounted) {
-                              AppToast.error(context, 'Erro ao entrar com Google: $e');
+                              AppToast.error(context, 'Não foi possível entrar com o Google. Tente novamente.');
                             }
                           }
                         },

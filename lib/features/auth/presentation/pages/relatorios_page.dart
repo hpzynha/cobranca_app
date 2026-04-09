@@ -1,6 +1,7 @@
 import 'package:app_cobranca/core/theme/app_colors.dart';
 import 'package:app_cobranca/core/theme/app_responsive.dart';
-import 'package:app_cobranca/features/auth/presentation/providers/student_providers.dart';
+import 'package:app_cobranca/features/auth/domain/entities/month_option.dart';
+import 'package:app_cobranca/features/auth/presentation/providers/reports_providers.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/bottom_bar.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/mensalify_app_bar.dart';
 import 'package:flutter/material.dart';
@@ -12,14 +13,12 @@ class RelatoriosPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final reportAsync = ref.watch(monthlyReportProvider);
+    final reportsAsync = ref.watch(reportsNotifierProvider);
     final isCompact = AppResponsive.isCompact(context);
     final padding = AppResponsive.size(context, isCompact ? 14 : 16).clamp(
       12.0,
       22.0,
     );
-    final now = DateTime.now();
-    final monthLabel = DateFormat('MMMM yyyy', 'pt_BR').format(now);
 
     return Scaffold(
       extendBody: true,
@@ -28,47 +27,121 @@ class RelatoriosPage extends ConsumerWidget {
         children: [
           const MensalifyAppBar(title: 'Relatórios'),
           Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(padding, 20, padding, 100),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _capitalize(monthLabel),
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
+            child: switch (reportsAsync) {
+              AsyncData(:final value) => SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(padding, 20, padding, 100),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _MonthDropdown(
+                      months: value.availableMonths,
+                      selected: value.selectedMonth,
+                      onChanged: (month) => ref
+                          .read(reportsNotifierProvider.notifier)
+                          .selectMonth(month),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  switch (reportAsync) {
-                    AsyncData(:final value) => _ReportCards(
-                      expectedCents: value.expectedCents,
-                      receivedCents: value.receivedCents,
-                      dueSoonCents: value.dueSoonCents,
-                      pendingCents: value.pendingCents,
-                    ),
-                    AsyncError(:final error) => _ErrorCard(
-                      message: error.toString().replaceFirst('Exception: ', ''),
-                    ),
-                    _ => const Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 48),
-                        child: CircularProgressIndicator(),
+                    const SizedBox(height: 16),
+                    switch (value.report) {
+                      AsyncData(:final value) => _ReportCards(
+                        expectedCents: value.expectedCents,
+                        receivedCents: value.receivedCents,
+                        dueSoonCents: value.dueSoonCents,
+                        pendingCents: value.overdueCents,
                       ),
-                    ),
-                  },
-                ],
+                      AsyncLoading() => const Center(
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 48),
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                      AsyncError(:final error) => _ReportCardsError(
+                        error: error,
+                      ),
+                      _ => const SizedBox.shrink(),
+                    },
+                  ],
+                ),
               ),
-            ),
+              AsyncLoading() => const Center(
+                child: CircularProgressIndicator(),
+              ),
+              AsyncError(:final error) => Padding(
+                padding: EdgeInsets.fromLTRB(padding, 20, padding, 100),
+                child: _ErrorCard(
+                  message: error.toString().replaceFirst('Exception: ', ''),
+                ),
+              ),
+              _ => const SizedBox.shrink(),
+            },
           ),
         ],
       ),
       bottomNavigationBar: const BottomBar(currentIndex: 3),
     );
   }
+}
+
+class _MonthDropdown extends StatelessWidget {
+  const _MonthDropdown({
+    required this.months,
+    required this.selected,
+    required this.onChanged,
+  });
+
+  final List<MonthOption> months;
+  final MonthOption selected;
+  final ValueChanged<MonthOption> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final textStyle = Theme.of(context).textTheme.titleMedium?.copyWith(
+      fontWeight: FontWeight.w600,
+    );
+
+    return DropdownButtonHideUnderline(
+      child: DropdownButton<MonthOption>(
+        value: selected,
+        isDense: true,
+        style: textStyle,
+        icon: Icon(
+          Icons.expand_more_rounded,
+          size: 20,
+          color: textStyle?.color,
+        ),
+        items: months
+            .map(
+              (m) => DropdownMenuItem(
+                value: m,
+                child: Text(_capitalize(m.label), style: textStyle),
+              ),
+            )
+            .toList(),
+        onChanged: (m) {
+          if (m != null) onChanged(m);
+        },
+      ),
+    );
+  }
 
   String _capitalize(String s) =>
       s.isEmpty ? s : s[0].toUpperCase() + s.substring(1);
+}
+
+/// Shows cards with 0 and logs the error — screen does not break.
+class _ReportCardsError extends StatelessWidget {
+  const _ReportCardsError({required this.error});
+
+  final Object error;
+
+  @override
+  Widget build(BuildContext context) {
+    return const _ReportCards(
+      expectedCents: 0,
+      receivedCents: 0,
+      dueSoonCents: 0,
+      pendingCents: 0,
+    );
+  }
 }
 
 class _ReportCards extends StatelessWidget {

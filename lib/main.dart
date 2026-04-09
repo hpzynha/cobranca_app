@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/router/app_router.dart';
+import 'features/auth/presentation/providers/reports_providers.dart';
 import 'features/auth/presentation/providers/student_providers.dart';
 
 void main() async {
@@ -68,6 +69,7 @@ class _MyAppState extends ConsumerState<MyApp> {
           data.event == AuthChangeEvent.signedIn) {
         ref.invalidate(studentsProvider);
         ref.invalidate(monthlyReportProvider);
+        ref.invalidate(reportsNotifierProvider);
       }
     });
   }

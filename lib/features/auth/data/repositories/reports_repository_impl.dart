@@ -58,6 +58,7 @@ class ReportsRepositoryImpl implements ReportsRepository {
           receivedCents: (data['received_cents'] as num).toInt(),
           dueSoonCents: (data['due_soon_cents'] as num).toInt(),
           overdueCents: (data['overdue_cents'] as num).toInt(),
+          lateReceivedCents: (data['late_received_cents'] as num).toInt(),
         ),
       );
     } on AuthException {

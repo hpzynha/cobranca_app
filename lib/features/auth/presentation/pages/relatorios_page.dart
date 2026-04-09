@@ -47,6 +47,7 @@ class RelatoriosPage extends ConsumerWidget {
                         receivedCents: value.receivedCents,
                         dueSoonCents: value.dueSoonCents,
                         pendingCents: value.overdueCents,
+                        lateReceivedCents: value.lateReceivedCents,
                       ),
                       AsyncLoading() => const Center(
                         child: Padding(
@@ -140,6 +141,7 @@ class _ReportCardsError extends StatelessWidget {
       receivedCents: 0,
       dueSoonCents: 0,
       pendingCents: 0,
+      lateReceivedCents: 0,
     );
   }
 }
@@ -150,15 +152,21 @@ class _ReportCards extends StatelessWidget {
     required this.receivedCents,
     required this.dueSoonCents,
     required this.pendingCents,
+    required this.lateReceivedCents,
   });
 
   final int expectedCents;
   final int receivedCents;
   final int dueSoonCents;
   final int pendingCents;
+  final int lateReceivedCents;
 
   @override
   Widget build(BuildContext context) {
+    final lateSubtitle = lateReceivedCents > 0
+        ? 'sendo ${NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(lateReceivedCents / 100.0)} em atraso'
+        : null;
+
     return Column(
       children: [
         _FinanceCard(
@@ -173,6 +181,7 @@ class _ReportCards extends StatelessWidget {
           amountCents: receivedCents,
           color: AppColors.success,
           icon: Icons.check_circle_outline_rounded,
+          subtitle: lateSubtitle,
         ),
         const SizedBox(height: 12),
         _FinanceCard(
@@ -199,12 +208,14 @@ class _FinanceCard extends StatelessWidget {
     required this.amountCents,
     required this.color,
     required this.icon,
+    this.subtitle,
   });
 
   final String label;
   final int amountCents;
   final Color color;
   final IconData icon;
+  final String? subtitle;
 
   @override
   Widget build(BuildContext context) {
@@ -252,6 +263,16 @@ class _FinanceCard extends StatelessWidget {
                     color: color,
                   ),
                 ),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle!,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppColors.danger,
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),

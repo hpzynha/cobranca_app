@@ -3,6 +3,7 @@ import 'package:app_cobranca/core/widgets/app_toast.dart';
 import 'package:app_cobranca/core/theme/app_spacing.dart';
 import 'package:app_cobranca/features/auth/domain/services/calculate_next_due_date.dart';
 import 'package:app_cobranca/features/auth/presentation/providers/auth_providers.dart';
+import 'package:app_cobranca/features/auth/presentation/providers/reports_providers.dart';
 import 'package:app_cobranca/features/auth/presentation/providers/student_providers.dart';
 import 'package:app_cobranca/features/auth/presentation/widgets/lib/features/auth/presentation/widgets/students_dashboard_card.dart';
 import 'package:flutter/material.dart';
@@ -338,6 +339,7 @@ class _StudentDetailsPageState extends ConsumerState<StudentDetailsPage> {
     // Refresh the list silently (no loading indicator) and update the report.
     ref.read(studentsProvider.notifier).silentRefresh();
     ref.invalidate(monthlyReportProvider);
+    ref.invalidate(reportsNotifierProvider);
   }
 
   void _showInactivateSheet(StudentPaymentItem student) {

@@ -34,30 +34,37 @@ extension StudentPaymentItemMapper on List<Student> {
 }
 
 StudentPaymentStatus _statusForStudent(Student student, DateTime now) {
-  // Pago no ciclo atual tem prioridade máxima
-  if (_paidInCurrentCycle(student, now)) {
+  final nextDueDate =
+      student.nextDueDate == null ? null : _dateOnly(student.nextDueDate!);
+  final lastPayment =
+      student.lastPaymentDate == null ? null : _dateOnly(student.lastPaymentDate!);
+
+  // 1. paid: has a payment and the next due date has not arrived yet.
+  // _paidInCurrentCycle covers the standard case; the OR covers early payers
+  // whose lastPaymentDate falls before the cycleStart (e.g. paid on the 9th
+  // when due_day = 10, so next_due_date advanced to next month's 10th).
+  if (_paidInCurrentCycle(student, now) ||
+      (lastPayment != null && nextDueDate != null && now.isBefore(nextDueDate))) {
     return StudentPaymentStatus.paid;
   }
 
-  // Se temos a data de vencimento, calculamos localmente — mais confiável
-  // que o status do backend, que pode ter boundaries diferentes.
-  final nextDueDate =
-      student.nextDueDate == null ? null : _dateOnly(student.nextDueDate!);
-
-  if (nextDueDate != null) {
-    if (now.isAfter(nextDueDate)) {
-      return StudentPaymentStatus.overdue;
-    }
-    final daysToDue = nextDueDate.difference(now).inDays;
-    if (daysToDue <= 5) {
-      return StudentPaymentStatus.dueSoon;
-    }
-    return StudentPaymentStatus.pending;
+  if (nextDueDate == null) {
+    return _statusFromBackend(student.paymentStatusCode) ??
+        StudentPaymentStatus.pending;
   }
 
-  // Sem data de vencimento: usa o status do backend como fallback
-  return _statusFromBackend(student.paymentStatusCode) ??
-      StudentPaymentStatus.pending;
+  // 2. due_soon: 3 days or fewer until due date (inclusive of the due date itself)
+  final daysToDue = nextDueDate.difference(now).inDays;
+  if (daysToDue <= 3 && !now.isAfter(nextDueDate)) {
+    return StudentPaymentStatus.dueSoon;
+  }
+
+  // 3. overdue: past the due date
+  if (now.isAfter(nextDueDate)) {
+    return StudentPaymentStatus.overdue;
+  }
+
+  return StudentPaymentStatus.pending;
 }
 
 /// Retorna true se o [lastPaymentDate] do aluno está dentro do ciclo atual,

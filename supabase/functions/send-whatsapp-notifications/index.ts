@@ -155,40 +155,67 @@ Deno.serve(async () => {
       const dueDateBR = formatDateBR(student.next_due_date)
 
       try {
+        let templateName = ''
         if (diffDays === 3) {
+          templateName = hasPix ? 'lembrete_vencimento_pix' : 'lembrete_vencimento'
           if (hasPix) {
-            await sendTemplate(phone, 'lembrete_vencimento_pix', [
+            await sendTemplate(phone, templateName, [
               student.name, service, ownerName, valor, '3', dueDateBR, profile.pix_key!,
             ])
           } else {
-            await sendTemplate(phone, 'lembrete_vencimento', [
+            await sendTemplate(phone, templateName, [
               student.name, service, ownerName, valor, '3', dueDateBR,
             ])
           }
         } else if (diffDays === 0) {
+          templateName = hasPix ? 'vencimento_hoje_pix' : 'vencimento_hoje'
           if (hasPix) {
-            await sendTemplate(phone, 'vencimento_hoje_pix', [
+            await sendTemplate(phone, templateName, [
               student.name, service, ownerName, valor, profile.pix_key!,
             ])
           } else {
-            await sendTemplate(phone, 'vencimento_hoje', [
+            await sendTemplate(phone, templateName, [
               student.name, service, ownerName, valor,
             ])
           }
         } else if (diffDays < 0) {
+          templateName = hasPix ? 'cobranca_atrasada_pix' : 'cobranca_atrasada'
           if (hasPix) {
-            await sendTemplate(phone, 'cobranca_atrasada_pix', [
+            await sendTemplate(phone, templateName, [
               student.name, service, ownerName, valor, dueDateBR, profile.pix_key!,
             ])
           } else {
-            await sendTemplate(phone, 'cobranca_atrasada', [
+            await sendTemplate(phone, templateName, [
               student.name, service, ownerName, valor, dueDateBR,
             ])
           }
         }
+        try {
+          await supabase.from('message_logs').insert({
+            owner_id: student.owner_id,
+            student_id: student.id,
+            student_name: student.name,
+            template: templateName,
+            status: 'sent',
+          })
+        } catch (logErr) {
+          console.error(`Failed to log sent message for student ${student.id}:`, logErr)
+        }
         sent++
       } catch (err) {
         console.error(`Error for student ${student.id} (${student.name}):`, err)
+        try {
+          await supabase.from('message_logs').insert({
+            owner_id: student.owner_id,
+            student_id: student.id,
+            student_name: student.name,
+            template: 'unknown',
+            status: 'failed',
+            error_msg: String(err),
+          })
+        } catch (logErr) {
+          console.error(`Failed to log failed message for student ${student.id}:`, logErr)
+        }
         errors++
       }
     }

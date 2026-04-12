@@ -325,6 +325,20 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           }
                         },
                       ),
+                      const SizedBox(height: 12),
+                      SocialAuthButton(
+                        text: 'Continuar com Apple',
+                        logoPath: 'assets/images/apple_logo.svg',
+                        onPressed: () async {
+                          try {
+                            await _authController.signInWithApple();
+                          } catch (e) {
+                            if (context.mounted) {
+                              AppToast.error(context, 'Não foi possível entrar com a Apple. Tente novamente.');
+                            }
+                          }
+                        },
+                      ),
                       const SizedBox(height: 20),
 
                       // Footer

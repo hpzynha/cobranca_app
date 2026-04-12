@@ -37,4 +37,33 @@ class AuthController {
 
     await _supabase.auth.exchangeCodeForSession(code);
   }
+
+  Future<void> signInWithApple() async {
+    const callbackScheme = 'io.supabase.flutter';
+    const redirectUrl = '$callbackScheme://login-callback/';
+
+    final oauthResponse = await _supabase.auth.getOAuthSignInUrl(
+      provider: OAuthProvider.apple,
+      redirectTo: redirectUrl,
+    );
+
+    final String result;
+    try {
+      result = await FlutterWebAuth2.authenticate(
+        url: oauthResponse.url,
+        callbackUrlScheme: callbackScheme,
+      );
+    } on Exception catch (e) {
+      if (e.toString().contains('CANCELED')) return;
+      rethrow;
+    }
+
+    final uri = Uri.parse(result);
+    final code = uri.queryParameters['code'];
+    if (code == null) {
+      throw Exception('Código de autorização não encontrado na resposta.');
+    }
+
+    await _supabase.auth.exchangeCodeForSession(code);
+  }
 }

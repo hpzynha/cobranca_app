@@ -112,25 +112,33 @@ Deno.serve(async () => {
       // Pro: 3 days before, due today, or overdue (up to 30 days)
       if (isPro) {
         if (diffDays > 3 || (diffDays > 0 && diffDays < 3) || diffDays < -30) {
+          console.log(`SKIP [${student.name}] diffDays=${diffDays} plan=pro out_of_window`)
           skipped++
           continue
         }
       } else {
         if (diffDays !== 0) {
+          console.log(`SKIP [${student.name}] diffDays=${diffDays} plan=free not_due_today`)
           skipped++
           continue
         }
       }
 
-      // Skip if already paid this month
+      // Skip if already paid for the billing cycle (check month of next_due_date, not today)
+      const dueMonthStart = nextDueStr.slice(0, 7) + '-01'
+      const dueMonthNextDate = new Date(nextDueStr.slice(0, 7) + '-01T00:00:00Z')
+      dueMonthNextDate.setUTCMonth(dueMonthNextDate.getUTCMonth() + 1, 1)
+      const dueMonthEnd = dueMonthNextDate.toISOString().split('T')[0]
+
       const { count } = await supabase
         .from('payments')
         .select('id', { count: 'exact', head: true })
         .eq('student_id', student.id)
-        .gte('competence_date', monthStart)
-        .lt('competence_date', monthEnd)
+        .gte('competence_date', dueMonthStart)
+        .lt('competence_date', dueMonthEnd)
 
       if ((count ?? 0) > 0) {
+        console.log(`SKIP [${student.name}] diffDays=${diffDays} already_paid due_month=${dueMonthStart}`)
         skipped++
         continue
       }

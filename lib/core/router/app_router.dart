@@ -217,7 +217,8 @@ class OnboardingStatusNotifier extends ChangeNotifier {
     _subscription =
         Supabase.instance.client.auth.onAuthStateChange.listen((authState) {
       if (authState.event == AuthChangeEvent.signedIn ||
-          authState.event == AuthChangeEvent.tokenRefreshed) {
+          authState.event == AuthChangeEvent.tokenRefreshed ||
+          authState.event == AuthChangeEvent.initialSession) {
         _fetch();
       } else if (authState.event == AuthChangeEvent.signedOut) {
         _onboardingCompleted = null;
